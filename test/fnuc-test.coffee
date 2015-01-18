@@ -4,7 +4,7 @@ chai.should()
 chai.use(require 'sinon-chai')
 { assert, spy, match, mock, stub, sandbox } = require 'sinon'
 
-require('../src/fnuc').installTo(global)
+require('../src/fnuc').installTo(global, true)
 
 # String
 # Number
@@ -55,11 +55,11 @@ describe 'isType', ->
             if spec.func
                 it "for type #{spec.t}#{spec.d}", -> isType(spec.func, spec.v).should.be.true
 
-describe 'isPlainObject', ->
+describe 'isPlain', ->
 
     describe 'tells whether something is a plain object', ->
         TYPES.forEach (spec) ->
-            it "for type #{spec.t}#{spec.d}", -> isPlainObject(spec.v).should.eql !!spec.plain
+            it "for type #{spec.t}#{spec.d}", -> isPlain(spec.v).should.eql !!spec.plain
 
 describe 'merge', ->
 
@@ -173,3 +173,151 @@ describe 'cloneDeep', ->
                         else
                             v.should.not.equal(spec.v[k])
                     Object.keys(r).length.should.eql Object.keys(spec.v).length
+
+describe 'arity', ->
+
+    it 'returns the arity of (f)', ->
+        arity(()->).should.eql 0
+        arity((a)->).should.eql 1
+        arity((a,b)->).should.eql 2
+
+    it 'chops the arity to the given number if (f,n)', ->
+        arity(arity(((a,b,c)->),n)).should.eql n for n in [0..10]
+
+    it 'has a curried variant for (n)', ->
+        arity(arity(n)((a,b,c)->)).should.eql n for n in [0..10]
+
+describe 'curry', ->
+
+    it 'does nothing for arity 0', ->
+        curry(f=(->)).should.equal f
+
+    it 'does nothing for arity 1', ->
+        curry(f=((a)->)).should.equal f
+
+    describe '(a,b) ->', ->
+
+        div = curry (a,b) -> a / b
+
+        it 'turns to (b) -> (a) ->', ->
+            div2 = div(2)
+            div2(10).should.eql 5
+
+        it 'maintains arity for curried func', ->
+            arity(div).should.eql 2
+
+        it 'returns a smaller arity func after partial apply', ->
+            div2 = div(2)
+            arity(div2).should.eql 1
+
+        it 'can still apply (a,b) to curried (a,b) ->', ->
+            div(10, 2).should.eql 5
+
+    describe '(a,b,c) ->', ->
+
+        divt = curry (a,b,c) -> a / b / c
+
+        it 'turns to (c) -> (b) -> (a) ->', ->
+            div2 = divt(2)
+            div42 = div2(4)
+            div42(80).should.eql 10
+
+        it 'maintains arity for curried func', ->
+            arity(divt).should.eql 3
+
+        it 'returns a small arity func after partial apply', ->
+            div2 = divt(2)
+            div42 = div2(4)
+            arity(div2).should.eql 2
+            arity(div42).should.eql 1
+
+        it 'can be partially applied with (b,c)', ->
+            div42 = divt(4, 2)
+            div42(80).should.equal 10
+
+        it 'does correct arity for partial applied', ->
+            div42 = divt(4, 2)
+            arity(div42).should.eql 1
+
+        it 'can still apply (a,b,c) to curried (a,b,c) ->', ->
+            divt(80, 4, 2).should.eql 10
+
+        it 'can apply (b,c) to partial applied curried (a,b,c) ->', ->
+            div2 = divt(2)
+            div2(80,4).should.eql 10
+
+describe 'flip', ->
+
+    describe '(a,b) ->', ->
+
+        f = flip (a,b) -> a / b
+
+        it 'flips the arguments to (b,a) ->', ->
+            f(2, 10).should.eql 5
+
+        it 'keeps arity', ->
+            arity(f).should.eql 2
+
+    describe '(a,b,c) ->', ->
+
+        f = flip (a,b,c) -> a / b / c
+
+        it 'flips the arguments to (c,b,a) ->', ->
+            f(3, 2, 12).should.eql 2
+
+        it 'keeps arity', ->
+            arity(f).should.eql 3
+
+describe 'compose', ->
+
+    describe '(f2,f1)', ->
+
+        f1 = (a,b) -> a + b
+        f2 = (c) -> c / 2
+        f = compose f2, f1
+
+        it 'is turned to f2(f1)', ->
+            f(6,4).should.eql 5
+
+        it 'maintains arity for f1', ->
+            arity(f).should.eql 2
+
+    describe '(f3,f2,f1)', ->
+
+        f1 = (a,b) -> a + b
+        f2 = (c) -> c / 2
+        f3 = (d) -> d / 3
+        f = compose f3, f2, f1
+
+        it 'is turned to f3(f2(f1))', ->
+            f(7,5).should.eql 2
+
+        it 'maintains arity for f1', ->
+            arity(f).should.eql 2
+
+describe 'sequence', ->
+
+    describe '(f1,f2)', ->
+
+        f1 = (a,b) -> a + b
+        f2 = (c) -> c / 2
+        f = sequence f1, f2
+
+        it 'is turned to f2(f1)', ->
+            f(6,4).should.eql 5
+
+        it 'maintains arity for f1', ->
+            arity(f).should.eql 2
+
+    describe '(f1,f2,f3)', ->
+
+        f1 = (a,b) -> a + b
+        f2 = (c) -> c / 2
+        f3 = (d) -> d / 3
+        f = sequence f1, f2, f3
+
+        it 'is turned to f3(f2(f1))', ->
+            f(7,5).should.eql 2
+
+        it 'maintains arity for f1', ->
+            arity(f).should.eql 2

@@ -29,17 +29,17 @@ lastIndexOf `:: [a], a -> Number` or `:: a -> [a] -> Number`
 
 fn
 --
-apply       `:: [*], (*... -> a) -> a` or `:: (*... -> a) -> [*] -> a`  
+apply?      `:: [*], (*... -> a) -> a` or `:: (*... -> a) -> [*] -> a`  
 argN        `:: Number -> *... -> *`  
-call        `:: (*... -> a), *... -> a`  
+call?       `:: (*... -> a), *... -> a`  
 compose     `:: ((y -> z), (x -> y), ..., (b -> c), (a... -> b)) -> (a... -> z)`  
             or `:: (a... -> b) -> (b -> c) -> ... -> (x -> y) -> (y -> z) -> (a... -> z)`  
 sequence    `:: ((a... -> b), (b -> c), ..., (x -> y), (y -> z)) -> (a... -> z)`  
             or `:: (y -> z) -> (x -> y) -> ... -> (b -> c) -> (a... -> b) -> (a... -> z)`  
 curry       `:: (* -> a) -> (* -> a)`  
-curryN      `:: (* -> a), Number -> (* -> a)` or `:: Number -> (* -> a) -> (* -> a)`  
+ncurry      `:: (* -> a), Number -> (* -> a)` or `:: Number -> (* -> a) -> (* -> a)`  
 I/ident     `:: a -> a`  
-unapply     `:: ([*...] -> a) -> (*... -> a)`  
+unapply?    `:: ([*...] -> a) -> (*... -> a)`  
 flip        `:: (a, b, ..., z) -> (z, ..., b, a)`  
             or `:: (a -> b -> ... -> z) -> (z -> ... -> b -> a)`  
 tap         `:: a, (a -> *) -> a` or `:: (a -> *) -> a -> a`  
@@ -62,6 +62,7 @@ object
 
 mixin        `:: {*}, {*}... -> {*}` or `:: {*} -> {*} -> {*}`  
 merge        `:: {*}, {*}... -> {*}` or `:: {*} -> {*} -> {*}`  
+
 prop/get     `:: {k:v}, k -> v` or `:: k -> {k:v} -> v`  
 propOf/getOf `:: k, {k:v} -> v` or `:: {k,v} -> k -> v`  
 has          `:: {k:v}, k -> Boolean` or `:: k -> {k:v} -> Boolean`  
