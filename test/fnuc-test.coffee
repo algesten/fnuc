@@ -321,3 +321,56 @@ describe 'sequence', ->
 
         it 'maintains arity for f1', ->
             arity(f).should.eql 2
+
+describe 'I/ident', ->
+
+    it 'returns the arg in', ->
+        I(42).should.eql 42
+
+    it 'is of arity 1', ->
+        arity(I).should.eql 1
+
+    it 'ignores additional args', ->
+        I(42,2).should.eql 42
+
+describe 'append', ->
+
+    describe '([a], v) -> [b]', ->
+
+        it 'appends v to a in a new list', ->
+            b = append(a=[0], 1)
+            b.should.eql [0,1]
+            a.should.eql [0]
+
+        it 'deals with [v] correctly', ->
+            b = append(a=[0], [1])
+            b.should.eql [0,[1]]
+            a.should.eql [0]
+
+        it 'with correct arity', ->
+            arity(append).should.eql 2
+
+        it 'has a curried variant (v) -> ([a]) -> [b]', ->
+            app4 = append(4)
+            app4([3]).should.eql [3,4]
+
+describe 'appendTo', ->
+
+    describe '(v, [a]) -> [b]', ->
+
+        it 'appends v to a in a new list', ->
+            b = appendTo(1, a=[0])
+            b.should.eql [0,1]
+            a.should.eql [0]
+
+        it 'deals with [v] correctly', ->
+            b = appendTo([1], a=[0])
+            b.should.eql [0,[1]]
+            a.should.eql [0]
+
+        it 'with correct arity', ->
+            arity(appendTo).should.eql 2
+
+        it 'has a curried variant ([a]) -> (v) -> [b]', ->
+            appTo3 = appendTo([3])
+            appTo3(4).should.eql [3,4]

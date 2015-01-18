@@ -29,18 +29,15 @@ lastIndexOf `:: [a], a -> Number` or `:: a -> [a] -> Number`
 
 fn
 --
-apply?      `:: [*], (*... -> a) -> a` or `:: (*... -> a) -> [*] -> a`  
 argN        `:: Number -> *... -> *`  
-call?       `:: (*... -> a), *... -> a`  
-compose     `:: ((y -> z), (x -> y), ..., (b -> c), (a... -> b)) -> (a... -> z)`  
+!compose     `:: ((y -> z), (x -> y), ..., (b -> c), (a... -> b)) -> (a... -> z)`  
             or `:: (a... -> b) -> (b -> c) -> ... -> (x -> y) -> (y -> z) -> (a... -> z)`  
-sequence    `:: ((a... -> b), (b -> c), ..., (x -> y), (y -> z)) -> (a... -> z)`  
+!sequence    `:: ((a... -> b), (b -> c), ..., (x -> y), (y -> z)) -> (a... -> z)`  
             or `:: (y -> z) -> (x -> y) -> ... -> (b -> c) -> (a... -> b) -> (a... -> z)`  
-curry       `:: (* -> a) -> (* -> a)`  
-ncurry      `:: (* -> a), Number -> (* -> a)` or `:: Number -> (* -> a) -> (* -> a)`  
-I/ident     `:: a -> a`  
-unapply?    `:: ([*...] -> a) -> (*... -> a)`  
-flip        `:: (a, b, ..., z) -> (z, ..., b, a)`  
+!curry       `:: (* -> a) -> (* -> a)`  
+!ncurry      `:: (* -> a), Number -> (* -> a)` or `:: Number -> (* -> a) -> (* -> a)`  
+!I/ident     `:: a -> a`  
+!flip        `:: (a, b, ..., z) -> (z, ..., b, a)`  
             or `:: (a -> b -> ... -> z) -> (z -> ... -> b -> a)`  
 tap         `:: a, (a -> *) -> a` or `:: (a -> *) -> a -> a`  
 
@@ -55,6 +52,9 @@ lift?
 memoize?
 once?
 useWith?
+call?       `:: (*... -> a), *... -> a`  
+apply?      `:: [*], (*... -> a) -> a` or `:: (*... -> a) -> [*] -> a`  
+unapply?    `:: ([*...] -> a) -> (*... -> a)`  
 
 
 object

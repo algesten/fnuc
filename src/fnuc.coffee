@@ -38,12 +38,6 @@ cloneDeep = (a) ->
         s[k] = cloneDeep(v) for k, v of s
     return s
 
-
-# object ----------------------------
-merge = (t, os...) -> t[k] = v for k,v of o when v != undefined for o in os; t
-mixin = (os...)    -> merge {}, os...
-
-
 # type -----------------------------
 _toString     = (a) -> Object::toString.call a
 isPlain       = (o) -> !!o && typeof o == 'object' && o.constructor == Object
@@ -79,6 +73,17 @@ compose = (fs...) -> ncurry arity(last = fs[fs.length-1]), (as...) ->
 
 sequence = flip compose
 
+I = ident = (a) -> a
+
+# object ----------------------------
+merge = (t, os...) -> t[k] = v for k,v of o when v != undefined for o in os; t
+mixin = (os...)    -> merge {}, os...
+
+# array ----------------------------
+append   = curry (a, v) -> a.concat [v]
+appendTo = curry (v, a) -> a.concat [v]
+
+
 ################################
 exports = {
     __fnuc: true # identifier
@@ -86,14 +91,17 @@ exports = {
     # generic
     clone, cloneDeep
 
+    # type
+    isType, typeOf, isPlain
+
+    # fn
+    arity, curry, ncurry, flip, compose, sequence, I, ident
+
     # object
     merge, mixin
 
-    # fn
-    arity, curry, ncurry, flip, compose, sequence
-
-    # type
-    isType, typeOf, isPlain
+    # array
+    append, appendTo
 }
 
 exports.installTo = (obj, force=false) ->
