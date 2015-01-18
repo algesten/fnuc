@@ -1,0 +1,30 @@
+{
+  "name": "fnuc",
+  "version": "0.0.1",
+  "description": "yet another functional library for javascript",
+  "main": "lib/fnuc.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:algesten/fnuc.git"
+  },
+  "keywords": [
+    "functional",
+    "programming"
+  ],
+  "author": "Martin Algesten",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/algesten/fnuc/issues"
+  },
+  "homepage": "https://github.com/algesten/fnuc",
+  "devDependencies": {
+    "chai": "^1.10.0",
+    "coffee-script": "^1.8.0",
+    "mocha": "^2.1.0",
+    "sinon": "^1.12.2",
+    "sinon-chai": "^2.6.0"
+  }
+}
