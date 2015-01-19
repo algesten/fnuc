@@ -7,9 +7,9 @@ cloneDeep   `:: {*} -> {*}`
 
 array
 -----
-append      `:: [a], a -> [a]` or `:: a -> [a] -> [a]`  
-appendTo    `:: a, [a] -> [a]` or `:: [a] -> a -> [a]`  
-concat      `:: [a], [a] -> [a]` or `:: [a] -> [a] -> [a]`  
+!append      `:: [a], a -> [a]` or `:: a -> [a] -> [a]`  
+!appendTo    `:: a, [a] -> [a]` or `:: [a] -> a -> [a]`  
+!concat      `:: [a], [a] -> [a]` or `:: [a] -> [a] -> [a]`  
 isEmpty     `:: [a] -> Boolean`
 head        `:: [a] -> a`  
 filter      `:: [a], (a,i,[a] -> Boolean) -> [a]`  

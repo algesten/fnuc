@@ -2,7 +2,7 @@ chai   = require 'chai'
 expect = chai.expect
 chai.should()
 chai.use(require 'sinon-chai')
-{ assert, spy, match, mock, stub, sandbox } = require 'sinon'
+{ assert, spy, mock, stub, sandbox } = require 'sinon'
 
 require('../src/fnuc').installTo(global, true)
 
@@ -492,107 +492,49 @@ describe 'I/ident', ->
     it 'ignores additional args', ->
         I(42,2).should.eql 42
 
-describe 'append', ->
+foldfn = (p, c) -> p + c / p
+FN_TEST = [
+    {n:'head',   s:'[] -> undef',    f:head,   ar:1, as:[[]],                eq:undefined}
+    {n:'head',   s:'[a] -> a',       f:head,   ar:1, as:[[1,2,3]],           eq:1}
+    {n:'tail',   s:'[] -> []',       f:tail,   ar:1, as:[[]],                eq:[]}
+    {n:'tail',   s:'[a] -> [a]',     f:tail,   ar:1, as:[[1,2,3]],           eq:[2,3]}
+    {n:'last',   s:'[] -> undef',    f:last,   ar:1, as:[[]],                eq:undefined}
+    {n:'last',   s:'[a] -> a',       f:last,   ar:1, as:[[1,2,3]],           eq:3}
+    {n:'concat', s:'[a], a -> [a]',  f:concat, ar:2, as:[[0,1],2],           eq:[0,1,2]}
+    {n:'concat', s:'[a], a -> [a]',  f:concat, ar:2, as:[[0,1],[2,3]],       eq:[0,1,[2,3]]}
+    {n:'each',   s:'[a], fn -> undef',f:each,  ar:2, as:[[0,1,2],((a) -> a + 1)],  eq:undefined}
+    {n:'map',    s:'[a], fn -> [a]', f:map,    ar:2, as:[[0,1,2],((a) -> a + 1)],  eq:[1,2,3]}
+    {n:'filter', s:'[a], fn -> [a]', f:filter, ar:2, as:[[0,1,2],((a) -> a % 2)],  eq:[1]}
+    {n:'fold',   s:'[a], fn, v -> *',f:fold,   ar:3, as:[[24,28],foldfn,12], eq:16}
+    {n:'fold1',  s:'[a], fn -> *',   f:fold1,  ar:2, as:[[12,24,28],foldfn], eq:16}
+    {n:'foldr',  s:'[a], fn, v -> *',f:foldr,  ar:3, as:[[28,24],foldfn,12], eq:16}
+    {n:'foldr1', s:'[a], fn -> *',   f:foldr1, ar:2, as:[[28,24,12],foldfn], eq:16}
+    {n:'all',    s:'[a], fn -> b',   f:all,    ar:2, as:[[0,1,2],((a) -> a >= 0)], eq:true}
+    {n:'any',    s:'[a], fn -> b',   f:any,    ar:2, as:[[0,1,2],((a) -> a > 1)],  eq:true}
+    {n:'join',   s:'[a], s -> s',    f:join,   ar:2, as:[[0,1,2],'-'],       eq:'0-1-2'}
+    {n:'reverse',s:'[a] -> [a]',     f:reverse,ar:1, as:[[0,1,2]],           eq:[2,1,0]}
+    {n:'split',  s:'s, s -> s',      f:split,  ar:2, as:['a#b','#'],         eq:['a','b']}
+    {n:'match',  s:'s, re -> null',  f:match,  ar:2, as:['abc','d'],         eq:null}
+    {n:'match',  s:'s, s -> [s]',    f:match,  ar:2, as:['abc','b'], eq:'abc'.match('b')}
+    {n:'match',  s:'s, re -> [s]',   f:match,  ar:2, as:['abc',/b/], eq:'abc'.match(/b/)}
+    {n:'replace',s:'s, s, s -> s',   f:replace,ar:3, as:['aba','a','b'],     eq:'bba'}
+    {n:'replace',s:'s, re, s -> s',  f:replace,ar:3, as:['aba',/a/g,'b'],    eq:'bbb'}
+    {n:'search', s:'s, s -> b',      f:search, ar:2, as:['aaaca', 'c'],      eq:3}
+    {n:'search', s:'s, re -> b',     f:search, ar:2, as:['aaaca', /ac/],     eq:2}
+    {n:'trim',   s:'s -> s',         f:trim,   ar:1, as:['  abc '],          eq:'abc'}
+    {n:'ucase',   s:'s -> s',        f:ucase,  ar:1, as:['abc'],             eq:'ABC'}
+    {n:'lcase',   s:'s -> s',        f:lcase,  ar:1, as:['ABC'],             eq:'abc'}
+]
 
-    describe '([a], v) -> [b]', ->
-
-        it 'appends v to a in a new list', ->
-            b = append(a=[0], 1)
-            b.should.eql [0,1]
-            a.should.eql [0]
-
-        it 'deals with [v] correctly', ->
-            b = append(a=[0], [1])
-            b.should.eql [0,[1]]
-            a.should.eql [0]
-
-        it 'with correct arity', ->
-            arity(append).should.eql 2
-
-        it 'has a curried variant (v) -> ([a]) -> [b]', ->
-            app4 = append(4)
-            app4([3]).should.eql [3,4]
-
-describe 'appendTo', ->
-
-    describe '(v, [a]) -> [b]', ->
-
-        it 'appends v to a in a new list', ->
-            b = appendTo(1, a=[0])
-            b.should.eql [0,1]
-            a.should.eql [0]
-
-        it 'deals with [v] correctly', ->
-            b = appendTo([1], a=[0])
-            b.should.eql [0,[1]]
-            a.should.eql [0]
-
-        it 'with correct arity', ->
-            arity(appendTo).should.eql 2
-
-        it 'has a curried variant ([a]) -> (v) -> [b]', ->
-            appTo3 = appendTo([3])
-            appTo3(4).should.eql [3,4]
-
-describe 'folding variants:', ->
-
-    fn = (p, c) -> p + c / p
-
-    describe 'fold', ->
-        it 'has signature ([arr], fn, v)', -> fold([24,28], fn, 12).should.eql 16
-        it 'is curried', -> fold(12)(fn)([24,28]).should.eql 16
-        it 'is of arity(3)', -> fold.length.should.eql 3
-
-    describe 'fold1', ->
-        it 'has signature ([arr], fn)', -> fold1([12,24,28], fn).should.eql 16
-        it 'is curred', -> fold1(fn)([12,24,28]).should.eql 16
-        it 'is of arity(2)', -> fold1.length.should.eql 2
-
-    describe 'foldr', ->
-        it 'has signature ([arr], fn, v)', -> foldr([28,24], fn, 12).should.eql 16
-        it 'is curried', -> foldr(12)(fn)([28,24]).should.eql 16
-        it 'is of arity(3)', -> fold.length.should.eql 3
-
-    describe 'foldr1', ->
-        it 'has signature ([arr], fn)', -> foldr1([28,24,12], fn).should.eql 16
-        it 'is curried', -> foldr1(fn)([28,24,12]).should.eql 16
-        it 'is of arity(2)', -> foldr1.length.should.eql 2
-
-describe 'head', ->
-
-    describe 'gets head value of an array', ->
-
-        it 'is undefined for length 0', ->
-            expect(head([])).to.be.undefined
-
-        it 'works for length 1', ->
-            head([1]).should.eql 1
-
-        it 'works for length > 1', ->
-            head([1,2]).should.eql 1
-
-describe 'tail', ->
-
-    describe 'gets all except the head', ->
-
-        it 'is [] for length 0', ->
-            tail([]).should.eql []
-
-        it 'is [] for length 1', ->
-            tail([1]).should.eql []
-
-        it 'works for length > 1', ->
-            tail([1,2]).should.eql [2]
-
-describe 'last', ->
-
-    describe 'gets last value of array', ->
-
-        it 'is undefined for length 0', ->
-            expect(last([])).to.be.undefined
-
-        it 'works for length 1', ->
-            last([1]).should.eql 1
-
-        it 'works for length > 1', ->
-            last([1,2]).should.eql 2
+FN_TEST.forEach (spec) ->
+    describe spec.n, ->
+        it "has signature #{spec.s}", ->
+            expect(spec.f(spec.as...)).to.eql spec.eq
+        if spec.ar > 1
+            it "has a curried variant", ->
+                if spec.ar == 2
+                    expect(spec.f(spec.as[1])(spec.as[0])).to.eql spec.eq
+                else if spec.ar == 3
+                    expect(spec.f(spec.as[2])(spec.as[1])(spec.as[0])).to.eql spec.eq
+        it "is of arity(#{spec.ar})", ->
+            spec.f.length.should.eql spec.ar

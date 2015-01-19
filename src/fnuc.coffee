@@ -95,18 +95,31 @@ flip = (f) ->
     [unwrap, rewrap] = if f._curry then [uncurry, curry] else [I, I]
     merge (rewrap ar(ar(f)) (as...) -> unwrap(f) as.reverse()...), _flip:f
 
-fold   = curry ternary builtin Array::reduce
-fold1  = curry binary  builtin Array::reduce
-foldr  = curry ternary builtin Array::reduceRight
-foldr1 = curry binary  builtin Array::reduceRight
-
 compose = (fs...) -> ncurry ar(last(fs)), fs.reduce (f, g) -> (as...) -> f g as...
 sequence = flip compose
 
 # array ----------------------------
-append   = curry (a, v) -> a.concat [v]
-appendTo = curry (v, a) -> a.concat [v]
+concat   = curry (a, v) -> a.concat [v]
+fold     = curry ternary builtin Array::reduce      # [a], fn, v -> *
+fold1    = curry binary  builtin Array::reduce      # [a], fn    -> *
+foldr    = curry ternary builtin Array::reduceRight # [a], fn, v -> *
+foldr1   = curry binary  builtin Array::reduceRight # [a], fn    -> *
+each     = curry binary  builtin Array::forEach     # [a], fn    -> undef
+map      = curry binary  builtin Array::map         # [a], fn -> [a]
+filter   = curry binary  builtin Array::filter      # [a], fn -> [a]|undef
+all      = curry binary  builtin Array::every       # [a], fn -> Boolean
+any      = curry binary  builtin Array::some        # [a], fn -> Boolean
+join     = curry binary  builtin Array::join        # [a], s -> s
+reverse  = unary builtin Array::reverse             # [a] -> [a]
 
+# string -----------------------------
+split    = curry binary  builtin String::split       # s, s -> s
+match    = curry binary  builtin String::match       # s, s -> [s]|null
+replace  = curry ternary builtin String::replace     # s, s, s -> s
+search   = curry binary  builtin String::search      # s, s -> Boolean
+trim     = unary builtin String::trim                # s -> s
+ucase    = unary builtin String::toUpperCase         # s -> s
+lcase    = unary builtin String::toLowerCase         # s -> s
 
 ################################
 exports = {
@@ -120,13 +133,18 @@ exports = {
 
     # fn
     arity, unary, binary, ternary, curry, ncurry, flip, compose,
-    sequence, I, ident, lpartial, rpartial, fold, fold1, foldr, foldr1
+    sequence, I, ident, lpartial, rpartial
 
     # object
     merge, mixin
 
     # array
-    append, appendTo, head, tail, last
+    concat, head, tail, last, fold, fold1, foldr, foldr1,
+    each, map, filter, all, any, join, reverse
+
+    # string
+    split, match, replace, search, trim, ucase, lcase
+
 }
 
 exports.installTo = (obj, force) ->
