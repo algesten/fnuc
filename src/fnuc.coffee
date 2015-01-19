@@ -25,7 +25,7 @@ shallow = (a) ->
         r = a
     else if type == 'array'
         r = []
-        r[i] = a[i] for i in [0..(a.length - 1)] by 1
+        r[i] = a[i] for i in [0...a.length] by 1
     else if type == 'date'
         r = new Date(a.getTime())
     else if isPlain(a)
@@ -38,7 +38,7 @@ clone = (a) ->
     return a unless a # null, undefined, false, '', 0
     s = shallow(a)
     if isType 'array', s
-        s[i] = clone(s[i]) for i in [0..(a.length - 1)] by 1
+        s[i] = clone(s[i]) for i in [0...a.length] by 1
     else if isPlain(s)
         s[k] = clone(v) for k, v of s
     return s
@@ -52,9 +52,8 @@ isType        = (t, a) ->
 
 
 # object ----------------------------
-merge = (t, os...) -> t[k] = v for k,v of o when v != undefined for o in os; t
-mixin = (os...)    -> merge {}, os...
-
+merge  = (t, os...) -> t[k] = v for k,v of o when v != undefined for o in os; t
+mixin  = (os...)    -> merge {}, os...
 
 # array 1
 head   = (a) -> a[0]
@@ -62,7 +61,7 @@ tail   = (a) -> a[1..]
 last   = (a) -> a[a.length-1]
 
 # fn --------------------------------
-arity = ar = (f, n) ->
+arity = (f, n) ->
     if arguments.length == 1
         return f.length if isType 'function', f
         n = f
@@ -73,30 +72,31 @@ unary   = arity 1
 binary  = arity 2
 ternary = arity 3
 
-ncurry = (n, f, as=[]) -> merge (ar(n - as.length) (bs...) ->
+ncurry = (n, f, as=[]) -> merge (arity(n - as.length) (bs...) ->
     cs = bs.concat as
     if cs.length < n then ncurry n, f, cs else f cs...), _curry:->rpartial f, as...
 
 curry = (f) ->
-    return f if (n = ar(f)) < 2
-    merge (ar(n) (as...) -> if as.length < n then ncurry n, f, as else f as...), _curry:->f
+    return f if (n = arity(f)) < 2
+    merge (arity(n) (as...) -> if as.length < n then ncurry n, f, as else f as...), _curry:->f
 
 uncurry = (f) -> if f._curry then f._curry() else f
 
 lpartial = (f, as...) ->
-    return f as... if (n = (ar(f) - as.length)) <= 0
-    ar(n) (bs...) -> f as.concat(bs)...
+    return f as... if (n = (arity(f) - as.length)) <= 0
+    arity(n) (bs...) -> f as.concat(bs)...
 rpartial = (f, as...) ->
-    return f as... if (n = (ar(f) - as.length)) <= 0
-    ar(n) (bs...) -> f bs[0...n].concat(as)...
+    return f as... if (n = (arity(f) - as.length)) <= 0
+    arity(n) (bs...) -> f bs[0...n].concat(as)...
 
 flip = (f) ->
     return f._flip if f._flip
     [unwrap, rewrap] = if f._curry then [uncurry, curry] else [I, I]
-    merge (rewrap ar(ar(f)) (as...) -> unwrap(f) as.reverse()...), _flip:f
+    merge (rewrap arity(arity(f)) (as...) -> unwrap(f) as.reverse()...), _flip:f
 
-compose = (fs...) -> ncurry ar(last(fs)), fs.reduce (f, g) -> (as...) -> f g as...
+compose = (fs...) -> ncurry arity(last(fs)), fs.reduce (f, g) -> (as...) -> f g as...
 sequence = flip compose
+tap      = curry (a, f) -> f(a); a                  # a, fn -> a
 
 # array ----------------------------
 concat   = curry (a, v) -> a.concat [v]
@@ -111,6 +111,18 @@ all      = curry binary  builtin Array::every       # [a], fn -> Boolean
 any      = curry binary  builtin Array::some        # [a], fn -> Boolean
 join     = curry binary  builtin Array::join        # [a], s -> s
 reverse  = unary builtin Array::reverse             # [a] -> [a]
+sort     = unary builtin Array::sort                # [a] -> [a]
+index    = curry binary  builtin Array::indexOf     # [a], a -> n
+contains = curry (as, a) -> index(as, a) >= 0       # [a], a -> b
+uniq     = (a) -> return a unless a; a.filter (v, i) -> a.indexOf(v) == i # [a] -> [a]
+
+
+# moar object
+has    = curry (o, k) -> o.hasOwnProperty(k)
+get    = curry (o, k) -> o[k]
+keys   = (o) -> Object.keys(o)
+values = (o) -> map (keys o), (k) -> o[k]
+
 
 # string -----------------------------
 split    = curry binary  builtin String::split       # s, s -> s
@@ -137,14 +149,14 @@ exports = {
 
     # fn
     arity, unary, binary, ternary, curry, ncurry, flip, compose,
-    sequence, I, ident, lpartial, rpartial
+    sequence, I, ident, lpartial, rpartial, tap
 
     # object
-    merge, mixin
+    merge, mixin, has, get, keys, values
 
     # array
-    concat, head, tail, last, fold, fold1, foldr, foldr1,
-    each, map, filter, all, any, join, reverse
+    concat, head, tail, last, fold, fold1, foldr, foldr1, each, map,
+    filter, all, any, join, reverse, sort, index, contains, uniq
 
     # string
     split, match, replace, search, trim, ucase, lcase

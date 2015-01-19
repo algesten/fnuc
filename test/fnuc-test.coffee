@@ -492,6 +492,20 @@ describe 'I/ident', ->
     it 'ignores additional args', ->
         I(42,2).should.eql 42
 
+describe 'tap', ->
+
+    f = spy I
+
+    it 'is the mother of all side effect funcs', ->
+        tap(42,f).should.eql 42
+        f.should.have.been.calledWith 42
+
+    it 'is curried', ->
+        tap(f)(42).should.eql 42
+
+    it 'has arity 2', ->
+        tap.length.should.eql 2
+
 foldfn = (p, c) -> p + c / p
 FN_TEST = [
     {n:'head',   s:'[] -> undef',    f:head,   ar:1, as:[[]],                eq:undefined}
@@ -522,8 +536,21 @@ FN_TEST = [
     {n:'search', s:'s, s -> b',      f:search, ar:2, as:['aaaca', 'c'],      eq:3}
     {n:'search', s:'s, re -> b',     f:search, ar:2, as:['aaaca', /ac/],     eq:2}
     {n:'trim',   s:'s -> s',         f:trim,   ar:1, as:['  abc '],          eq:'abc'}
-    {n:'ucase',   s:'s -> s',        f:ucase,  ar:1, as:['abc'],             eq:'ABC'}
-    {n:'lcase',   s:'s -> s',        f:lcase,  ar:1, as:['ABC'],             eq:'abc'}
+    {n:'ucase',  s:'s -> s',         f:ucase,  ar:1, as:['abc'],             eq:'ABC'}
+    {n:'lcase',  s:'s -> s',         f:lcase,  ar:1, as:['ABC'],             eq:'abc'}
+    {n:'sort',   s:'[a] -> [a]',     f:sort,   ar:1, as:[[2,3,1]],           eq:[1,2,3]}
+    {n:'sort',   s:'[a], f -> [a]',  f:sort,   ar:1, as:[[2,3,1],(a,b)->b-a],eq:[3,2,1]}
+    {n:'uniq',   s:'null -> null',   f:uniq,   ar:1, as:[null],              eq:null}
+    {n:'uniq',   s:'[a] -> [a]',     f:uniq,   ar:1, as:[[]],                eq:[]}
+    {n:'uniq',   s:'[a] -> [a]',     f:uniq,   ar:1, as:[[1,2,2,1,2,3]],     eq:[1,2,3]}
+    {n:'index',  s:'[a], a -> n',    f:index,  ar:2, as:[[1,2,3,4], 3],      eq:2}
+    {n:'index',  s:'[a], a -> n',    f:index,  ar:2, as:[[1,2,3,4], 5],      eq:-1}
+    {n:'contains',s:'[a], a -> b',   f:contains,ar:2,as:[[1,2,3,4], 3],      eq:true}
+    {n:'contains',s:'[a], a -> b',   f:contains,ar:2,as:[[1,2,3,4], 5],      eq:false}
+    {n:'has',    s:'{k:v}, s -> b',  f:has,    ar:2, as:[{a:1,b:2}, 'b'],    eq:true}
+    {n:'get',    s:'{k:v}, s -> v',  f:get,    ar:2, as:[{a:1,b:2}, 'b'],    eq:2}
+    {n:'keys',   s:'{k:v} -> [k]',   f:keys,   ar:1, as:[{a:1,b:2}],         eq:['a','b']}
+    {n:'values', s:'{k:v} -> [v]',   f:values, ar:1, as:[{a:1,b:2}],         eq:[1,2]}
 ]
 
 FN_TEST.forEach (spec) ->
