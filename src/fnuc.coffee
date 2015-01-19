@@ -1,15 +1,15 @@
 ARITY = [
-    (f) -> () -> f(arguments...)
-    (f) -> (a) -> f(arguments...)
-    (f) -> (a,b) -> f(arguments...)
-    (f) -> (a,b,c) -> f(arguments...)
-    (f) -> (a,b,c,d) -> f(arguments...)
-    (f) -> (a,b,c,d,e) -> f(arguments...)
-    (f) -> (a,b,c,d,e,f) -> f(arguments...)
-    (f) -> (a,b,c,d,e,f,g) -> f(arguments...)
-    (f) -> (a,b,c,d,e,f,g,h) -> f(arguments...)
-    (f) -> (a,b,c,d,e,f,g,h,i) -> f(arguments...)
-    (f) -> (a,b,c,d,e,f,g,h,i,j) -> f(arguments...)
+    (z) -> () -> z(arguments...)
+    (z) -> (a) -> z(arguments...)
+    (z) -> (a,b) -> z(arguments...)
+    (z) -> (a,b,c) -> z(arguments...)
+    (z) -> (a,b,c,d) -> z(arguments...)
+    (z) -> (a,b,c,d,e) -> z(arguments...)
+    (z) -> (a,b,c,d,e,f) -> z(arguments...)
+    (z) -> (a,b,c,d,e,f,g) -> z(arguments...)
+    (z) -> (a,b,c,d,e,f,g,h) -> z(arguments...)
+    (z) -> (a,b,c,d,e,f,g,h,i) -> z(arguments...)
+    (z) -> (a,b,c,d,e,f,g,h,i,j) -> z(arguments...)
 ]
 
 # generic -------------------------
@@ -47,7 +47,18 @@ isType        = (t, a) ->
     return typeOf(a) == t
 
 
+# object ----------------------------
+merge = (t, os...) -> t[k] = v for k,v of o when v != undefined for o in os; t
+mixin = (os...)    -> merge {}, os...
+
+
+# array 1
+head = (a) -> a[0]
+tail = (a) -> a[1..]
+last = (a) -> a[a.length-1]
+
 # fn --------------------------------
+I = ident = (a) -> a
 arity = (f, n) ->
     if arguments.length == 1
         return f.length if isType 'function', f
@@ -55,29 +66,27 @@ arity = (f, n) ->
         f = undefined
     _arity = (f) -> ARITY[n](f)
     if f then return _arity(f) else _arity
+unary   = arity 1
+binary  = arity 2
+ternary = arity 3
 
 ncurry = (ar, f, as=[]) -> arity(ar - as.length) (bs...) ->
     cs = bs.concat as
     if cs.length < ar then ncurry ar, f, cs else f cs...
 
 curry = (f) ->
-    return f if (ar = arity(f)) <= 1
-    arity(ar) (as...) -> if as.length < ar then ncurry ar, f, as else f as...
+    return f if (ar = arity(f)) < 2
+    merge (arity(ar) (as...) -> if as.length < ar then ncurry ar, f, as else f as...), _curry:f
 
-flip = (f) -> arity(arity(f)) (as...) -> f as.reverse()...
+uncurry = (f) -> if f._curry then f._curry else f
 
-compose = (fs...) -> ncurry arity(last = fs[fs.length-1]), (as...) ->
-    r = last as...
-    r = fs[n](r) for n in [(fs.length-2)..0]
-    return r
+flip = (f) ->
+    return f._flip if f._flip
+    [unwrap, rewrap] = if f._curry then [uncurry, curry] else [I, I]
+    merge (rewrap arity(arity(f)) (as...) -> unwrap(f) as.reverse()...), _flip:f
 
+compose = (fs...) -> ncurry arity(last(fs)), fs.reduce (f, g) -> (as...) -> f g as...
 sequence = flip compose
-
-I = ident = (a) -> a
-
-# object ----------------------------
-merge = (t, os...) -> t[k] = v for k,v of o when v != undefined for o in os; t
-mixin = (os...)    -> merge {}, os...
 
 # array ----------------------------
 append   = curry (a, v) -> a.concat [v]
@@ -95,7 +104,8 @@ exports = {
     isType, typeOf, isPlain
 
     # fn
-    arity, curry, ncurry, flip, compose, sequence, I, ident
+    arity, unary, binary, ternary, curry, ncurry, flip, compose,
+    sequence, I, ident
 
     # object
     merge, mixin
@@ -104,7 +114,7 @@ exports = {
     append, appendTo
 }
 
-exports.installTo = (obj, force=false) ->
+exports.installTo = (obj, force) ->
     return obj if obj.__fnuc unless force
     merge obj, exports
 

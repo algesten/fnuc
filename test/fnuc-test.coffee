@@ -187,6 +187,24 @@ describe 'arity', ->
     it 'has a curried variant for (n)', ->
         arity(arity(n)((a,b,c)->)).should.eql n for n in [0..10]
 
+    describe 'unary', ->
+
+        it 'is arity(1)', ->
+            f = unary ((a,b,c,d,e) ->)
+            f.length.should.eql 1
+
+    describe 'binary', ->
+
+        it 'is arity(2)', ->
+            f = binary (a,b,c,d,e) ->
+            f.length.should.eql 2
+
+    describe 'ternary', ->
+
+        it 'is arity(3)', ->
+            f = ternary (a,b,c,d,e) ->
+            f.length.should.eql 3
+
 describe 'curry', ->
 
     it 'does nothing for arity 0', ->
@@ -215,42 +233,42 @@ describe 'curry', ->
 
     describe '(a,b,c) ->', ->
 
-        divt = curry (a,b,c) -> a / b / c
+        divt = curry (a,b,c) -> a / (b / c)
 
         it 'turns to (c) -> (b) -> (a) ->', ->
             div2 = divt(2)
-            div42 = div2(4)
-            div42(80).should.eql 10
+            div4 = div2(8)
+            div4(80).should.eql 20
 
         it 'maintains arity for curried func', ->
             arity(divt).should.eql 3
 
         it 'returns a small arity func after partial apply', ->
             div2 = divt(2)
-            div42 = div2(4)
+            div4 = div2(8)
             arity(div2).should.eql 2
-            arity(div42).should.eql 1
+            arity(div4).should.eql 1
 
         it 'can be partially applied with (b,c)', ->
-            div42 = divt(4, 2)
-            div42(80).should.equal 10
+            div4 = divt(8, 2)
+            div4(80).should.equal 20
 
         it 'does correct arity for partial applied', ->
-            div42 = divt(4, 2)
-            arity(div42).should.eql 1
+            div4 = divt(8, 2)
+            arity(div4).should.eql 1
 
         it 'can still apply (a,b,c) to curried (a,b,c) ->', ->
-            divt(80, 4, 2).should.eql 10
+            divt(80, 8, 2).should.eql 20
 
         it 'can apply (b,c) to partial applied curried (a,b,c) ->', ->
             div2 = divt(2)
-            div2(80,4).should.eql 10
+            div2(80,8).should.eql 20
 
 describe 'flip', ->
 
     describe '(a,b) ->', ->
 
-        f = flip (a,b) -> a / b
+        f = flip (f1 = (a,b) -> a / b)
 
         it 'flips the arguments to (b,a) ->', ->
             f(2, 10).should.eql 5
@@ -258,15 +276,40 @@ describe 'flip', ->
         it 'keeps arity', ->
             arity(f).should.eql 2
 
+        it 'is commutative', ->
+            flip(f).should.equal f1
+
+        it 'flips curried functions', ->
+            f = flip curry (a,b) -> a / b
+            f(2,10).should.equal 5
+            f(10)(2).should.equal 5
+
+        it 'is commutative for flipped curried functions', ->
+            f = flip (f1 = curry (a,b) -> a / b)
+            flip(f).should.equal f1
+
     describe '(a,b,c) ->', ->
 
-        f = flip (a,b,c) -> a / b / c
+        f = flip (f1 = (a,b,c) -> a / (b / c))
 
         it 'flips the arguments to (c,b,a) ->', ->
-            f(3, 2, 12).should.eql 2
+            f(2, 3, 12).should.eql 8
 
         it 'keeps arity', ->
             arity(f).should.eql 3
+
+        it 'is commutative', ->
+            flip(f).should.equal f1
+
+        it 'flips curried functions', ->
+            f = flip curry (a,b,c) -> a / (b / c)
+            f(2,3,12).should.equal 8
+            f(12)(3)(2).should.equal 8
+
+        it 'is commutative for flipped curried functions', ->
+            f = flip (f1 = curry (a,b,c) -> a / (b / c))
+            flip(f).should.equal f1
+
 
 describe 'compose', ->
 
