@@ -1,4 +1,4 @@
-(fnuc) -> yet another functional library for javascript
-=======================================================
+(fnuc) ->
+=========
 
-cause i want it my way.
+> cause i want it my way.
