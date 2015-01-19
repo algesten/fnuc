@@ -59,33 +59,40 @@ last = (a) -> a[a.length-1]
 
 # fn --------------------------------
 I = ident = (a) -> a
-arity = (f, n) ->
+arity = ar = (f, n) ->
     if arguments.length == 1
         return f.length if isType 'function', f
         n = f
         f = undefined
-    _arity = (f) -> ARITY[n](f)
-    if f then return _arity(f) else _arity
+    _ar = (f) -> ARITY[n](f)
+    if f then return _ar(f) else _ar
 unary   = arity 1
 binary  = arity 2
 ternary = arity 3
 
-ncurry = (ar, f, as=[]) -> arity(ar - as.length) (bs...) ->
+ncurry = (n, f, as=[]) -> merge (ar(n - as.length) (bs...) ->
     cs = bs.concat as
-    if cs.length < ar then ncurry ar, f, cs else f cs...
+    if cs.length < n then ncurry n, f, cs else f cs...), _curry:->rpartial f, as...
 
 curry = (f) ->
-    return f if (ar = arity(f)) < 2
-    merge (arity(ar) (as...) -> if as.length < ar then ncurry ar, f, as else f as...), _curry:f
+    return f if (n = ar(f)) < 2
+    merge (ar(n) (as...) -> if as.length < n then ncurry n, f, as else f as...), _curry:->f
 
-uncurry = (f) -> if f._curry then f._curry else f
+uncurry = (f) -> if f._curry then f._curry() else f
+
+lpartial = (f, as...) ->
+    return f as... if (n = (ar(f) - as.length)) <= 0
+    ar(n) (bs...) -> f as.concat(bs)...
+rpartial = (f, as...) ->
+    return f as... if (n = (ar(f) - as.length)) <= 0
+    ar(n) (bs...) -> f bs[0...n].concat(as)...
 
 flip = (f) ->
     return f._flip if f._flip
     [unwrap, rewrap] = if f._curry then [uncurry, curry] else [I, I]
-    merge (rewrap arity(arity(f)) (as...) -> unwrap(f) as.reverse()...), _flip:f
+    merge (rewrap ar(ar(f)) (as...) -> unwrap(f) as.reverse()...), _flip:f
 
-compose = (fs...) -> ncurry arity(last(fs)), fs.reduce (f, g) -> (as...) -> f g as...
+compose = (fs...) -> ncurry ar(last(fs)), fs.reduce (f, g) -> (as...) -> f g as...
 sequence = flip compose
 
 # array ----------------------------
@@ -105,7 +112,7 @@ exports = {
 
     # fn
     arity, unary, binary, ternary, curry, ncurry, flip, compose,
-    sequence, I, ident
+    sequence, I, ident, lpartial, rpartial
 
     # object
     merge, mixin

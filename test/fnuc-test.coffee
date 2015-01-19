@@ -205,6 +205,106 @@ describe 'arity', ->
             f = ternary (a,b,c,d,e) ->
             f.length.should.eql 3
 
+describe 'lpartial', ->
+
+    describe 'partially fills in arguments from the left', ->
+
+        it 'executes arity(0)', ->
+            r = lpartial (->42)
+            r.should.eql 42
+
+        it 'executes arity(0) with arguments', ->
+            r = lpartial (->42), 1, 2, 3
+            r.should.eql 42
+
+        it 'handles arity(1)', ->
+            r = lpartial ((a) -> a + 42)
+            r.should.be.a.function
+            r(1,2,3).should.eql 43
+
+        it 'executes arity(1) with arguments', ->
+            r = lpartial ((a) -> a + 42), 1, 2
+            r.should.not.be.a.function
+            r.should.eql 43
+
+        it 'works for arity(2)', ->
+            r = lpartial ((a,b) -> a / b), 42
+            r.should.be.a.function
+            arity(r).should.eql 1
+            r(2,3,4).should.eql 21
+
+        it 'executes arity(2) with arguments', ->
+            r = lpartial ((a,b) -> a / b), 42, 2
+            r.should.not.be.a.function
+            r.should.eql 21
+
+        it 'works for arity(3) with one arg', ->
+            r = lpartial ((a,b,c) -> a / (b / c)), 12
+            r.should.be.a.function
+            arity(r).should.eql 2
+            r(3,2,5).should.eql 8
+
+        it 'works for arity(3) with two arg', ->
+            r = lpartial ((a,b,c) -> a / (b / c)), 12, 3
+            r.should.be.a.function
+            arity(r).should.eql 1
+            r(2,5).should.eql 8
+
+        it 'executes arity(3) with arguments', ->
+            r = lpartial ((a,b,c) -> a / (b / c)), 12, 3, 2, 5
+            r.should.not.be.a.function
+            r.should.eql 8
+
+describe 'rpartial', ->
+
+    describe 'partially fills in arguments from the right', ->
+
+        it 'executes arity(0)', ->
+            r = rpartial (->42)
+            r.should.eql 42
+
+        it 'executes arity(0) with arguments', ->
+            r = rpartial (->42), 1, 2, 3
+            r.should.eql 42
+
+        it 'handles arity(1)', ->
+            r = rpartial ((a) -> a + 42)
+            r.should.be.a.function
+            r(1,2,3).should.eql 43
+
+        it 'executes arity(1) with arguments', ->
+            r = rpartial ((a) -> a + 42), 1, 2
+            r.should.not.be.a.function
+            r.should.eql 43
+
+        it 'works for arity(2)', ->
+            r = rpartial ((a,b) -> a / b), 2
+            r.should.be.a.function
+            arity(r).should.eql 1
+            r(42,3,4).should.eql 21
+
+        it 'executes arity(2) with arguments', ->
+            r = rpartial ((a,b) -> a / b), 42, 2
+            r.should.not.be.a.function
+            r.should.eql 21
+
+        it 'works for arity(3) with one arg', ->
+            r = rpartial ((a,b,c) -> a / (b / c)), 2
+            r.should.be.a.function
+            arity(r).should.eql 2
+            r(12,3,5).should.eql 8
+
+        it 'works for arity(3) with two arg', ->
+            r = rpartial ((a,b,c) -> a / (b / c)), 3, 2
+            r.should.be.a.function
+            arity(r).should.eql 1
+            r(12,5).should.eql 8
+
+        it 'executes arity(3) with arguments', ->
+            r = rpartial ((a,b,c) -> a / (b / c)), 12, 3, 2, 5
+            r.should.not.be.a.function
+            r.should.eql 8
+
 describe 'curry', ->
 
     it 'does nothing for arity 0', ->
@@ -284,8 +384,16 @@ describe 'flip', ->
             f(2,10).should.equal 5
             f(10)(2).should.equal 5
 
-        it 'is commutative for flipped curried functions', ->
+        it 'is commutative for curried functions', ->
             f = flip (f1 = curry (a,b) -> a / b)
+            flip(f).should.equal f1
+
+        it 'flips partially applied curried functions', ->
+            f = flip (curry (a,b) -> a / b)(2)
+            f(8).should.eql 4
+
+        it 'is commutative for partially applied curried functions', ->
+            f = flip (f1 = (curry (a,b) -> a / b)(2))
             flip(f).should.equal f1
 
     describe '(a,b,c) ->', ->
@@ -306,10 +414,18 @@ describe 'flip', ->
             f(2,3,12).should.equal 8
             f(12)(3)(2).should.equal 8
 
-        it 'is commutative for flipped curried functions', ->
+        it 'is commutative curried functions', ->
             f = flip (f1 = curry (a,b,c) -> a / (b / c))
             flip(f).should.equal f1
 
+        it 'flips partially applied curried functions', ->
+            f = flip (curry (a,b,c) -> a / (b / c))(2)
+            f(3,12).should.eql 8
+            f(12)(3).should.eql 8
+
+        it 'is commutative partially applied curried functions', ->
+            f = flip (f1 = (curry (a,b,c) -> a / (b / c))(2))
+            flip(f).should.equal f1
 
 describe 'compose', ->
 
