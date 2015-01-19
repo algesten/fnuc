@@ -1,5 +1,4 @@
-fnuc - yet another functional library for javascript
-====================================================
+(fnuc) -> yet another functional library for javascript
+=======================================================
 
-cause they all do it wrong.
-
+cause i want it my way.
