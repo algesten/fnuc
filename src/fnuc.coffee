@@ -12,6 +12,11 @@ ARITY = [
     (z) -> (a,b,c,d,e,f,g,h,i,j) -> z(arguments...)
 ]
 
+# core
+I = ident = (a) -> a
+builtin   = I.bind.bind I.call
+_toString = builtin Object::toString
+
 # generic -------------------------
 clone = (a) ->
     return a unless a # null, undefined, false, '', 0
@@ -39,7 +44,6 @@ cloneDeep = (a) ->
     return s
 
 # type -----------------------------
-_toString     = (a) -> Object::toString.call a
 isPlain       = (o) -> !!o && typeof o == 'object' && o.constructor == Object
 typeOf        = (a) -> _toString(a)[8...-1].toLowerCase()
 isType        = (t, a) ->
@@ -53,12 +57,11 @@ mixin = (os...)    -> merge {}, os...
 
 
 # array 1
-head = (a) -> a[0]
-tail = (a) -> a[1..]
-last = (a) -> a[a.length-1]
+head   = (a) -> a[0]
+tail   = (a) -> a[1..]
+last   = (a) -> a[a.length-1]
 
 # fn --------------------------------
-I = ident = (a) -> a
 arity = ar = (f, n) ->
     if arguments.length == 1
         return f.length if isType 'function', f
@@ -92,6 +95,11 @@ flip = (f) ->
     [unwrap, rewrap] = if f._curry then [uncurry, curry] else [I, I]
     merge (rewrap ar(ar(f)) (as...) -> unwrap(f) as.reverse()...), _flip:f
 
+fold   = curry ternary builtin Array::reduce
+fold1  = curry binary  builtin Array::reduce
+foldr  = curry ternary builtin Array::reduceRight
+foldr1 = curry binary  builtin Array::reduceRight
+
 compose = (fs...) -> ncurry ar(last(fs)), fs.reduce (f, g) -> (as...) -> f g as...
 sequence = flip compose
 
@@ -112,13 +120,13 @@ exports = {
 
     # fn
     arity, unary, binary, ternary, curry, ncurry, flip, compose,
-    sequence, I, ident, lpartial, rpartial
+    sequence, I, ident, lpartial, rpartial, fold, fold1, foldr, foldr1
 
     # object
     merge, mixin
 
     # array
-    append, appendTo
+    append, appendTo, head, tail, last
 }
 
 exports.installTo = (obj, force) ->

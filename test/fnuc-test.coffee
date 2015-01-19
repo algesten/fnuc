@@ -533,3 +533,66 @@ describe 'appendTo', ->
         it 'has a curried variant ([a]) -> (v) -> [b]', ->
             appTo3 = appendTo([3])
             appTo3(4).should.eql [3,4]
+
+describe 'folding variants:', ->
+
+    fn = (p, c) -> p + c / p
+
+    describe 'fold', ->
+        it 'has signature ([arr], fn, v)', -> fold([24,28], fn, 12).should.eql 16
+        it 'is curried', -> fold(12)(fn)([24,28]).should.eql 16
+        it 'is of arity(3)', -> fold.length.should.eql 3
+
+    describe 'fold1', ->
+        it 'has signature ([arr], fn)', -> fold1([12,24,28], fn).should.eql 16
+        it 'is curred', -> fold1(fn)([12,24,28]).should.eql 16
+        it 'is of arity(2)', -> fold1.length.should.eql 2
+
+    describe 'foldr', ->
+        it 'has signature ([arr], fn, v)', -> foldr([28,24], fn, 12).should.eql 16
+        it 'is curried', -> foldr(12)(fn)([28,24]).should.eql 16
+        it 'is of arity(3)', -> fold.length.should.eql 3
+
+    describe 'foldr1', ->
+        it 'has signature ([arr], fn)', -> foldr1([28,24,12], fn).should.eql 16
+        it 'is curried', -> foldr1(fn)([28,24,12]).should.eql 16
+        it 'is of arity(2)', -> foldr1.length.should.eql 2
+
+describe 'head', ->
+
+    describe 'gets head value of an array', ->
+
+        it 'is undefined for length 0', ->
+            expect(head([])).to.be.undefined
+
+        it 'works for length 1', ->
+            head([1]).should.eql 1
+
+        it 'works for length > 1', ->
+            head([1,2]).should.eql 1
+
+describe 'tail', ->
+
+    describe 'gets all except the head', ->
+
+        it 'is [] for length 0', ->
+            tail([]).should.eql []
+
+        it 'is [] for length 1', ->
+            tail([1]).should.eql []
+
+        it 'works for length > 1', ->
+            tail([1,2]).should.eql [2]
+
+describe 'last', ->
+
+    describe 'gets last value of array', ->
+
+        it 'is undefined for length 0', ->
+            expect(last([])).to.be.undefined
+
+        it 'works for length 1', ->
+            last([1]).should.eql 1
+
+        it 'works for length > 1', ->
+            last([1,2]).should.eql 2
