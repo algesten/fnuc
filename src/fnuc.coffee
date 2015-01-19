@@ -18,7 +18,7 @@ builtin   = I.bind.bind I.call
 _toString = builtin Object::toString
 
 # generic -------------------------
-clone = (a) ->
+shallow = (a) ->
     return a unless a # null, undefined, false, '', 0
     r = null
     if (type = typeOf(a)) in ['string', 'number', 'boolean', 'symbol']
@@ -31,16 +31,16 @@ clone = (a) ->
     else if isPlain(a)
         r = merge {}, a
     else
-        throw new TypeError "Can't clone " + a
+        throw new TypeError "Can't shallow " + a
     return r
 
-cloneDeep = (a) ->
+clone = (a) ->
     return a unless a # null, undefined, false, '', 0
-    s = clone(a)
+    s = shallow(a)
     if isType 'array', s
-        s[i] = cloneDeep(s[i]) for i in [0..(a.length - 1)] by 1
+        s[i] = clone(s[i]) for i in [0..(a.length - 1)] by 1
     else if isPlain(s)
-        s[k] = cloneDeep(v) for k, v of s
+        s[k] = clone(v) for k, v of s
     return s
 
 # type -----------------------------
@@ -121,12 +121,16 @@ trim     = unary builtin String::trim                # s -> s
 ucase    = unary builtin String::toUpperCase         # s -> s
 lcase    = unary builtin String::toLowerCase         # s -> s
 
+# maths -----------------------------------
+
+
+
 ################################
 exports = {
     __fnuc: true # identifier
 
     # generic
-    clone, cloneDeep
+    shallow, clone
 
     # type
     isType, typeOf, isPlain

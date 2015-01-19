@@ -102,9 +102,41 @@ describe 'mixin', ->
             mixin(a = {a:undefined},{b:2}).should.eql b:2
             a.should.eql a:undefined
 
-describe 'clone', ->
+describe 'shallow', ->
 
     describe 'does a shallow copy', ->
+        TYPE_NO_PROTO.forEach (spec) ->
+            it "for built in type #{spec.t}#{spec.d}", ->
+                r = shallow(spec.v)
+                expect(r).to.eql spec.v
+
+    describe 'wont handle proto', ->
+        TYPE_PROTO.forEach (spec) ->
+            it 'throws an exception', ->
+                expect(->shallow(spec.v)).to.throw 'Can\'t shallow [object Object]'
+
+    describe 'specifically', ->
+
+        describe 'for arrays', ->
+
+            TYPE_ARR.forEach (spec) ->
+                it "copies nested by reference for #{spec.t}#{spec.d}", ->
+                    r = shallow(spec.v)
+                    r.should.not.equal spec.v
+                    r[i].should.equal(spec.v[i]) for a, i in r
+                    r.length.should.eql spec.v.length
+
+        describe 'for objects', ->
+            TYPE_PLAIN.forEach (spec) ->
+                it "copies nested by reference for #{spec.t}#{spec.d}", ->
+                    r = shallow(spec.v)
+                    r.should.not.equal spec.v
+                    v.should.equal(spec.v[k]) for k, v of r
+                    Object.keys(r).length.should.eql Object.keys(spec.v).length
+
+describe 'clone', ->
+
+    describe 'does a deep copy', ->
         TYPE_NO_PROTO.forEach (spec) ->
             it "for built in type #{spec.t}#{spec.d}", ->
                 r = clone(spec.v)
@@ -113,39 +145,7 @@ describe 'clone', ->
     describe 'wont handle proto', ->
         TYPE_PROTO.forEach (spec) ->
             it 'throws an exception', ->
-                expect(->clone(spec.v)).to.throw 'Can\'t clone [object Object]'
-
-    describe 'specifically', ->
-
-        describe 'for arrays', ->
-
-            TYPE_ARR.forEach (spec) ->
-                it "copies nested by reference for #{spec.t}#{spec.d}", ->
-                    r = clone(spec.v)
-                    r.should.not.equal spec.v
-                    r[i].should.equal(spec.v[i]) for a, i in r
-                    r.length.should.eql spec.v.length
-
-        describe 'for objects', ->
-            TYPE_PLAIN.forEach (spec) ->
-                it "copies nested by reference for #{spec.t}#{spec.d}", ->
-                    r = clone(spec.v)
-                    r.should.not.equal spec.v
-                    v.should.equal(spec.v[k]) for k, v of r
-                    Object.keys(r).length.should.eql Object.keys(spec.v).length
-
-describe 'cloneDeep', ->
-
-    describe 'does a deep copy', ->
-        TYPE_NO_PROTO.forEach (spec) ->
-            it "for built in type #{spec.t}#{spec.d}", ->
-                r = cloneDeep(spec.v)
-                expect(r).to.eql spec.v
-
-    describe 'wont handle proto', ->
-        TYPE_PROTO.forEach (spec) ->
-            it 'throws an exception', ->
-                expect(->clone(spec.v)).to.throw 'Can\'t clone [object Object]'
+                expect(->clone(spec.v)).to.throw 'Can\'t shallow [object Object]'
 
     describe 'specifically', ->
 
@@ -153,7 +153,7 @@ describe 'cloneDeep', ->
 
             TYPE_ARR.forEach (spec) ->
                 it "clones nested for #{spec.t}#{spec.d}", ->
-                    r = cloneDeep(spec.v)
+                    r = clone(spec.v)
                     r.should.not.equal spec.v
                     for a, i in r
                         if isType 'number', a
@@ -165,7 +165,7 @@ describe 'cloneDeep', ->
         describe 'for objects', ->
             TYPE_PLAIN.forEach (spec) ->
                 it "clones nested for #{spec.t}#{spec.d}", ->
-                    r = cloneDeep(spec.v)
+                    r = clone(spec.v)
                     r.should.not.equal spec.v
                     for k, v of r
                         if isType 'number', v

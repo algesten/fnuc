@@ -11,17 +11,17 @@ array
 !appendTo    `:: a, [a] -> [a]` or `:: [a] -> a -> [a]`  
 !concat      `:: [a], [a] -> [a]` or `:: [a] -> [a] -> [a]`  
 isEmpty     `:: [a] -> Boolean`
-head        `:: [a] -> a`  
-filter      `:: [a], (a,i,[a] -> Boolean) -> [a]`  
+!head        `:: [a] -> a`  
+!filter      `:: [a], (a,i,[a] -> Boolean) -> [a]`  
             or `:: (a,i,[a] -> Boolean) -> [a] -> [a]`  
-map         `:: [a], (a,i,[a] -> b) -> [b]` or `:: (a,i,[a] -> b) -> [a] -> [b]`  
+!map         `:: [a], (a,i,[a] -> b) -> [b]` or `:: (a,i,[a] -> b) -> [a] -> [b]`  
 nth         `:: [a], Number -> a` or `:: Number -> [a] -> a`  
 prepend     `:: [a], a -> [a]` or `:: a -> [a] -> [a]`
 prependTo   `:: a, [a] -> [a]` or `:: [a] -> a -> [a]`  
-reduce/foldl/fold `:: [b], a, (a,b,i,[b] -> a)` or `:: (a,b,i,[b] -> a) -> a -> [b] -> a`  
-reduceRight/foldr `:: [b], a, (a,b,i,[b] -> a)` or `:: (a,b,i,[b] -> a) -> a -> [b] -> a`  
-tail        `:: [a] -> [a]`  
-find        `:: [a], (a -> Boolean) -> a | undefined`  
+!reduce/foldl/fold `:: [b], a, (a,b,i,[b] -> a)` or `:: (a,b,i,[b] -> a) -> a -> [b] -> a`  
+!reduceRight/foldr `:: [b], a, (a,b,i,[b] -> a)` or `:: (a,b,i,[b] -> a) -> a -> [b] -> a`  
+!tail        `:: [a] -> [a]`  
+!find        `:: [a], (a -> Boolean) -> a | undefined`  
             or `:: (a -> Boolean) -> [a] -> a | undefined`  
 findIndex   `:: [a], (a -> Boolean) -> Number` or `:: (a -> Boolean) -> [a] -> Number`  
 indexOf     `:: [a], a -> Number` or `:: a -> [a] -> Number`
@@ -46,7 +46,7 @@ arity? vs
 nAry, unary, binary
 bind?
 comparator?
-construct/constructN? can we just use curry/curryN?
+construct/constructN?
 converge?
 lift?
 memoize?
