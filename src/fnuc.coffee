@@ -21,12 +21,12 @@ _toString = builtin Object::toString
 shallow = (a) ->
     return a unless a # null, undefined, false, '', 0
     r = null
-    if (type = typeOf(a)) in ['string', 'number', 'boolean', 'symbol']
+    if (t = type(a)) in ['string', 'number', 'boolean', 'symbol']
         r = a
-    else if type == 'array'
+    else if t == 'array'
         r = []
         r[i] = a[i] for i in [0...a.length] by 1
-    else if type == 'date'
+    else if t == 'date'
         r = new Date(a.getTime())
     else if isPlain(a)
         r = merge {}, a
@@ -45,10 +45,10 @@ clone = (a) ->
 
 # type -----------------------------
 isPlain       = (o) -> !!o && typeof o == 'object' && o.constructor == Object
-typeOf        = (a) -> _toString(a)[8...-1].toLowerCase()
+type          = (a) -> _toString(a)[8...-1].toLowerCase()
 isType        = (t, a) ->
     t = t.toString()[9...-20].toLowerCase() if t instanceof Function
-    return typeOf(a) == t
+    return type(a) == t
 
 
 # object ----------------------------
@@ -80,6 +80,7 @@ curry = (f) ->
     return f if (n = arity(f)) < 2
     merge (arity(n) (as...) -> if as.length < n then ncurry n, f, as else f as...), _curry:->f
 
+# not a true uncurry, it just unwraps our own curry
 uncurry = (f) -> if f._curry then f._curry() else f
 
 lpartial = (f, as...) ->
@@ -136,16 +137,15 @@ lcase    = unary builtin String::toLowerCase         # s -> s
 # maths -----------------------------------
 
 
-
 ################################
 exports = {
     __fnuc: true # identifier
 
     # generic
-    shallow, clone
+    shallow, clone, builtin
 
     # type
-    isType, typeOf, isPlain
+    isType, type, isPlain
 
     # fn
     arity, unary, binary, ternary, curry, ncurry, flip, compose,

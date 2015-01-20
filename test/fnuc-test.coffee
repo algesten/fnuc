@@ -40,10 +40,10 @@ TYPE_ARR      = TYPES.filter (spec) -> spec.t == 'array'
 TYPE_PLAIN    = TYPES.filter (spec) -> spec.t == 'object' and spec.plain
 
 
-describe 'typeOf', ->
+describe 'type', ->
 
     TYPES.forEach (spec) ->
-        it "works for #{spec.t}#{spec.d}", -> typeOf(spec.v).should.eql(spec.t)
+        it "works for #{spec.t}#{spec.d}", -> type(spec.v).should.eql(spec.t)
 
 describe 'isType', ->
 
