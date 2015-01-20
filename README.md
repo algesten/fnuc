@@ -50,17 +50,17 @@ a.div b      # infix coffeescript style
 API
 ---
 
-# type
+### type
 
 Functions operating on types.
 
-### isPlain
+#### isPlain
 
 `:: {*} -> Boolean`
 
 Tells whether an object is a plain object, i.e. has no prototype.
 
-#### Example
+##### Example
 
 ```
 isPlain null          # false
@@ -69,69 +69,69 @@ isPlain {}            # true
 isPlain a:42          # true
 ```
 
-### isType
-### typeOf
+#### isType
+#### typeOf
 
-# fn
+### fn
 
-### I
-### arity
-### binary
-### builtin
-### compose
-### curry
-### flip
-### ident
-### lpartial
-### ncurry
-### rpartial
-### sequence
-### tap
-### ternary
-### unary
+#### I
+#### arity
+#### binary
+#### builtin
+#### compose
+#### curry
+#### flip
+#### ident
+#### lpartial
+#### ncurry
+#### rpartial
+#### sequence
+#### tap
+#### ternary
+#### unary
 
-# object
+### object
 
-### clone
-### get
-### has
-### keys
-### merge
-### mixin
-### shallow
-### values
+#### clone
+#### get
+#### has
+#### keys
+#### merge
+#### mixin
+#### shallow
+#### values
 
-# array
+### array
 
-### all
-### any
-### concat
-### contains
-### each
-### filter
-### fold
-### fold1
-### foldr
-### foldr1
-### head
-### index
-### join
-### last
-### map
-### reverse
-### sort
-### tail
-### uniq
+#### all
+#### any
+#### concat
+#### contains
+#### each
+#### filter
+#### fold
+#### fold1
+#### foldr
+#### foldr1
+#### head
+#### index
+#### join
+#### last
+#### map
+#### reverse
+#### sort
+#### tail
+#### uniq
 
-# string
+### string
 
-### lcase
-### match
-### replace
-### search
-### split
-### trim
-### ucase
+#### lcase
+#### match
+#### replace
+#### search
+#### split
+#### trim
+#### ucase
 
 
 [princ]: http://en.wikipedia.org/wiki/Principle_of_least_astonishment
