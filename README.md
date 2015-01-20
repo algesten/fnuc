@@ -401,13 +401,149 @@ args | desc
 ### object
 
 #### clone
+
+Deep clones a value. The value can be an `object`, `array`, `date`,
+`string`, `number`, `boolean`, `symbol`, `null` or `undefined`. The
+only thing that can't be cloned is a non-plain object (other than
+date).
+
+`clone(o)` `:: * -> *`
+
+args | desc
+:--- | :---
+`o` | Value to deep clone.
+
+##### clone example
+
+    clone 42            # 42
+    clone {a:1}         # {a:1}
+    clone {a:[1,2,3]}   # {a:[1,2,3]} the nested array is cloned
+    clone {d:new Date}  # {d:<date>}  the nested date is cloned
+
 #### get
+
+Gets the property value from an object, `get o, 'bar'` gives the value
+of `o.bar`
+
+`get(o,k)`  `:: {k,v}, k -> v`  
+`get(k)(o)` `:: k -> {k,v} -> v`
+
+args | desc
+:--- | :---
+`o` | Object to get property from.
+`k` | The property key.
+
+##### get example
+
+    get {a:1,b:2}, 'b'     # 2
+    getb = get 'b'         # partial
+    getb {b:3}             # 3
+
 #### has
+
+Tells whether an object has a property. `has o, 'bar'` is the same as
+`o.hasOwnProperty('bar')`.
+
+`has(o,k)`  `:: {k,v}, k -> Boolean`  
+`has(k)(o)` `:: k -> {k,v} -> Boolean`
+
+args | desc
+:--- | :---
+`o` | Object to check property on.
+`k` | The property key.
+
+##### has example
+
+    has {a:1,b:2}, 'b'     # true
+    hasb = has 'b'         # partial
+    hasb {b:3}             # true
+
 #### keys
+
+Makes an array of the keys of an object. `keys o` is the same as `Object.keys(o)`.
+
+`keys(o)` `:: {k:v} -> [k]`
+
+args | desc
+:--- | :---
+`o` | Object to get keys from.
+
+#### keys example
+
+    keys {a:1,b:2}          # ['a','b']
+    keys {}                 # []
+
 #### merge
+
+Alters the first object with the key/values from consecutive
+objects and returns it. Rightmost object takes precedence. Omits values that are
+undefined.
+
+`merge(o, os...)` `:: {*}, {*}... -> {*}`
+
+args | desc
+:--- | :---
+`o` | Target object that will be altered.
+`os...` | Variable number of objects to apply left to right.
+
+##### merge example
+
+    merge (t={c:4}), {a:1}, {a:2,b:3}    # t is {a:2,b:3,c:4}
+    merge {c:4}, {a:1, b:undefined}      # {a:1,c:4}
+
 #### mixin
+
+Returns a new object with the key/values from consecutive objects
+set. Rightmost object takes precende. Omits values that are
+undefined. `mixin {a:1}, {b:2}` is equivalent to `merge {}, {a:1},
+{b:2}`.
+
+`mixin(os...)` `:: {*}... -> {*}`
+
+args | desc
+:--- | :---
+`os...` | Variable number of objects to apply left to right.
+
+##### mixin example
+
+    mixin (t={c:4}), {a:1}, {a:2,b:3}    # {a:2,b:3,c:4} t is {c:4}
+    mixin {c:4}, {a:1, b:undefined}      # {a:1,c:4}
+
 #### shallow
+
+Makes a shallow copy of the given argument. The argument can be an
+`object`, `array`, `date`, `string`, `number`, `boolean`, `symbol`,
+`null` or `undefined`. However shallowness is only defined for `array`
+and `object`.
+
+`shallow(o)` `:: * -> *`
+
+args | desc
+:--- | :---
+`o` | Value to shallow copy.
+
+##### shallow example
+
+    shallow 42            # 42
+    shallow {a:1}         # {a:1}
+    shallow {a:[1,2,3]}   # {a:[1,2,3]} the nested array is copy-by-reference
+    shallow {d:new Date}  # {d:<date>}  the nested date is copy-by-reference
+
 #### values
+
+Makes an array of the values of an object.
+
+`values(o)` `:: {k:v} -> [v]`
+
+args | desc
+:--- | :---
+`o` | Object to get values from.
+
+#### values example
+
+    values {a:1,b:2}, 'b'     # ['1','2']
+    values {}                 # []
+
 
 ### array
 
