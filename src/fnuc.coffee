@@ -100,7 +100,10 @@ sequence = flip compose
 tap      = curry (a, f) -> f(a); a                  # a, fn -> a
 
 # array ----------------------------
-concat   = curry (a, v) -> a.concat [v]
+_anyArray = (a) -> a.some Array.isArray
+concat   = (as...) ->
+    as = if _anyArray(as) then as.map (a) -> [a] else as
+    [].concat as...
 fold     = curry ternary builtin Array::reduce      # [a], fn, v -> *
 fold1    = curry binary  builtin Array::reduce      # [a], fn    -> *
 foldr    = curry ternary builtin Array::reduceRight # [a], fn, v -> *
