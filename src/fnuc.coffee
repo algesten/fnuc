@@ -151,7 +151,7 @@ exports = {
     isType, type, isPlain
 
     # fn
-    arity, unary, binary, ternary, curry, ncurry, flip, compose,
+    arity, unary, binary, ternary, curry, flip, compose,
     sequence, I, ident, lpartial, rpartial, tap
 
     # object

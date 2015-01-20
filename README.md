@@ -209,6 +209,7 @@ The result is curried if the rightmost function is of arity > 1.
 
     h = compose(f,g)
     z = h(1,2)
+    z = h(2)(1)
 
 is equivalent to:
 
@@ -299,12 +300,103 @@ args | desc
     f3(2)(1)      # [3,2,1]
     g3(2)(1)      # [3,1,2]
 
-#### ident
 #### lpartial
-#### ncurry
+
+Creates a function that has the original function partially applied
+from the left (see also [rpartial](#rpartial)).
+
+`lpartial ((a,b) -> a/b), 10` makes a function that will receive one
+additional argument `x` to divide 10 by `x`.
+
+`lpartial(f,as...)` `:: ((a... -> a), a, b, ...) -> (a... -> a)`
+
+args | desc
+:--- | :---
+`f`  | Function to apply arguments for.
+`as...` | Variable number of arguments to apply from the left.
+
+##### lpartial example
+
+    l     = [1,2,3,...]
+    even  = (a) -> a % 2 == 0    # even number filter
+    fl    = lpartial filter l    # fl always filters mylist
+    le    = fl even              # keep only even
+
 #### rpartial
+
+Creates a function that has the original function partially applied
+from the right (see also [lpartial](#lpartial)).
+
+`rpartial ((a,b) -> a/b), 10` makes a function that will receive one
+additional argument `x` to divide `x` by 10.
+
+`rpartial(f,as...)` `:: ((a... -> a), a, b, ...) -> (a... -> a)`
+
+args | desc
+:--- | :---
+`f`  | Function to apply arguments for.
+`as...` | Variable number of arguments to apply from the right.
+
+##### rpartial example
+
+    l     = [1,2,3,...]
+    even  = (a) -> a % 2 == 0         # even number filter
+    fr    = lpartial filter even      # applies even filter to any list
+    le    = fr l                      # keeps only even
+
 #### sequence
+
+Makes a sequence function out of a variable number of functions
+`sequence(f1,f2,f3)` becomes `f3(f2(f1)))` with the leftmost function
+invoked first (the opposite is [compose](#compose)).
+
+The result is curried if the leftmost function is of arity > 1.
+
+    h = sequence(f,g)
+    z = h(1,2)
+    z = h(2)(1)
+
+is equivalent to:
+
+    y = f(1,2)
+    z = g(y)
+
+`sequence(as...)` `:: ((y -> z), (x -> y), ..., (b -> c), (a... -> b)) -> (a... -> z)`
+
+args | desc
+:--- | :---
+`as...` | Variable number of functions to sequence.
+
+##### sequence example
+
+    div10 = div(10)
+    add50 = add(50)
+    pow   = (a,b) -> Math.pow(a,b)
+    calc  = sequence pow, add50, div10
+    calc(10,2)  # 15 or (10 ^ 2 + 50) / 10
+    calc(2)(10) # 15
+
 #### tap
+
+Runs a value through a function, ignores the result of the function
+and returns the original value. The mother of all side effects.
+
+`tap(4,div(10))` divides 4 by 10 and ignores that result, returns 4.
+
+`tap(a,f)`  `:: a, (a -> a) -> a`  
+`tap(f)(a)` `:: (a -> a) -> a -> a`
+
+args | desc
+:--- | :---
+`a` | The value to pass as argument to the function.
+`f` | The function to pass the argument to (and then ignore).
+
+##### tap example
+
+    log   = (as...) -> console.log as...      # console.log returns undefined
+    dolog = tap(log)                          # dolog returns same value
+    calc  = sequence add(3), dolog, div(10)   # log the value between the operations
+    calc [1,2,3]                              # logs 4...5...6
 
 ### object
 
