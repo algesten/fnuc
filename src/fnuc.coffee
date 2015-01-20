@@ -100,24 +100,21 @@ sequence = flip compose
 tap      = curry (a, f) -> f(a); a                  # a, fn -> a
 
 # array ----------------------------
-_anyArray = (a) -> a.some Array.isArray
-concat   = (as...) ->
-    as = if _anyArray(as) then as.map (a) -> [a] else as
-    [].concat as...
+all      = curry binary  builtin Array::every       # [a], fn -> Boolean
+any      = curry binary  builtin Array::some        # [a], fn -> Boolean
+contains = curry (as, a) -> index(as, a) >= 0       # [a], a -> b
+concat   = (as...) -> [].concat as...
+each     = curry binary  builtin Array::forEach     # [a], fn    -> undef
+filter   = curry binary  builtin Array::filter      # [a], fn -> [a]|undef
 fold     = curry ternary builtin Array::reduce      # [a], fn, v -> *
 fold1    = curry binary  builtin Array::reduce      # [a], fn    -> *
 foldr    = curry ternary builtin Array::reduceRight # [a], fn, v -> *
 foldr1   = curry binary  builtin Array::reduceRight # [a], fn    -> *
-each     = curry binary  builtin Array::forEach     # [a], fn    -> undef
-map      = curry binary  builtin Array::map         # [a], fn -> [a]
-filter   = curry binary  builtin Array::filter      # [a], fn -> [a]|undef
-all      = curry binary  builtin Array::every       # [a], fn -> Boolean
-any      = curry binary  builtin Array::some        # [a], fn -> Boolean
-join     = curry binary  builtin Array::join        # [a], s -> s
-reverse  = unary builtin Array::reverse             # [a] -> [a]
-sort     = unary builtin Array::sort                # [a] -> [a]
 index    = curry binary  builtin Array::indexOf     # [a], a -> n
-contains = curry (as, a) -> index(as, a) >= 0       # [a], a -> b
+join     = curry binary  builtin Array::join        # [a], s -> s
+map      = curry binary  builtin Array::map         # [a], fn -> [a]
+reverse  = unary builtin Array::reverse             # [a] -> [a]
+sort     = curry binary  builtin Array::sort        # [a] -> [a]
 uniq     = (a) -> return a unless a; a.filter (v, i) -> a.indexOf(v) == i # [a] -> [a]
 
 
@@ -130,7 +127,7 @@ values = (o) -> map (keys o), (k) -> o[k]
 
 # string -----------------------------
 split    = curry binary  builtin String::split       # s, s -> s
-match    = curry binary  builtin String::match       # s, s -> [s]|null
+match    = curry binary  builtin String::match       # s, re -> [s]|null
 replace  = curry ternary builtin String::replace     # s, s, s -> s
 search   = curry binary  builtin String::search      # s, s -> Boolean
 trim     = unary builtin String::trim                # s -> s

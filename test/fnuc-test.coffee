@@ -509,8 +509,9 @@ FN_TEST = [
     {n:'last',   s:'[] -> undef',    f:last,   ar:1, as:[[]],                eq:undefined}
     {n:'last',   s:'[a] -> a',       f:last,   ar:1, as:[[1,2,3]],           eq:3}
     {n:'concat', s:'a, a -> [a]',    f:concat, ar:0, as:[0,1,2,3],           eq:[0,1,2,3]}
-    {n:'concat', s:'[a], a -> [a]',  f:concat, ar:0, as:[[0,1],2],           eq:[[0,1],2]}
-    {n:'concat', s:'a, [a] -> [a]',  f:concat, ar:0, as:[0,1,[2,3]],         eq:[0,1,[2,3]]}
+    {n:'concat', s:'[a], a -> [a]',  f:concat, ar:0, as:[[0,1],2],           eq:[0,1,2]}
+    {n:'concat', s:'a, [a] -> [a]',  f:concat, ar:0, as:[0,1,[2,3]],         eq:[0,1,2,3]}
+    {n:'concat', s:'[a], [a] -> [a]',f:concat, ar:0, as:[[0,1],[2,3]],       eq:[0,1,2,3]}
     {n:'each',   s:'[a], fn -> undef',f:each,  ar:2, as:[[0,1,2],((a) -> a + 1)],  eq:undefined}
     {n:'map',    s:'[a], fn -> [a]', f:map,    ar:2, as:[[0,1,2],((a) -> a + 1)],  eq:[1,2,3]}
     {n:'filter', s:'[a], fn -> [a]', f:filter, ar:2, as:[[0,1,2],((a) -> a % 2)],  eq:[1]}
@@ -533,8 +534,8 @@ FN_TEST = [
     {n:'trim',   s:'s -> s',         f:trim,   ar:1, as:['  abc '],          eq:'abc'}
     {n:'ucase',  s:'s -> s',         f:ucase,  ar:1, as:['abc'],             eq:'ABC'}
     {n:'lcase',  s:'s -> s',         f:lcase,  ar:1, as:['ABC'],             eq:'abc'}
-    {n:'sort',   s:'[a] -> [a]',     f:sort,   ar:1, as:[[2,3,1]],           eq:[1,2,3]}
-    {n:'sort',   s:'[a], f -> [a]',  f:sort,   ar:1, as:[[2,3,1],(a,b)->b-a],eq:[3,2,1]}
+    {n:'sort',   s:'[a], f -> [a]',  f:sort,   ar:2, as:[[2,3,1],undefined], eq:[1,2,3]}
+    {n:'sort',   s:'[a], f -> [a]',  f:sort,   ar:2, as:[[2,3,1],(a,b)->b-a],eq:[3,2,1]}
     {n:'uniq',   s:'null -> null',   f:uniq,   ar:1, as:[null],              eq:null}
     {n:'uniq',   s:'[a] -> [a]',     f:uniq,   ar:1, as:[[]],                eq:[]}
     {n:'uniq',   s:'[a] -> [a]',     f:uniq,   ar:1, as:[[1,2,2,1,2,3]],     eq:[1,2,3]}
