@@ -77,10 +77,10 @@ ncurry = (n, f, as=[]) -> merge (arity(n - as.length) (bs...) ->
     if cs.length < n then ncurry n, f, cs else f cs...), _curry:->rpartial f, as...
 
 curry = (f) ->
-    return f if (n = arity(f)) < 2
+    n = arity(f)
     merge (arity(n) (as...) -> if as.length < n then ncurry n, f, as else f as...), _curry:->f
 
-# not a true uncurry, it just unwraps our own curry
+# not a mathematical uncurry, it just unwraps our own curry
 uncurry = (f) -> if f._curry then f._curry() else f
 
 lpartial = (f, as...) ->
@@ -142,7 +142,7 @@ exports = {
     __fnuc: true # identifier
 
     # generic
-    shallow, clone, builtin
+    shallow, clone
 
     # type
     isType, type, isPlain

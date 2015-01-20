@@ -307,12 +307,6 @@ describe 'rpartial', ->
 
 describe 'curry', ->
 
-    it 'does nothing for arity 0', ->
-        curry(f=(->)).should.equal f
-
-    it 'does nothing for arity 1', ->
-        curry(f=((a)->)).should.equal f
-
     describe '(a,b) ->', ->
 
         div = curry (a,b) -> a / b
