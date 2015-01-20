@@ -50,7 +50,7 @@ a.div b      # infix coffeescript style
 API
 ---
 
-### type
+### Type
 
 Functions operating on types.
 
@@ -58,9 +58,15 @@ Functions operating on types.
 
 `:: {*} -> Boolean`
 
-Tells whether an object is a plain object, i.e. has no prototype.
+args | desc
+:--- | :---
+`o`  | Anything to test for plain.
 
-##### Example
+
+
+Tells whether an object `o` is a plain object, i.e. has no prototype.
+
+##### isPlain example
 
 ```
 isPlain null          # false
@@ -70,6 +76,10 @@ isPlain a:42          # true
 ```
 
 #### isType
+
+`:: s|fn, a -> Boolean`
+
+
 #### typeOf
 
 ### fn
