@@ -398,7 +398,9 @@ args | desc
     calc  = sequence add(3), dolog, div(10)   # log the value between the operations
     calc [1,2,3]                              # logs 4...5...6
 
-### object
+### Object
+
+Functions operating on objects.
 
 #### clone
 
@@ -544,41 +546,495 @@ args | desc
     values {a:1,b:2}, 'b'     # ['1','2']
     values {}                 # []
 
+### Array
 
-### array
+Functions operating on arrays.
 
 #### all
+
+Tests if a condition is fulfilled for all elements of an array. Same
+as `[...].every`.
+
+`all(as,f)`  `:: [a], (a -> Boolean) -> Boolean`  
+`all(f)(as)` `:: (a -> Boolean) -> [a] -> Boolean`
+
+args | desc
+:--- | :---
+`as` | Array to operate on.
+`f`  | Test function that is truthy/falsy for a single element.
+
+##### all example
+
+    as = [1,0,2]
+    all as, (a) -> a > 0      # false
+    all as, (a) -> a >= 0     # true
+    gt0 = all (a) -> a > 0    # partial
+    gt0 as                    # false
+
 #### any
+
+Tests if a condition is fulfilled for any element of an array. Same as
+`[...].some`.
+
+`any(as,f)`  `:: [a], (a -> Boolean) -> Boolean`  
+`any(f)(as)` `:: (a -> Boolean) -> [a] -> Boolean`
+
+args | desc
+:--- | :---
+`as` | Array to operate on.
+`f`  | Test function that is truthy/falsy for a single element.
+
+##### any example
+
+    as = [1,0,2]
+    any as, (a) -> a > 0      # true
+    any as, (a) -> a > 2      # false
+    gt0 = any (a) -> a > 0    # partial
+    gt0 as                    # false
+
 #### concat
+
+Concatenates (joins) two or more lists or values. To not be surprising
+has the same quirks as `Array::concat`:
+
+1. Joins multiple arrays to one array.
+2. Joins a mix of array and values to one array.
+3. Joins plain values to one array.
+
+`concat(as...)` `:: [a], a, ... -> [a]`
+
+args | desc
+:--- | :---
+`as` | Variable amount of values or arrays to concatenate.
+
+##### concat example
+
+    concat [1,2], [3,4]   # [1,2,3,4]
+    concat [1,2], 3, 4    # [1,2,3,4]
+    concat 1, 2, 3, 4     # [1,2,3,4]
+
 #### contains
+
+Tells if an array contains a value. Same as `index(a,v) >= 0`.
+
+`contains(as,a)`  `:: [a], a -> Boolean`  
+`contains(a)(as)  `:: a -> [a] -> Boolean`
+
+args | desc
+:--- | :---
+`as` | Array to check.
+`a`  | Element to look for.
+
+##### contains example
+
+    contains [1,2,3], 2    # true
+    contains [1,2,3], 5    # false
+    cont5 = contains(5)    # partial
+    cont5 [3,4,5]          # true
+
 #### each
+
+Performs side effects for each element of an array without altering
+the array or returning anything useful. Same as `[...].forEach`
+
+`each(as,f)`  `:: [a], (a -> *) -> undefined`  
+`each(f)(as)` `:: (a -> *) -> [a] -> undefined`
+
+args | desc
+:--- | :---
+`as` | Array to loop over.
+`f`  | Function to invoke for each element.
+
+##### each example
+
+    log = (a) -> console.log a
+    each [1,2,3], log            # prints 1...2...3
+    listlogger = each log        # partial
+    listlogger [1,2,3]           # prints 1...2...3
+
 #### filter
+
+Creates a new list containing only elements for which a test function
+is true. Same as `[...].filter`.
+
+`filter(as,f)`  `:: [a], (a -> Boolean) -> [a]`  
+`filter(f)(as)` `:: (a -> Boolean) -> [a] -> [a]`
+
+##### filter example
+
+    odd = (a) -> a % 2
+    filter [1,2,3], odd     # [1,3]
+    fo = filter odd         # partial
+    fo [1,2,3]              # [1,3]
+
 #### fold
+
+Performs a [fold][fold] operation from the left with a seed
+value. Same as `[...].reduce(f, s)`
+
+`fold(as,f,s)`   `[b], ((a, b, i, [b]) -> a), a -> a`  
+`fold(s)(f)(as)` `a -> ((a, b, i, [b]) -> a) -> [b] -> a`
+
+args | desc
+:--- | :---
+`as` | Array to fold.
+`f`  | Folding function. Signature is `(a,b,i,as)`.
+`s`  | Seed value.
+*folding function* |
+`a` | Value of previous fold operation or `s` for first element.
+`b` | Current value from `as`.
+`i` | Index of `b` in `as`.
+`as`| The entire `as`.
+
+##### fold example
+
+    f = (p,c) -> if c % 2 then c + p else p   # sum odd numbers
+    fold [1,2,3], f, 5                        # 9
+
 #### fold1
+
+Same as [fold](#fold) but no seed value. Same as `[...].reduce(f)`.
+
+`fold1(as,f)`  `[b], ((a, b, i, [b]) -> a) -> a`  
+`fold1(f)(as)` `((a, b, i, [b]) -> a) -> [b] -> a`
+
+args | desc
+:--- | :---
+`as` | Array to fold.
+`f`  | Folding function. Signature is `(a,b,i,as)`.
+*folding function* |
+`a` | Value of previous fold operation or first element for first iteration.
+`b` | Current value from `as` or second element for first iteration.
+`i` | Index of `b` in `as`.
+`as`| The entire `as`.
+
+##### fold1 example
+
+    f = (p,c) -> if c % 2 then c + p else p   # sum odd numbers
+    fold1 [2,3,4], f                          # 5 (in first iteration p=2 and c=3)
+
 #### foldr
+
+Same as [fold](#fold) but goes right to left with a seed value. Same
+as `[...].reduceRight(f,s)`
+
+`foldr(as,f,s)`   `[b], ((a, b, i, [b]) -> a), a -> a`  
+`foldr(s)(f)(as)` `a -> ((a, b, i, [b]) -> a) -> [b] -> a`
+
+args | desc
+:--- | :---
+*See [fold](#fold)* |
+
 #### foldr1
+
+Same as [foldr](#foldr) but no seed value. Same as
+`[...].reduceRight(f)`
+
+`fold1(as,f)`  `[b], ((a, b, i, [b]) -> a) -> a`  
+`fold1(f)(as)` `((a, b, i, [b]) -> a) -> [b] -> a`
+
+args | desc
+:--- | :---
+*See [fold1](#fold1)* |
+
 #### head
+
+Gets the head value of an array.
+
+`head(as)` `:: [a] -> a|undefined`
+
+args | desc
+:--- | :---
+`as` | The array to get the head from.
+
+##### head example
+
+    head [1,2,3]   # 1
+    head []        # undefined
+
 #### index
+
+Tells the index of a value in an array or -1 if not found. Same as
+`[...].indexOf(a)`. `undefined` for empty list.
+
+`index(as,a)`  `:: [a], a -> Number`  
+`index(a)(as)` `:: a -> [a] -> Number`
+
+args | desc
+:--- | :---
+`as` | The array to look for `a` in.
+`a`  | Value to look for.
+
+##### index example
+
+    index [1,2,3], 3       # 2
+    index [1,2,3], 4       # -1
+
 #### join
+
+Creates a string from a list by inserting a given string in between
+each element. Same as `[...].join(s)`
+
+`join(as,s)`  `:: [a], s -> String`  
+`join(s)(as)` `:: s -> [a] -> String`
+
+args | desc
+:--- | :---
+`as` | Array to join.
+`s`  | String to insert in between each element.
+
+##### join example
+
+    join [1,2,3], ''     # '123'
+    join [1,2,3], '-'    # '1-2-3'
+
 #### last
+
+Gets the last value of an array. `undefined` for empty list.
+
+`last(as)`  `:: [a] -> a|undefined`
+
+args | desc
+:--- | :---
+`as` | The array get the last value of.
+
+##### last example
+
+    last [1,2,3]     # 3
+    last []          # undefined
+
 #### map
+
+Creates a new array of transformed values by applying a transformation
+function to each element. Same as `[...].map(f)`
+
+`map(as,f)`  `:: [a], ((a, i, [a]) -> b) -> [b]`  
+`map(f)(as)` `:: ((a, i, [a]) -> b) -> [a] -> [b]`
+
+args | desc
+:--- | :---
+`as` | Array to transform.
+`f`  | Transformation function. Signature is `(a,i,as)`.
+*transformation function* |
+`a` | Current value from `as`.
+`i` | Index of `a` in `as`.
+`as`| The entire `as`.
+
+##### map example
+
+    add1 = (a) -> a + 1
+    map [1,2,3], add1     # [2,3,4]
+    ladd1 = map add1      # partial
+    ladd1 [2,3,4]         # [3,4,5]
+
 #### reverse
+
+Reverses the array. Same as `[...].reverse()`
+
+`reverse(as)` `:: [a] -> [a]`
+
+args | desc
+:--- | :---
+`as` | Array to reverse.
+
+##### reverse example
+
+    reverse [1,2,3]    # [3,2,1]
+
 #### sort
+
+Sorts an array according to a comparator function. Same as
+`[...].sort(f)`.
+
+The comparator function `(a,b)` returns:
+
+1. A number `< 0`  if `a < b`
+2. `0` if `a == b`
+3. A number `> 0` if `a > b`
+
+Specifically if `(a1,a2)` returns something `< 0`, `(a2,a1)` must
+returns something `> 0`.
+
+`sort(as,f)`  `:: [a], (a, a -> Number) -> [a]`  
+`sort(f)(as)` `:: (a, a -> Number) -> [a] -> [a]`
+
+args | desc
+:--- | :---
+`as` | Array to sort.
+`f`  | Comparator function with signature `(a,b)`.
+*Comparator function* |
+`a`  | An element of `as` to compare to `b`.
+`b`  | An element of `as` to compare to `a`.
+
+##### sort example
+
+    sort [2,1,3]            # [1,2,3]
+    comp = (a,b) -> b - a
+    sort [2,1,3], comp      # [3,2,1]
+    s = sort(comp)          # partial
+    s [4,1,5,2]             # [5,4,2,1]
+
 #### tail
+
+The tail of a list, that is, every element apart from the first. The
+tail of `[]` is `[]`.
+
+`tail(as)`  `:: [a] -> [a]`
+
+args | desc
+:--- | :---
+`as` | Array to get tail of.
+
+##### example
+
+    tail [1,2,3]    # [2,3]
+    tail []         # []
+
 #### uniq
 
-### string
+Creates an array where every element occurs only once (given `==`
+equality).
+
+`uniq(as)` `:: [a] -> [a]`
+
+args | desc
+:--- | :---
+`as` | Array to dedupe.
+
+##### uniq example
+
+    uniq [3,1,3,2,1,3,2,1]   # [3,1,2]
+
+### String
+
+Functions operating on strings.
 
 #### lcase
+
+Turns the given string to lowercase. Same as `s.toLowerCase()`
+
+`lcase(s)`  `:: s -> s`
+
+args | desc
+:--- | :---
+`s`  | String to lowercase.
+
+##### lcase example
+
+    lcase 'aBcD'   # 'abcd'
+
 #### match
+
+Matches a regexp in a string. Same as `s1.match(s2)`. The value
+returned is a special regexp match object.
+
+`match(s,m)`  `:: s, RegExp -> [a]|null`  
+`match(m)(s)` `:: RegExp -> s -> [a]|null`
+
+args | desc
+:--- | :---
+`s`  | String to match in.
+`m`  | The match object which is interpreted as a RegExp.
+
+##### match example
+
+    match 'a bar frog', '.'     # [ 'a', index: 0, input: 'a bar frog' ]
+    match 'a bar frog', 'fo'    # null
+    match 'a bar frog', /ar?/g  # ['a', 'ar']
+
 #### replace
+
+Returns a new string with occurences of a matching string/regexp with
+another string. Same as `s1.replace(s2,s3)`
+
+`replace(s,m,r)`   `:: s, s|RegExp, s -> s`  
+`replace(r)(m)(s)` `:: s -> s|RegExp -> s -> s`
+
+args | desc
+:--- | :---
+`s`  | String to replace in.
+`m`  | The match object which can either be a string or a RegExp.
+`r`  | The replacement string where `m` matches.
+
+##### replace example
+
+    replace 'abcab', 'b', 'c'    # 'accac'
+    replace 'abcab', 'd', 'c'    # 'abcab'
+    replace 'abcab', /a./g, 'f'  # 'fcf'
+
 #### search
+
+Searches the string for a given regexp and returns the index of the
+match. Same as `s.search(m)`.
+
+`search(s,m)`  `:: s, RegExp -> Number`  
+`search(m)(s)` `:: RegExp -> s -> Number`
+
+args | desc
+:--- | :---
+`s`  | String to search in
+`m`  | The match RegExp.
+
+##### search example
+
+    search 'abc',  '.'    # 0
+    search 'abc',  /./    # 0
+    search 'abc',  /d/    # -1
+    search 'abc',  '.c'   # 1
+    findC = search('c')   # partial
+    findC 'aqdc'          # 3
+
 #### split
+
+Splits a string into an array divided on a separator. Same as
+`s1.split(s2)`
+
+`split(s,e)`  `:: s, s|RegExp -> [s]`  
+`split(e)(s)` `:: s|RegExp -> s -> [s]`
+
+args | desc
+:--- | :---
+`s`  | String to split
+`e`  | Separator to split on which can be a string or RegExp.
+
+##### split example
+
+    split 'abc', ''          # ['a','b','c']
+    split 'abc', 'b'         # ['a', 'c']
+    split 'cadabcab', /[ab]/ # ['c', 'd', '', 'c', '', '']
+
 #### trim
+
+Trims whitespace off start and end of a string. Same as `s.trim()`
+
+`trim(s)`  `:: s -> s`
+
+args | desc
+:--- | :---
+`s`  | String to trim.
+
+##### trim example
+
+    trim '  ab  \n'    # 'ab'
+
 #### ucase
+
+Turns the given string to uppercase. Same as `s.toUpperCase()`
+
+`ucase(s)` `:: s -> s`
+
+args | desc
+:--- | :---
+`s`  | String to uppercase.
+
+##### ucase example
+
+    ucase 'aBcD'  # 'ABCD'
+
 
 
 [princ]: http://en.wikipedia.org/wiki/Principle_of_least_astonishment
 [stack]: http://stackoverflow.com/questions/25674596/#25720884
 [curry]: https://en.wikipedia.org/wiki/Currying
 [compo]: https://en.wikipedia.org/wiki/Function_composition_%28computer_science%29
+[fold]:  https://en.wikipedia.org/wiki/Fold_%28higher-order_function%29
