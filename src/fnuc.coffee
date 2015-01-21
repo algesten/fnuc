@@ -126,6 +126,7 @@ uniq     = (a) -> return a unless a; a.filter (v, i) -> a.indexOf(v) == i # [a] 
 # moar object
 has    = curry (o, k) -> o.hasOwnProperty(k)
 get    = curry (o, k) -> o[k]
+set    = curry (o, k, v) -> o[k] = v; o
 keys   = (o) -> Object.keys(o)
 values = (o) -> map (keys o), (k) -> o[k]
 
@@ -157,7 +158,7 @@ exports = {
     sequence, I, ident, lpartial, rpartial, tap
 
     # object
-    merge, mixin, has, get, keys, values
+    merge, mixin, has, get, set, keys, values
 
     # array
     concat, head, tail, last, fold, fold1, foldr, foldr1, each, map,

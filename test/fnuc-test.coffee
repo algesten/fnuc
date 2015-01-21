@@ -543,8 +543,9 @@ FN_TEST = [
     {n:'index',  s:'[a], a -> n',    f:index,  ar:2, as:[[1,2,3,4], 5],      eq:-1}
     {n:'contains',s:'[a], a -> b',   f:contains,ar:2,as:[[1,2,3,4], 3],      eq:true}
     {n:'contains',s:'[a], a -> b',   f:contains,ar:2,as:[[1,2,3,4], 5],      eq:false}
-    {n:'has',    s:'{k:v}, s -> b',  f:has,    ar:2, as:[{a:1,b:2}, 'b'],    eq:true}
-    {n:'get',    s:'{k:v}, s -> v',  f:get,    ar:2, as:[{a:1,b:2}, 'b'],    eq:2}
+    {n:'has',    s:'{k:v}, k -> b',  f:has,    ar:2, as:[{a:1,b:2}, 'b'],    eq:true}
+    {n:'get',    s:'{k:v}, k -> v',  f:get,    ar:2, as:[{a:1,b:2}, 'b'],    eq:2}
+    {n:'set',    s:'{k:v}, k, v -> v',f:set,   ar:3, as:[{a:1,b:2}, 'b', 3], eq:{a:1,b:3}}
     {n:'keys',   s:'{k:v} -> [k]',   f:keys,   ar:1, as:[{a:1,b:2}],         eq:['a','b']}
     {n:'values', s:'{k:v} -> [v]',   f:values, ar:1, as:[{a:1,b:2}],         eq:[1,2]}
 ]

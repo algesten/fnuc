@@ -504,6 +504,28 @@ args | desc
     mixin (t={c:4}), {a:1}, {a:2,b:3}    # {a:2,b:3,c:4} t is {c:4}
     mixin {c:4}, {a:1, b:undefined}      # {a:1,c:4}
 
+#### set
+
+Sets a property of an object and returns the same object.
+
+`set(o,k,v)`   `:: {k:v}, k, v -> {k:v}`  
+`set(v)(k)(o)` `:: v -> k -> {k:v} -> {k:v}`
+
+args | desc
+:--- | :---
+`o`  | Object to set a property on.
+`k`  | Key for the property to set.
+`v`  | The value to set.
+
+##### set example
+
+    o = {a:1,b:3}
+    set(o,'a',2)          # {a:2,b:3}
+    seta3 = set(3)('a')   # partial
+    setb4 = set(4)('b')   # partial
+    f = sequence seta3, setb4
+    f(o)                  # {a:3,b:4}
+
 #### shallow
 
 Makes a shallow copy of the given argument. The argument can be an
