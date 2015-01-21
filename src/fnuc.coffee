@@ -72,13 +72,18 @@ unary   = arity 1
 binary  = arity 2
 ternary = arity 3
 
-ncurry = (n, f, as=[]) -> merge (arity(n - as.length) (bs...) ->
-    cs = bs.concat as
-    if cs.length < n then ncurry n, f, cs else f cs...), _curry:->rpartial f, as...
+ncurry = (n, f, as=[]) ->
+    nf = arity(n - as.length) (bs...) ->
+        cs = bs.concat as
+        if cs.length < n then ncurry n, f, cs else f cs...
+    nf._curry = -> rpartial f, as...
+    return nf
 
 curry = (f) ->
     n = arity(f)
-    merge (arity(n) (as...) -> if as.length < n then ncurry n, f, as else f as...), _curry:->f
+    nf = arity(n) (as...) -> if as.length < n then ncurry n, f, as else f as...
+    nf._curry = -> f
+    return nf
 
 # not a mathematical uncurry, it just unwraps our own curry
 uncurry = (f) -> if f._curry then f._curry() else f
@@ -92,8 +97,8 @@ rpartial = (f, as...) ->
 
 flip = (f) ->
     return f._flip if f._flip
-    [unwrap, rewrap] = if f._curry then [uncurry, curry] else [I, I]
-    merge (rewrap arity(arity(f)) (as...) -> unwrap(f) as.reverse()...), _flip:f
+    rewrap = if f._curry then curry else I
+    merge (rewrap arity(arity(f)) (as...) -> uncurry(f) as.reverse()...), _flip:f
 
 compose = (fs...) -> ncurry arity(last(fs)), fs.reduce (f, g) -> (as...) -> f g as...
 sequence = flip compose
