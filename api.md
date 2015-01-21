@@ -72,7 +72,7 @@ The identity function `(x) -> x`.
 
 #### isPlain
 
-`Checks whether an object `o` is plain (created using `{}` or `new Object`).
+Checks whether an object `o` is plain (created using `{}` or `new Object`).
 
 `isPlain(o)` `:: {*} -> Boolean`
 
