@@ -141,7 +141,17 @@ ucase    = unary builtin String::toUpperCase         # s -> s
 lcase    = unary builtin String::toLowerCase         # s -> s
 
 # maths -----------------------------------
-
+add      = curry binary (as...) -> as.reduce (a,b) -> a + b
+sub      = curry binary (as...) -> as.reduce (a,b) -> a - b
+mul      = curry binary (as...) -> as.reduce (a,b) -> a * b
+div      = curry binary (as...) -> as.reduce (a,b) -> a / b
+mod      = curry binary (as...) -> as.reduce (a,b) -> a % b
+min      = curry binary (as...) -> Math.min as...
+max      = curry binary (as...) -> Math.max as...
+gt       = curry (a,b) -> a > b
+gte      = curry (a,b) -> a >= b
+lt       = curry (a,b) -> a < b
+lte      = curry (a,b) -> a <= b
 
 ################################
 exports = {
@@ -166,6 +176,9 @@ exports = {
 
     # string
     split, match, replace, search, trim, ucase, lcase
+
+    # maths
+    add, sub, mul, div, mod, min, max, gt, gte, lt, lte
 
 }
 

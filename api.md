@@ -2,6 +2,7 @@ API
 ===
 
 [`I`](api.md#i)
+[`add`](api.md#add)
 [`all`](api.md#all)
 [`any`](api.md#any)
 [`arity`](api.md#arity)
@@ -10,6 +11,7 @@ API
 [`concat`](api.md#concat)
 [`contains`](api.md#contains)
 [`curry`](api.md#curry)
+[`div`](api.md#div)
 [`each`](api.md#each)
 [`filter`](api.md#filter)
 [`flip`](api.md#flip)
@@ -18,6 +20,8 @@ API
 [`foldr1`](api.md#foldr1)
 [`foldr`](api.md#foldr)
 [`get`](api.md#get)
+[`gt`](api.md#gt)
+[`gte`](api.md#gte)
 [`has`](api.md#has)
 [`head`](api.md#head)
 [`index`](api.md#index)
@@ -28,10 +32,16 @@ API
 [`last`](api.md#last)
 [`lcase`](api.md#lcase)
 [`lpartial`](api.md#lpartial)
+[`lt`](api.md#lt)
+[`lte`](api.md#lte)
 [`map`](api.md#map)
 [`match`](api.md#match)
+[`max`](api.md#max)
 [`merge`](api.md#merge)
+[`min`](api.md#min)
 [`mixin`](api.md#mixin)
+[`mod`](api.md#mod)
+[`mul`](api.md#mul)
 [`replace`](api.md#replace)
 [`reverse`](api.md#reverse)
 [`rpartial`](api.md#rpartial)
@@ -41,6 +51,7 @@ API
 [`shallow`](api.md#shallow)
 [`sort`](api.md#sort)
 [`split`](api.md#split)
+[`sub`](api.md#sub)
 [`tail`](api.md#tail)
 [`tap`](api.md#tap)
 [`trim`](api.md#trim)
@@ -49,7 +60,8 @@ API
 [`uniq`](api.md#uniq)
 [`values`](api.md#values)
 
-### Type
+
+### Type functions
 
 Functions operating on types.
 
@@ -131,7 +143,7 @@ args | desc
     type {}        # 'object'
     type undefined # 'undefined'
 
-### Function
+### Function functions
 
 Functions operating on functions.
 
@@ -391,7 +403,7 @@ args | desc
     calc  = sequence add(3), dolog, div(10)   # log the value between the operations
     calc [1,2,3]                              # logs 4...5...6
 
-### Object
+### Object functions
 
 Functions operating on objects.
 
@@ -561,7 +573,7 @@ args | desc
     values {a:1,b:2}, 'b'     # ['1','2']
     values {}                 # []
 
-### Array
+### Array functions
 
 Functions operating on arrays.
 
@@ -920,7 +932,7 @@ args | desc
 
     uniq [3,1,3,2,1,3,2,1]   # [3,1,2]
 
-### String
+### String functions
 
 Functions operating on strings.
 
@@ -1045,6 +1057,164 @@ args | desc
 ##### ucase example
 
     ucase 'aBcD'  # 'ABCD'
+
+
+### Math functions
+
+Functions for math.
+
+#### add
+
+Adds two (or more) numbers or strings together.
+
+`add(a,b)`   `:: a, a -> a`  
+`add(b)(a)`  `:: a -> a -> a`  
+`add(as...)` `:: a... -> a`
+
+args | desc
+:--- | :---
+`a`  | First argument to add, number or string.
+`b`  | Second argument to add, number or string.
+*Variadic*|
+`as` | Variable number of number/strings to add together.
+
+#### div
+
+Division. `a` divided by `b`.
+
+`div(a,b)`   `:: a, a -> a`  
+`div(b)(a)`  `:: a -> a -> a`  
+`div(as...)` `:: a... -> a`
+
+args | desc
+:--- | :---
+`a`  | Dividend.
+`b`  | Divisor.
+*Variadic*|
+`as` | Variable number of arguments. I.e. `div(a,b,c)` is `a / b / c`.
+
+#### gt
+
+Greater than. `a` greater than `b`.
+
+`gt(a,b)`  `:: a, a -> Boolean`  
+`gt(b)(a)` `:: a -> a -> Boolean`
+
+args | desc
+:--- | :---
+`a`  | First argument in `a > b`.
+`b`  | Second argument in `a > b`.
+
+#### gte
+
+Greater than or equals. `a` greater than or equals `b`.
+
+`gte(a,b)`  `:: a, a -> Boolean`  
+`gte(b)(a)` `:: a -> a -> Boolean`
+
+args | desc
+:--- | :---
+`a`  | First argument in `a >= b`.
+`b`  | Second argument in `a >= b`.
+
+#### lt
+
+Less than. `a` less than `b`.
+
+`lt(a,b)`  `:: a, a -> Boolean`  
+`lt(b)(a)` `:: a -> a -> Boolean`
+
+args | desc
+:--- | :---
+`a`  | First argument in `a < b`.
+`b`  | Second argument in `a < b`.
+
+#### lte
+
+Less than or equals. `a` less than or equals `b`.
+
+`lte(a,b)`  `:: a, a -> Boolean`  
+`lte(b)(a)` `:: a -> a -> Boolean`
+
+args | desc
+:--- | :---
+`a`  | First argument in `a <= b`.
+`b`  | Second argument in `a <= b`.
+
+#### max
+
+The max of two (or more) arguments. Same as `Math.max(a,b)`.
+
+`max(a,b)`   `:: a, a -> Boolean`  
+`max(b)(a)`  `:: a -> a -> Boolean`  
+`max(as...)` `:: a... -> Boolean`
+
+args | desc
+:--- | :---
+`a`  | First argument in `Math.max(a,b)`
+`b`  | Second argument in `Math.max(a,b)`
+*Variadic*|
+`as` | Variable number of arguments. I.e `Math.max(a,b,c)`
+
+#### min
+
+The min of two (or more) arguments. Same as `Math.min(a,b)`.
+
+`min(a,b)`   `:: a, a -> Boolean`  
+`min(b)(a)`  `:: a -> a -> Boolean`  
+`min(as...)` `:: a... -> Boolean`
+
+args | desc
+:--- | :---
+`a`  | First argument in `Math.min(a,b)`
+`b`  | Second argument in `Math.min(a,b)`
+*Variadic*|
+`as` | Variable number of arguments. I.e `Math.min(a,b,c)`
+
+#### mod
+
+Modulus (javascript style). `a` modulus `b`.
+
+`mod(a,b)`   `:: a, a -> a`  
+`mod(b)(a)`  `:: a -> a -> a`  
+`mod(as...)` `:: a... -> a`
+
+args | desc
+:--- | :---
+`a`  | Dividend.
+`b`  | Divisor.
+*Variadic*|
+`as` | Variable number of arguments. I.e. `mod(a,b,c)` is `a % b % c`.
+
+#### mul
+
+Multiplication. `a` multiplied by `b`.
+
+`mul(a,b)`   `:: a, a -> a`  
+`mul(b)(a)`  `:: a -> a -> a`  
+`mul(as...)` `:: a... -> a`
+
+args | desc
+:--- | :---
+`a`  | First factor in `a * b`.
+`b`  | Second factor in `a * b`.
+*Variadic*|
+`as` | Variable number of arguments. I.e. `mul(a,b,c)` is `a * b * c`.
+
+#### sub
+
+Subtraction. `a` subtracted by `b`.
+
+`sub(a,b)`   `:: a, a -> a`  
+`sub(b)(a)`  `:: a -> a -> a`  
+`sub(as...)` `:: a... -> a`
+
+args | desc
+:--- | :---
+`a`  | Minuend.
+`b`  | Subtrahend.
+*Variadic*|
+`as` | Variable number of arguments. I.e. `sub(a,b,c)` is `a - b - c`.
 
 
 [curry]: https://en.wikipedia.org/wiki/Currying

@@ -548,17 +548,40 @@ FN_TEST = [
     {n:'set',    s:'{k:v}, k, v -> v',f:set,   ar:3, as:[{a:1,b:2}, 'b', 3], eq:{a:1,b:3}}
     {n:'keys',   s:'{k:v} -> [k]',   f:keys,   ar:1, as:[{a:1,b:2}],         eq:['a','b']}
     {n:'values', s:'{k:v} -> [v]',   f:values, ar:1, as:[{a:1,b:2}],         eq:[1,2]}
+    {n:'add',    s:'a, a -> a',      f:add,    ar:2, as:[12,2],              eq:14}
+    {n:'add',    s:'a... -> a',      f:add,    ar:2, as:[12,2,3],            eq:17}
+    {n:'sub',    s:'a, a -> a',      f:sub,    ar:2, as:[12,2],              eq:10}
+    {n:'sub',    s:'a... -> a',      f:sub,    ar:2, as:[12,2,3],            eq:7}
+    {n:'mul',    s:'a, a -> a',      f:mul,    ar:2, as:[12,2],              eq:24}
+    {n:'mul',    s:'a... -> a',      f:mul,    ar:2, as:[12,2,3],            eq:72}
+    {n:'div',    s:'a, a -> a',      f:div,    ar:2, as:[12,2],              eq:6}
+    {n:'div',    s:'a... -> a',      f:div,    ar:2, as:[12,2,3],            eq:2}
+    {n:'mod',    s:'a, a -> a',      f:mod,    ar:2, as:[17,6],              eq:5}
+    {n:'mod',    s:'a... -> a',      f:mod,    ar:2, as:[17,6,3],            eq:2}
+    {n:'min',    s:'a, a -> a',      f:min,    ar:2, as:[12,2],              eq:2}
+    {n:'min',    s:'a... -> a',      f:min,    ar:2, as:[12,3,2],            eq:2}
+    {n:'max',    s:'a, a -> a',      f:max,    ar:2, as:[12,2],              eq:12}
+    {n:'max',    s:'a... -> a',      f:max,    ar:2, as:[3,2,12],            eq:12}
+    {n:'gt',     s:'a, a -> a',      f:gt,     ar:2, as:[12,11],             eq:true}
+    {n:'gt',     s:'a, a -> a',      f:gt,     ar:2, as:[12,12],             eq:false}
+    {n:'gte',    s:'a, a -> a',      f:gte,    ar:2, as:[12,12],             eq:true}
+    {n:'gte',    s:'a, a -> a',      f:gte,    ar:2, as:[12,13],             eq:false}
+    {n:'lt',     s:'a, a -> a',      f:lt,     ar:2, as:[11,12],             eq:true}
+    {n:'lt',     s:'a, a -> a',      f:lt,     ar:2, as:[12,12],             eq:false}
+    {n:'lte',    s:'a, a -> a',      f:lte,    ar:2, as:[12,12],             eq:true}
+    {n:'lte',    s:'a, a -> a',      f:lte,    ar:2, as:[13,12],             eq:false}
 ]
 
 FN_TEST.forEach (spec) ->
     describe spec.n, ->
         it "has signature #{spec.s}", ->
             expect(spec.f(spec.as...)).to.eql spec.eq
-        if spec.ar > 1
-            it "has a curried variant", ->
-                if spec.ar == 2
-                    expect(spec.f(spec.as[1])(spec.as[0])).to.eql spec.eq
-                else if spec.ar == 3
-                    expect(spec.f(spec.as[2])(spec.as[1])(spec.as[0])).to.eql spec.eq
-        it "is of arity(#{spec.ar})", ->
-            spec.f.length.should.eql spec.ar
+        if spec.ar == spec.as.length
+            if spec.ar > 1
+                it "has a curried variant", ->
+                    if spec.ar == 2
+                        expect(spec.f(spec.as[1])(spec.as[0])).to.eql spec.eq
+                    else if spec.ar == 3
+                        expect(spec.f(spec.as[2])(spec.as[1])(spec.as[0])).to.eql spec.eq
+            it "is of arity(#{spec.ar})", ->
+                spec.f.length.should.eql spec.ar
