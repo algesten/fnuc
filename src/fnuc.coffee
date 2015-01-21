@@ -37,18 +37,21 @@ shallow = (a) ->
 clone = (a) ->
     return a unless a # null, undefined, false, '', 0
     s = shallow(a)
-    if isType 'array', s
+    if type 'array', s
         s[i] = clone(s[i]) for i in [0...a.length] by 1
     else if isPlain(s)
         s[k] = clone(v) for k, v of s
     return s
 
+
 # type -----------------------------
 isPlain       = (o) -> !!o && typeof o == 'object' && o.constructor == Object
-type          = (a) -> _toString(a)[8...-1].toLowerCase()
-isType        = (t, a) ->
-    t = t.toString()[9...-20].toLowerCase() if t instanceof Function
-    return type(a) == t
+type          = (t, a) ->
+    if arguments.length == 1
+        _toString(t)[8...-1].toLowerCase()
+    else
+        t = t.toString()[9...-20].toLowerCase() if t instanceof Function
+        type(a) == t
 
 
 # object ----------------------------
@@ -63,7 +66,7 @@ last   = (a) -> a[a.length-1]
 # fn --------------------------------
 arity = (f, n) ->
     if arguments.length == 1
-        return f.length if isType 'function', f
+        return f.length if type 'function', f
         n = f
         f = undefined
     _ar = (f) -> ARITY[n](f)
@@ -104,6 +107,7 @@ compose = (fs...) -> ncurry arity(last(fs)), fs.reduce (f, g) -> (as...) -> f g 
 sequence = flip compose
 tap      = curry (a, f) -> f(a); a                  # a, fn -> a
 
+
 # array ----------------------------
 all      = curry binary  builtin Array::every       # [a], fn -> Boolean
 any      = curry binary  builtin Array::some        # [a], fn -> Boolean
@@ -140,6 +144,7 @@ trim     = unary builtin String::trim                # s -> s
 ucase    = unary builtin String::toUpperCase         # s -> s
 lcase    = unary builtin String::toLowerCase         # s -> s
 
+
 # maths -----------------------------------
 add      = curry binary (as...) -> as.reduce (a,b) -> a + b
 sub      = curry binary (as...) -> as.reduce (a,b) -> a - b
@@ -161,7 +166,7 @@ exports = {
     shallow, clone
 
     # type
-    isType, type, isPlain
+    type, isPlain
 
     # fn
     arity, unary, binary, ternary, curry, flip, compose,

@@ -81,7 +81,6 @@ API
 [`head`](api.md#head)
 [`index`](api.md#index)
 [`isPlain`](api.md#isplain)
-[`isType`](api.md#istype)
 [`join`](api.md#join)
 [`keys`](api.md#keys)
 [`last`](api.md#last)

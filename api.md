@@ -26,7 +26,6 @@ API
 [`head`](api.md#head)
 [`index`](api.md#index)
 [`isPlain`](api.md#isplain)
-[`isType`](api.md#istype)
 [`join`](api.md#join)
 [`keys`](api.md#keys)
 [`last`](api.md#last)
@@ -89,59 +88,55 @@ args | desc
     isPlain {}            # true
     isPlain a:42          # true
 
-#### isType
+#### type
 
-Checks is an object `a` is of the given type `t`, where `t` can be any
-of `'array'`, `'boolean'`, `'date'`, `'null'`, `'number'`, `'object'`
-`'string'` or `'undefined'`. The function accepts any output from
-[type](#type).
+Tells or checks what type an object is depending on number of
+arguments.
 
-`isType(t,a)` `:: s|fn, a -> Boolean`
+With one argument, returns one of `'array'`, `'boolean'`, `'date'`,
+`'null'`, `'number'`, `'object'` `'string'` or `'undefined'`.
+
+With two arguments, checks whether the second argument is of the type
+specified in the first.
+
+`type(a)`   `:: a -> String`  
+`type(t,a)` `:: s|fn, a -> Boolean`
 
 args | desc
 :--- | :---
-`t`  | Type to test for. Either a string type function.
-`a`  | Object to test.
+*One arg variant*|
+`a`  | Object to find type for.
+*Two arg variant*|
+`t`  | The (string|Function) type to check for.
+`a`  | Object to check.
 
 type | function
 :--- | :---
 `'array'`   | `Array`
 `'boolean'` | `Boolean`
 `'date'`    | `Date`
-`'number'`  | `Number`
 `'null'`    | -
+`'number'`  | `Number`
 `'object'`  | `Object`
 `'string'`  | `String`
 `'symbol'`  | `Symbol` *untested*
 `'undefined'` | -
 
-##### isType example
-
-
-    isType 'string', 'abc'     # true
-    isType 'string', null      # false
-    isType type(a), a          # true
-    isType Number, 42          # true
-    isType 'number', 42        # true
-
-#### type
-
-Tells what type an object is. Returns one of `'array'`, `'boolean'`,
-`'date'`, `'null'`, `'number'`, `'object'` `'string'` or `'undefined'`.
-
-`type(a)` `:: a -> String`
-
-args | desc
-:--- | :---
-`a`  | Object to find type for.
-
-##### type example
+##### type one arg example
 
     type 'abc'     # 'string'
     type 42        # 'number'
     type null      # 'null'
     type {}        # 'object'
     type undefined # 'undefined'
+
+##### type two arg example
+
+    type 'string', 'abc'     # true
+    type 'string', null      # false
+    type type(a), a          # true
+    type Number, 42          # true
+    type 'number', 42        # true
 
 ### Function functions
 
@@ -192,7 +187,7 @@ Same as `arity(3)`.
     arity (->)        # 0
     arity I           # 1
     arity ((a,b)->)   # 2
-    arity isType      # 2
+    arity type        # 2
     arity arity       # 2
 
     myconcat = (as....) -> [].concat as...

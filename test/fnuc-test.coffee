@@ -42,18 +42,18 @@ TYPE_PLAIN    = TYPES.filter (spec) -> spec.t == 'object' and spec.plain
 
 describe 'type', ->
 
-    TYPES.forEach (spec) ->
-        it "works for #{spec.t}#{spec.d}", -> type(spec.v).should.eql(spec.t)
-
-describe 'isType', ->
-
-    describe 'can take a string argument', ->
+    describe 'for 1 arg', ->
         TYPES.forEach (spec) ->
-            it "for type #{spec.t}#{spec.d}", -> isType(spec.t, spec.v).should.be.true
-    describe 'can take a Function argument', ->
-        TYPES.forEach (spec) ->
-            if spec.func
-                it "for type #{spec.t}#{spec.d}", -> isType(spec.func, spec.v).should.be.true
+            it "works for #{spec.t}#{spec.d}", -> type(spec.v).should.eql(spec.t)
+
+    describe 'for 2 args', ->
+        describe 'can take a string argument', ->
+            TYPES.forEach (spec) ->
+                it "for type #{spec.t}#{spec.d}", -> type(spec.t, spec.v).should.be.true
+        describe 'can take a Function argument', ->
+            TYPES.forEach (spec) ->
+                if spec.func
+                    it "for type #{spec.t}#{spec.d}", -> type(spec.func, spec.v).should.be.true
 
 describe 'isPlain', ->
 
@@ -150,13 +150,12 @@ describe 'clone', ->
     describe 'specifically', ->
 
         describe 'for arrays', ->
-
             TYPE_ARR.forEach (spec) ->
                 it "clones nested for #{spec.t}#{spec.d}", ->
                     r = clone(spec.v)
                     r.should.not.equal spec.v
                     for a, i in r
-                        if isType 'number', a
+                        if type 'number', a
                             r[i].should.equal(spec.v[i])
                         else
                             r[i].should.not.equal(spec.v[i])
@@ -168,7 +167,7 @@ describe 'clone', ->
                     r = clone(spec.v)
                     r.should.not.equal spec.v
                     for k, v of r
-                        if isType 'number', v
+                        if type 'number', v
                             v.should.equal(spec.v[k])
                         else
                             v.should.not.equal(spec.v[k])
