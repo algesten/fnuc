@@ -107,7 +107,7 @@ args | desc
 *One arg variant*|
 `a`  | Object to find type for.
 *Two arg variant*|
-`t`  | The (string|Function) type to check for.
+`t`  | The (string or Function) type to check for.
 `a`  | Object to check.
 
 type | function
