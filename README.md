@@ -1,7 +1,7 @@
 (fnuc) ->
 =========
 
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/algesten/fnuc)
+[![Build Status](https://travis-ci.org/algesten/fnuc.svg)](https://travis-ci.org/algesten/fnuc) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/algesten/fnuc)
 
 > cause i want it my way.
 
