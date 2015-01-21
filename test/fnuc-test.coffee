@@ -408,7 +408,7 @@ describe 'flip', ->
             f(2,3,12).should.equal 8
             f(12)(3)(2).should.equal 8
 
-        it 'is commutative curried functions', ->
+        it 'is commutative for curried functions', ->
             f = flip (f1 = curry (a,b,c) -> a / (b / c))
             flip(f).should.equal f1
 
