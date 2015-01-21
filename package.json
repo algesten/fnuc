@@ -16,7 +16,10 @@
     "functional",
     "programming",
     "curry",
-    "composition"
+    "composition",
+    "coffee-script",
+    "coffeescript",
+    "coffee"
   ],
   "author": "Martin Algesten",
   "license": "MIT",
