@@ -1,6 +1,6 @@
 {
   "name": "fnuc",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "yet another functional library for javascript",
   "main": "lib/fnuc.js",
   "scripts": {
