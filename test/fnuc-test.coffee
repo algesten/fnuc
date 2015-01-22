@@ -1,10 +1,15 @@
-chai   = require 'chai'
-expect = chai.expect
-chai.should()
-chai.use(require 'sinon-chai')
-{ assert, spy, mock, stub, sandbox } = require 'sinon'
+if browsertest?
+    `sinon = window.sinon`
+    `expect = window.chai.expect`
+else
+    chai   = require 'chai'
+    chai.should()
+    expect = chai.expect
+    chai.use(require 'sinon-chai')
+    sinon = require 'sinon'
+    require('../src/fnuc').installTo(global, true)
 
-require('../src/fnuc').installTo(global, true)
+{ assert, spy, mock, stub, sandbox } = sinon
 
 # String
 # Number

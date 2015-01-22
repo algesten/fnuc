@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Fnuc tests</title>
+    <link rel="stylesheet" media="all" href="../node_modules/mocha/mocha.css">
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script src="../node_modules/sinon/lib/sinon.js"></script>
+    <script src="../node_modules/sinon/lib/sinon/util/core.js"></script>
+    <script src="../node_modules/sinon/lib/sinon/extend.js"></script>
+    <script src="../node_modules/sinon/lib/sinon/typeOf.js"></script>
+    <script src="../node_modules/sinon/lib/sinon/times_in_words.js"></script>
+    <script src="../node_modules/sinon/lib/sinon/spy.js"></script>
+    <script src="../node_modules/sinon/lib/sinon/call.js"></script>
+    <script src="../node_modules/sinon/lib/sinon/behavior.js"></script>
+    <script src="../node_modules/sinon/lib/sinon/stub.js"></script>
+    <script src="../node_modules/sinon/lib/sinon/mock.js"></script>
+    <script src="../node_modules/sinon/lib/sinon/collection.js"></script>
+    <script src="../node_modules/sinon/lib/sinon/assert.js"></script>
+    <script src="../node_modules/sinon/lib/sinon/sandbox.js"></script>
+    <script src="../node_modules/sinon/lib/sinon/test.js"></script>
+    <script src="../node_modules/sinon/lib/sinon/test_case.js"></script>
+    <script src="../node_modules/sinon/lib/sinon/match.js"></script>
+    <script src="../node_modules/sinon/lib/sinon/format.js"></script>
+    <script src="../node_modules/sinon-chai/lib/sinon-chai.js"></script>
+    <script src="../lib/fnuc.js"></script>
+    <script>
+      chai.should();
+      mocha.setup('bdd');
+    </script>
+    <script>
+      F.installTo(window);
+      browsertest = true;
+    </script>
+    <script src="../lib/fnuc-test.js"></script>
+  </head>
+  <body>
+    <div id="mocha"><p><a href=".">Index</a></p></div>
+    <div id="messages"></div>
+    <div id="fixtures"></div>
+    <script>mocha.run();</script>
+  </body>
+</html>
