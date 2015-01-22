@@ -5,7 +5,7 @@
   "main": "lib/fnuc.js",
   "scripts": {
     "test": "mocha",
-    "version": "coffee -c -o lib src && uglifyjs lib/fnuc.js >lib/fnuc.min.js"
+    "compile": "coffee -m -c -o lib src && coffee -m -c -o lib test && uglifyjs lib/fnuc.js >lib/fnuc.min.js"
   },
   "repository": {
     "type": "git",
