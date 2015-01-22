@@ -1,15 +1,16 @@
+minifyNot = (f, as) -> f(as...)
 ARITY = [
-    (z) -> () -> z(arguments...)
-    (z) -> (a) -> z(arguments...)
-    (z) -> (a,b) -> z(arguments...)
-    (z) -> (a,b,c) -> z(arguments...)
-    (z) -> (a,b,c,d) -> z(arguments...)
-    (z) -> (a,b,c,d,e) -> z(arguments...)
-    (z) -> (a,b,c,d,e,f) -> z(arguments...)
-    (z) -> (a,b,c,d,e,f,g) -> z(arguments...)
-    (z) -> (a,b,c,d,e,f,g,h) -> z(arguments...)
-    (z) -> (a,b,c,d,e,f,g,h,i) -> z(arguments...)
-    (z) -> (a,b,c,d,e,f,g,h,i,j) -> z(arguments...)
+    (z) -> () -> minifyNot z, arguments
+    (z) -> (a) -> minifyNot z, arguments
+    (z) -> (a,b) -> minifyNot z, arguments
+    (z) -> (a,b,c) -> minifyNot z, arguments
+    (z) -> (a,b,c,d) -> minifyNot z, arguments
+    (z) -> (a,b,c,d,e) -> minifyNot z, arguments
+    (z) -> (a,b,c,d,e,f) -> minifyNot z, arguments
+    (z) -> (a,b,c,d,e,f,g) -> minifyNot z, arguments
+    (z) -> (a,b,c,d,e,f,g,h) -> minifyNot z, arguments
+    (z) -> (a,b,c,d,e,f,g,h,i) -> minifyNot z, arguments
+    (z) -> (a,b,c,d,e,f,g,h,i,j) -> minifyNot z, arguments
 ]
 
 # core
