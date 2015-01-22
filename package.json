@@ -1,7 +1,7 @@
 {
   "name": "fnuc",
   "version": "0.0.3",
-  "description": "yet another functional library for javascript",
+  "description": "functional library for coffeescript",
   "main": "lib/fnuc.js",
   "scripts": {
     "test": "mocha",
