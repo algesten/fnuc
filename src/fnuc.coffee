@@ -192,7 +192,7 @@ exports.installTo = (obj, force) ->
     return obj if obj.__fnuc unless force
     merge obj, exports
 
-if typeof exports == 'object'
+if typeof module == 'object'
     module.exports = exports
 else if typeof define == 'function' and define.amd
     define -> exports
