@@ -25,7 +25,7 @@ API
 [`has`](api.md#has)
 [`head`](api.md#head)
 [`index`](api.md#index)
-[`isPlain`](api.md#isplain)
+[`isplain`](api.md#isplain)
 [`join`](api.md#join)
 [`keys`](api.md#keys)
 [`last`](api.md#last)
@@ -70,23 +70,23 @@ The identity function `(x) -> x`.
 
 `:: (a) -> a`
 
-#### isPlain
+#### isplain
 
 Checks whether an object `o` is plain (created using `{}` or `new Object`).
 
-`isPlain(o)` `:: {*} -> Boolean`
+`isplain(o)` `:: {*} -> Boolean`
 
 args | desc
 :--- | :---
 `o`  | Anything to test for plain.
 
-##### isPlain example
+##### isplain example
 
 
-    isPlain null          # false
-    isPlain new Date      # false
-    isPlain {}            # true
-    isPlain a:42          # true
+    isplain null          # false
+    isplain new Date      # false
+    isplain {}            # true
+    isplain a:42          # true
 
 #### type
 

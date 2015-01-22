@@ -80,7 +80,7 @@ API
 [`has`](api.md#has)
 [`head`](api.md#head)
 [`index`](api.md#index)
-[`isPlain`](api.md#isplain)
+[`isplain`](api.md#isplain)
 [`join`](api.md#join)
 [`keys`](api.md#keys)
 [`last`](api.md#last)

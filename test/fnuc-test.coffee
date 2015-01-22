@@ -55,11 +55,11 @@ describe 'type', ->
                 if spec.func
                     it "for type #{spec.t}#{spec.d}", -> type(spec.func, spec.v).should.be.true
 
-describe 'isPlain', ->
+describe 'isplain', ->
 
     describe 'tells whether something is a plain object', ->
         TYPES.forEach (spec) ->
-            it "for type #{spec.t}#{spec.d}", -> isPlain(spec.v).should.eql !!spec.plain
+            it "for type #{spec.t}#{spec.d}", -> isplain(spec.v).should.eql !!spec.plain
 
 describe 'merge', ->
 

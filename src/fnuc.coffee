@@ -28,7 +28,7 @@ shallow = (a) ->
         r[i] = a[i] for i in [0...a.length] by 1
     else if t == 'date'
         r = new Date(a.getTime())
-    else if isPlain(a)
+    else if isplain(a)
         r = merge {}, a
     else
         throw new TypeError "Can't shallow " + a
@@ -39,13 +39,13 @@ clone = (a) ->
     s = shallow(a)
     if type 'array', s
         s[i] = clone(s[i]) for i in [0...a.length] by 1
-    else if isPlain(s)
+    else if isplain(s)
         s[k] = clone(v) for k, v of s
     return s
 
 
 # type -----------------------------
-isPlain       = (o) -> !!o && typeof o == 'object' && o.constructor == Object
+isplain       = (o) -> !!o && typeof o == 'object' && o.constructor == Object
 type          = (t, a) ->
     if arguments.length == 1
         _toString(t)[8...-1].toLowerCase()
@@ -166,7 +166,7 @@ exports = {
     shallow, clone
 
     # type
-    type, isPlain
+    type, isplain
 
     # fn
     arity, unary, binary, ternary, curry, flip, compose,
