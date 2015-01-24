@@ -107,7 +107,7 @@ args | desc
 *One arg variant*|
 `a`  | Object to find type for.
 *Two arg variant*|
-`t`  | The (string or Function) type to check for.
+`t`  | The string type to check for.
 `a`  | Object to check.
 
 type | function
@@ -135,7 +135,6 @@ type | function
     type 'string', 'abc'     # true
     type 'string', null      # false
     type type(a), a          # true
-    type Number, 42          # true
     type 'number', 42        # true
 
 ### Function functions

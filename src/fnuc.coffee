@@ -51,7 +51,6 @@ type          = (t, a) ->
     if arguments.length == 1
         _toString(t)[8...-1].toLowerCase()
     else
-        t = t.toString()[9...-20].toLowerCase() if t instanceof Function
         type(a) == t
 
 

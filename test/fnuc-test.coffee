@@ -55,10 +55,6 @@ describe 'type', ->
         describe 'can take a string argument', ->
             TYPES.forEach (spec) ->
                 it "for type #{spec.t}#{spec.d}", -> type(spec.t, spec.v).should.be.true
-        describe 'can take a Function argument', ->
-            TYPES.forEach (spec) ->
-                if spec.func
-                    it "for type #{spec.t}#{spec.d}", -> type(spec.func, spec.v).should.be.true
 
 describe 'isplain', ->
 
