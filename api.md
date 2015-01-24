@@ -100,7 +100,7 @@ With two arguments, checks whether the second argument is of the type
 specified in the first.
 
 `type(a)`   `:: a -> String`  
-`type(t,a)` `:: s|fn, a -> Boolean`
+`type(t,a)` `:: String, a -> Boolean`
 
 args | desc
 :--- | :---
