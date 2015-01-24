@@ -1,0 +1,32 @@
+{
+  "name": "fnuc",
+  "version": "0.0.4",
+  "homepage": "https://github.com/algesten/fnuc",
+  "authors": [
+    "Martin Algesten <martin@algesten.se>"
+  ],
+  "description": "functional library for coffeescript",
+  "main": "lib/fnuc.js",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test"
+  ],
+  "keywords": [
+    "functional programming",
+    "functional",
+    "programming",
+    "curry",
+    "composition",
+    "coffee-script",
+    "coffeescript",
+    "coffee"
+  ]
+}
