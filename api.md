@@ -153,16 +153,18 @@ form `f1 = arity(f,n)` where `n` is the number of arguments we want
 `f` to report (`f1.length` will equal `n`). Note that this doesn't
 stop `f1` from receiving more arguments.
 
-###### check variant
-`arity(f)`   `:: (a... -> a) -> Number`
+`arity(f)`   `:: (a... -> a) -> Number`  
+`arity(f,n)` `:: (a... -> a), n -> (a... -> a)`  
+`arity(n)(f)` `:: n -> (a... -> a) -> (a... -> a)`
 
 args | desc
 :--- | :---
+*One arg variant*|
 `f`  | Function to check arity of.
+*Two arg variant*|
+`f`  | Function to make a new function with fixed arity of.
+`n`  | The arity of the new function.
 
-###### force variant
-`arity(f,n)` `:: (a... -> a), n -> (a... -> a)`  
-`arity(n)(f)` `:: n -> (a... -> a) -> (a... -> a)`
 
 args | desc
 :--- | :---
@@ -639,7 +641,7 @@ args | desc
 Tells if an array contains a value. Same as `index(a,v) >= 0`.
 
 `contains(as,a)`  `:: [a], a -> Boolean`  
-`contains(a)(as)  `:: a -> [a] -> Boolean`
+`contains(a)(as)` `:: a -> [a] -> Boolean`
 
 args | desc
 :--- | :---
