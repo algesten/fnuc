@@ -34,7 +34,9 @@ Design philosophy:
    argument order which is clearly spelled out in this
    [stack overflow answer][stack].
 2. Less is more. fnuc provides the most used basics, not every
-   conceivable utility function.
+   conceivable utility function. Please
+   [suggest](https://github.com/algesten/fnuc/issues) functions to add
+   if anything important is missing.
 3. I don't mind OOP. fnuc focuses on functions that are somewhat
    interesting for [function composition][compo], not a functional
    purist approach where everything must be functions.
