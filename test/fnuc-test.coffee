@@ -585,3 +585,26 @@ FN_TEST.forEach (spec) ->
                         expect(spec.f(spec.as[2])(spec.as[1])(spec.as[0])).to.eql spec.eq
             it "is of arity(#{spec.ar})", ->
                 spec.f.length.should.eql spec.ar
+
+describe 'map', ->
+
+    as = split('abc', '')
+
+    it 'doesnt pass multiple args to map function', ->
+        map as, (v, i, as) ->
+            expect(i).to.be.undefined
+            expect(as).to.be.undefined
+            v
+
+describe 'fold/fold1/foldr/foldr1', ->
+
+    fs = [fold, fold1, foldr, foldr1]
+    as = [0,1,2,3]
+
+    each fs, (f) ->
+        console.log 'yes'
+        it 'doesnt pass multiple args to fold function', ->
+            f as, ((p, c, i, as) ->
+                expect(i).to.be.undefined
+                expect(as).to.be.undefined
+                p + c), 1

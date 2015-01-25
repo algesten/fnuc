@@ -693,21 +693,20 @@ is true. Same as `[...].filter`.
 #### fold
 
 Performs a [fold][fold] operation from the left with a seed
-value. Same as `[...].reduce(f, s)`
+value. Same as `[...].reduce(f, s)` but without the additional index
+or array arguments.
 
-`fold(as,f,s)`   `[b], ((a, b, i, [b]) -> a), a -> a`  
-`fold(s)(f)(as)` `a -> ((a, b, i, [b]) -> a) -> [b] -> a`
+`fold(as,f,s)`   `[b], ((a, b) -> a), a -> a`  
+`fold(s)(f)(as)` `a -> ((a, b) -> a) -> [b] -> a`
 
 args | desc
 :--- | :---
 `as` | Array to fold.
-`f`  | Folding function. Signature is `(a,b,i,as)`.
+`f`  | Folding function. Signature is `(a,b)`, no index or array.
 `s`  | Seed value.
 *folding function* |
 `a` | Value of previous fold operation or `s` for first element.
 `b` | Current value from `as`.
-`i` | Index of `b` in `as`.
-`as`| The entire `as`.
 
 ##### fold example
 
@@ -716,20 +715,19 @@ args | desc
 
 #### fold1
 
-Same as [fold](#fold) but no seed value. Same as `[...].reduce(f)`.
+Same as [fold](#fold) but no seed value. Same as `[...].reduce(f)` but
+without the additional index and array arguments.
 
-`fold1(as,f)`  `[b], ((a, b, i, [b]) -> a) -> a`  
-`fold1(f)(as)` `((a, b, i, [b]) -> a) -> [b] -> a`
+`fold1(as,f)`  `[b], ((a, b) -> a) -> a`  
+`fold1(f)(as)` `((a, b) -> a) -> [b] -> a`
 
 args | desc
 :--- | :---
 `as` | Array to fold.
-`f`  | Folding function. Signature is `(a,b,i,as)`.
+`f`  | Folding function. Signature is `(a,b)`, no index or array.
 *folding function* |
 `a` | Value of previous fold operation or first element for first iteration.
 `b` | Current value from `as` or second element for first iteration.
-`i` | Index of `b` in `as`.
-`as`| The entire `as`.
 
 ##### fold1 example
 
@@ -739,10 +737,10 @@ args | desc
 #### foldr
 
 Same as [fold](#fold) but goes right to left with a seed value. Same
-as `[...].reduceRight(f,s)`
+as `[...].reduceRight(f,s)` without the additional index or array.
 
-`foldr(as,f,s)`   `[b], ((a, b, i, [b]) -> a), a -> a`  
-`foldr(s)(f)(as)` `a -> ((a, b, i, [b]) -> a) -> [b] -> a`
+`foldr(as,f,s)`   `[b], ((a, b) -> a), a -> a`  
+`foldr(s)(f)(as)` `a -> ((a, b) -> a) -> [b] -> a`
 
 args | desc
 :--- | :---
@@ -751,10 +749,10 @@ args | desc
 #### foldr1
 
 Same as [foldr](#foldr) but no seed value. Same as
-`[...].reduceRight(f)`
+`[...].reduceRight(f)` without the additional index or array.
 
-`fold1(as,f)`  `[b], ((a, b, i, [b]) -> a) -> a`  
-`fold1(f)(as)` `((a, b, i, [b]) -> a) -> [b] -> a`
+`fold1(as,f)`  `[b], ((a, b) -> a) -> a`  
+`fold1(f)(as)` `((a, b) -> a) -> [b] -> a`
 
 args | desc
 :--- | :---
@@ -829,19 +827,18 @@ args | desc
 #### map
 
 Creates a new array of transformed values by applying a transformation
-function to each element. Same as `[...].map(f)`
+function to each element. Same as `[...].map(f)` but does not pass the
+additional index and array arguments to the transformation function.
 
-`map(as,f)`  `:: [a], ((a, i, [a]) -> b) -> [b]`  
-`map(f)(as)` `:: ((a, i, [a]) -> b) -> [a] -> [b]`
+`map(as,f)`  `:: [a], (a -> b) -> [b]`  
+`map(f)(as)` `:: ((a -> b) -> [a] -> [b]`
 
 args | desc
 :--- | :---
 `as` | Array to transform.
-`f`  | Transformation function. Signature is `(a,i,as)`.
+`f`  | Transformation function. Signature is `(a)` (no index or array).
 *transformation function* |
 `a` | Current value from `as`.
-`i` | Index of `a` in `as`.
-`as`| The entire `as`.
 
 ##### map example
 

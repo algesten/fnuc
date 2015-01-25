@@ -115,13 +115,13 @@ contains = curry (as, a) -> index(as, a) >= 0       # [a], a -> b
 concat   = (as...) -> [].concat as...
 each     = curry binary  builtin Array::forEach     # [a], fn    -> undef
 filter   = curry binary  builtin Array::filter      # [a], fn -> [a]|undef
-fold     = curry ternary builtin Array::reduce      # [a], fn, v -> *
-fold1    = curry binary  builtin Array::reduce      # [a], fn    -> *
-foldr    = curry ternary builtin Array::reduceRight # [a], fn, v -> *
-foldr1   = curry binary  builtin Array::reduceRight # [a], fn    -> *
+fold     = curry (as, f, v) -> as.reduce ((p,c) -> f(p,c)), v      # [a], fn, v -> *
+fold1    = curry (as, f) -> as.reduce ((p,c) -> f(p,c))            # [a], fn -> *
+foldr    = curry (as, f, v) -> as.reduceRight ((p,c) -> f(p,c)), v # [a], fn, v -> *
+foldr1   = curry (as, f) -> as.reduceRight ((p,c) -> f(p,c))       # [a], fn -> *
 index    = curry binary  builtin Array::indexOf     # [a], a -> n
 join     = curry binary  builtin Array::join        # [a], s -> s
-map      = curry binary  builtin Array::map         # [a], fn -> [a]
+map      = curry (as, f) -> as.map (a) -> f(a)      # [a], fn -> [a]
 reverse  = unary builtin Array::reverse             # [a] -> [a]
 sort     = curry binary  builtin Array::sort        # [a] -> [a]
 uniq     = (a) -> return a unless a; a.filter (v, i) -> a.indexOf(v) == i # [a] -> [a]
