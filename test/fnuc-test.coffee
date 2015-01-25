@@ -358,6 +358,10 @@ describe 'curry', ->
             div2 = divt(2)
             div2(80,8).should.eql 20
 
+        it 'doesnt splice in more arguments for a partially applied', ->
+            div2 = divt(2)
+            div2(100,25,4).should.eql 8
+
 describe 'flip', ->
 
     describe '(a,b) ->', ->

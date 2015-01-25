@@ -76,8 +76,9 @@ binary  = arity 2
 ternary = arity 3
 
 ncurry = (n, f, as=[]) ->
-    nf = arity(n - as.length) (bs...) ->
-        cs = bs.concat as
+    l = n - as.length
+    nf = arity(l) (bs...) ->
+        cs = bs[0...l].concat as
         if cs.length < n then ncurry n, f, cs else f cs...
     nf._curry = -> rpartial f, as...
     return nf
