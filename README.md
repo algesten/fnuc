@@ -80,6 +80,7 @@ API
 [`curry`](api.md#curry)
 [`div`](api.md#div)
 [`each`](api.md#each)
+[`eq`](api.md#eq)
 [`filter`](api.md#filter)
 [`flip`](api.md#flip)
 [`fold1`](api.md#fold1)

@@ -570,6 +570,12 @@ FN_TEST = [
     {n:'lt',     s:'a, a -> a',      f:lt,     ar:2, as:[12,12],             eq:false}
     {n:'lte',    s:'a, a -> a',      f:lte,    ar:2, as:[12,12],             eq:true}
     {n:'lte',    s:'a, a -> a',      f:lte,    ar:2, as:[13,12],             eq:false}
+    {n:'eq',     s:'a, a -> b',      f:eq,     ar:2, as:[0,0],               eq:true}
+    {n:'eq',     s:'a, a -> b',      f:eq,     ar:2, as:[1,0],               eq:false}
+    {n:'eq',     s:'a, a -> b',      f:eq,     ar:2, as:[{},{}],             eq:false}
+    {n:'eq',     s:'a... -> b',      f:eq,     ar:2, as:[1,1,2],             eq:false}
+    {n:'eq',     s:'a... -> b',      f:eq,     ar:2, as:[false,false,false], eq:true}
+    {n:'eq',     s:'a... -> b',      f:eq,     ar:2, as:[0,0,1],             eq:false}
 ]
 
 FN_TEST.forEach (spec) ->

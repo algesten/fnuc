@@ -13,6 +13,7 @@ API
 [`curry`](api.md#curry)
 [`div`](api.md#div)
 [`each`](api.md#each)
+[`eq`](api.md#eq)
 [`filter`](api.md#filter)
 [`flip`](api.md#flip)
 [`fold1`](api.md#fold1)
@@ -1085,6 +1086,21 @@ args | desc
 `b`  | Divisor.
 *Variadic*|
 `as` | Variable number of arguments. I.e. `div(a,b,c)` is `a / b / c`.
+
+#### eq
+
+Equality test. `a` equal to `b`, strict (as in `===` in javascript-terms).
+
+`eq(a,b)`   `:: a, a -> a`  
+`eq(b)(a)`  `:: a -> a -> a`  
+`eq(as...)` `:: a... -> a`
+
+args | desc
+:--- | :---
+`a`  | Argument 1.
+`b`  | Argument 2.
+*Variadic*|
+`as` | Variable number of arguments. I.e. eq(a,b,c)` is `a == b == c`.
 
 #### gt
 

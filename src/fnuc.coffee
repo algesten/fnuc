@@ -157,6 +157,8 @@ gt       = curry (a,b) -> a > b
 gte      = curry (a,b) -> a >= b
 lt       = curry (a,b) -> a < b
 lte      = curry (a,b) -> a <= b
+_ = {}
+eq       = curry binary (as...) -> as.reduce((a,b) -> if a == b then a else _) != _
 
 ################################
 exports = {
@@ -183,7 +185,7 @@ exports = {
     split, match, replace, search, trim, ucase, lcase
 
     # maths
-    add, sub, mul, div, mod, min, max, gt, gte, lt, lte
+    add, sub, mul, div, mod, min, max, gt, gte, lt, lte, eq
 
 }
 
