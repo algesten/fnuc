@@ -158,8 +158,11 @@ gt       = curry (a,b) -> a > b
 gte      = curry (a,b) -> a >= b
 lt       = curry (a,b) -> a < b
 lte      = curry (a,b) -> a <= b
-_ = {}
+_ = {} # internal placeholder
 eq       = curry binary (as...) -> as.reduce((a,b) -> if a == b then a else _) != _
+and_     = curry binary (as...) -> (bs...) -> as.reduce ((a,b) -> a and b(bs...)), true
+or_      = curry binary (as...) -> (bs...) -> as.reduce ((a,b) -> a or  b(bs...)), false
+not_     = curry binary (as..., f) -> !f(as...)
 
 ################################
 exports = {
@@ -186,9 +189,13 @@ exports = {
     split, match, replace, search, trim, ucase, lcase
 
     # maths
-    add, sub, mul, div, mod, min, max, gt, gte, lt, lte, eq
+    add, sub, mul, div, mod, min, max, gt, gte, lt, lte, eq, and_, or_, not_
 
 }
+
+exports.and = exports.and_
+exports.or = exports.or_
+exports.not = exports.not_
 
 exports.installTo = (obj, force) ->
     return obj if obj.__fnuc unless force

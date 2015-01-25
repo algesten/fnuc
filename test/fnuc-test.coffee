@@ -7,7 +7,8 @@ else
     expect = chai.expect
     chai.use(require 'sinon-chai')
     sinon = require 'sinon'
-    require('../src/fnuc').installTo(global, true)
+    F = require('../src/fnuc')
+    F.installTo(global, true)
 
 { assert, spy, mock, stub, sandbox } = sinon
 
@@ -580,6 +581,8 @@ FN_TEST = [
     {n:'eq',     s:'a... -> b',      f:eq,     ar:2, as:[1,1,2],             eq:false}
     {n:'eq',     s:'a... -> b',      f:eq,     ar:2, as:[false,false,false], eq:true}
     {n:'eq',     s:'a... -> b',      f:eq,     ar:2, as:[0,0,1],             eq:false}
+    {n:'not',    s:'a..., a -> b',   f:not_,   ar:2, as:[false, I],            eq:true}
+    {n:'not',    s:'a..., a -> b',   f:not_,   ar:2, as:[0,1,(a,b) -> b == 1], eq:false}
 ]
 
 FN_TEST.forEach (spec) ->
@@ -612,9 +615,96 @@ describe 'fold/fold1/foldr/foldr1', ->
     as = [0,1,2,3]
 
     each fs, (f) ->
-        console.log 'yes'
         it 'doesnt pass multiple args to fold function', ->
             f as, ((p, c, i, as) ->
                 expect(i).to.be.undefined
                 expect(as).to.be.undefined
                 p + c), 1
+
+describe 'and', ->
+
+    gt10 = even = lt102 = null
+
+    beforeEach ->
+        gt10  = spy gt(10)
+        even  = spy (n) -> n % 2 == 0
+        lt102 = spy lt(102)
+
+    it 'is of arity(2)', ->
+        arity(and_).should.eql 2
+
+    it 'wraps two functions f, g and invokes both with &&', ->
+        f = and_(gt10, even)
+        f(100, 42).should.eql true
+        gt10.should.have.been.calledOnce
+        gt10.should.have.been.calledWith 100, 42
+        even.should.have.been.calledOnce
+        even.should.have.been.calledWith 100, 42
+        f(8).should.eql false
+
+    it 'wraps moar functions f, g, h and invokes both with &&', ->
+        f = and_(gt10, even, lt102)
+        f(100,42).should.eql true
+        gt10.should.have.been.calledOnce
+        gt10.should.have.been.calledWith 100, 42
+        even.should.have.been.calledOnce
+        even.should.have.been.calledWith 100, 42
+        lt102.should.have.been.calledOnce
+        lt102.should.have.been.calledWith 100, 42
+        f(102).should.eql false
+
+    it 'is aliased', ->
+        F.and.should.eql F.and_
+
+describe 'or', ->
+
+    gt10 = even = lt102 = null
+
+    beforeEach ->
+        gt10  = spy gt(10)
+        even  = spy (n) -> n % 2 == 0
+        lt102 = spy lt(102)
+
+    it 'is of arity(2)', ->
+        arity(or_).should.eql 2
+
+    it 'wraps two functions f, g and invokes both with ||', ->
+        f = or_(gt10, even)
+        f(8, 42).should.eql true
+        gt10.should.have.been.calledOnce
+        gt10.should.have.been.calledWith 8, 42
+        even.should.have.been.calledOnce
+        even.should.have.been.calledWith 8, 42
+        f(9).should.eql false
+
+    it 'wraps moar functions f, g, h and invokes both with ||', ->
+        f = or_(gt10, even, lt102)
+        f(9,42).should.eql true
+        gt10.should.have.been.calledOnce
+        gt10.should.have.been.calledWith 9, 42
+        even.should.have.been.calledOnce
+        even.should.have.been.calledWith 9, 42
+        lt102.should.have.been.calledOnce
+        lt102.should.have.been.calledWith 9, 42
+
+    it 'is aliased', ->
+        F.or.should.eql F.or_
+
+describe 'not', ->
+
+    gt10 = null
+
+    beforeEach ->
+        gt10  = spy gt(10)
+
+    it 'is of arity(2)', ->
+        arity(not_).should.eql 2
+
+    it 'wraps a function and nots the output', ->
+        f = not_(gt10)
+        f(12).should.eql false
+        gt10.should.have.been.calledOnce
+        gt10.should.have.been.calledWith 12
+
+    it 'is aliased', ->
+        F.not.should.eql F.not_

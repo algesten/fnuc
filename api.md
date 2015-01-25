@@ -4,6 +4,7 @@ API
 [`I`](api.md#i)
 [`add`](api.md#add)
 [`all`](api.md#all)
+[`and`](api.md#and)
 [`any`](api.md#any)
 [`arity`](api.md#arity)
 [`clone`](api.md#clone)
@@ -42,6 +43,8 @@ API
 [`mixin`](api.md#mixin)
 [`mod`](api.md#mod)
 [`mul`](api.md#mul)
+[`not`](api.md#not)
+[`or`](api.md#or)
 [`replace`](api.md#replace)
 [`reverse`](api.md#reverse)
 [`rpartial`](api.md#rpartial)
@@ -1057,6 +1060,33 @@ args | desc
 
 Functions for math.
 
+#### and
+
+Returns a function that wraps two (or more) functions and performs
+logical and on the result. For coffeescript this function is aliased
+as `and_`.
+
+`and_(f1,f2)`   `:: (a... -> Boolean), (a... -> Boolean) -> Boolean`  
+`and_(f2)(f1)`  `:: (a... -> Boolean) -> (a... -> Boolean) -> Boolean`  
+`and_(fs...)`   `:: (a... -> Boolean)... -> Boolean`
+
+args | desc
+:--- | :---
+`f1`  | First function to wrap.
+`f1`  | Second function to wrap.
+*Variadic*|
+`fs` | Variable number of functions to wrap.
+
+##### and example
+
+    gt10  = gt(10)
+    even  = (a) -> a % 2 == 0
+    lt100 = lt(100)
+    f     = and_(gt10, even)
+    f(102)                        # true
+    g     = and_(gt10, even, lt100)
+    g(102)                        # false
+
 #### add
 
 Adds two (or more) numbers or strings together.
@@ -1209,6 +1239,50 @@ args | desc
 `b`  | Second factor in `a * b`.
 *Variadic*|
 `as` | Variable number of arguments. I.e. `mul(a,b,c)` is `a * b * c`.
+
+#### not
+
+Returns a function does a logical not on the result of the initial
+function. For coffeescript this function is aliased as `not_`.
+
+`not_(f)`   `:: (a... -> Boolean), -> Boolean`
+
+args | desc
+:--- | :---
+`f`  | The function to not.
+
+##### not example
+
+    even  = (a) -> a % 2 == 0
+    odd   = not_(even)
+    odd(11)            # true
+
+#### or
+
+Returns a function that wraps two (or more) functions and performs
+logical or on the result. For coffeescript this function is aliased
+as `or_`.
+
+`or_(f1,f2)`   `:: (a... -> Boolean), (a... -> Boolean) -> Boolean`  
+`or_(f2)(f1)`  `:: (a... -> Boolean) -> (a... -> Boolean) -> Boolean`  
+`or_(fs...)`   `:: (a... -> Boolean)... -> Boolean`
+
+args | desc
+:--- | :---
+`f1`  | First function to wrap.
+`f1`  | Second function to wrap.
+*Variadic*|
+`fs` | Variable number of functions to wrap.
+
+##### or example
+
+    gt10  = gt(10)
+    even  = (a) -> a % 2 == 0
+    lt100 = lt(100)
+    f     = or_(gt10, even)
+    f(102)                        # true
+    g     = or_(gt10, even, lt100)
+    g(102)                        # false
 
 #### sub
 
