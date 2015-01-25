@@ -5,6 +5,11 @@
 
 > cause i want it my way.
 
+fnuc is a library for [functional programming][funcp] in coffeescript
+(and javascript). The reason for providing the "standard" javascript
+methods as pure functions is to facilitate
+[functional composition][compo] and [higher order functions][highf].
+
 ### Installing with NPM
 
 ```bash`
@@ -147,7 +152,8 @@ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
+[funcp]: https://en.wikipedia.org/wiki/Functional_programming
+[highf]: https://en.wikipedia.org/wiki/Higher-order_function
 [princ]: http://en.wikipedia.org/wiki/Principle_of_least_astonishment
 [stack]: http://stackoverflow.com/questions/25674596/#25720884
 [curry]: https://en.wikipedia.org/wiki/Currying
