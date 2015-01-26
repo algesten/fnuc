@@ -22,12 +22,12 @@ Inject into global
 
 Or use it library style with a prefix:
 
-    f = require `fnuc` # all functions under f
+    F = require `fnuc`  # all functions under F
 
 ### Compatibility
 
 Tested on IE10+, Chrome 38+, Firefox 34+, Safari 7+. IE9 did not pass
-all tests since chai should style is unsupported on IE9.
+all tests since chai "should style" is unsupported on IE9.
 
 About
 -----
