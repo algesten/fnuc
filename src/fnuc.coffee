@@ -164,8 +164,18 @@ and_     = curry binary (as...) -> (bs...) -> as.reduce ((a,b) -> a and b(bs...)
 or_      = curry binary (as...) -> (bs...) -> as.reduce ((a,b) -> a or  b(bs...)), false
 not_     = curry binary (as..., f) -> !f(as...)
 
+
+# Make a function chainable off Function::
+chainable = (d, f) ->
+    Object.defineProperty Function::, d,
+        get: -> p = this; curry arity(arity(f) - 1) (as...) -> sequence(p, f(as...))
+
+
 ################################
 exports = {
+
+    chainable
+
     __fnuc: true # identifier
 
     # generic
