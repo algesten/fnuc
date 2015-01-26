@@ -113,7 +113,7 @@ tap      = curry (a, f) -> f(a); a                  # a, fn -> a
 all      = curry binary  builtin Array::every       # [a], fn -> Boolean
 any      = curry binary  builtin Array::some        # [a], fn -> Boolean
 contains = curry (as, a) -> index(as, a) >= 0       # [a], a -> b
-concat   = (as...) -> [].concat as...
+concat   = curry binary (as...) -> [].concat as...
 each     = curry binary  builtin Array::forEach     # [a], fn    -> undef
 filter   = curry binary  builtin Array::filter      # [a], fn -> [a]|undef
 fold     = curry (as, f, v) -> as.reduce ((p,c) -> f(p,c)), v      # [a], fn, v -> *
