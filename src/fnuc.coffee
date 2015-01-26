@@ -166,15 +166,13 @@ not_     = curry binary (as..., f) -> !f(as...)
 
 
 # Make a function chainable off Function::
-chainable = (d, f) ->
-    Object.defineProperty Function::, d,
+chainable = (name, f) ->
+    Object.defineProperty Function::, name,
         get: -> p = this; curry arity(arity(f) - 1) (as...) -> sequence(p, f(as...))
 
 
 ################################
 exports = {
-
-    chainable
 
     __fnuc: true # identifier
 
@@ -186,7 +184,7 @@ exports = {
 
     # fn
     arity, unary, binary, ternary, curry, flip, compose,
-    sequence, I, ident, lpartial, rpartial, tap
+    sequence, I, ident, lpartial, rpartial, tap, chainable
 
     # object
     merge, mixin, has, get, set, keys, values
@@ -199,7 +197,8 @@ exports = {
     split, match, replace, search, trim, ucase, lcase
 
     # maths
-    add, sub, mul, div, mod, min, max, gt, gte, lt, lte, eq, and_, or_, not_
+    add, sub, mul, div, mod, min, max, gt, gte, lt, lte, eq, and_,
+    or_, not_
 
 }
 
@@ -207,9 +206,26 @@ exports.and = exports.and_
 exports.or = exports.or_
 exports.not = exports.not_
 
+CHAINABLE = ['clone', 'shallow', 'flip', 'tap', 'has', 'get', 'set',
+    'keys', 'values', 'concat', 'head', 'tail', 'last', 'fold',
+    'fold1', 'foldr', 'foldr1', 'each', 'map', 'filter', 'all', 'any',
+    'join', 'reverse', 'sort', 'index', 'contains', 'uniq', 'split',
+    'match', 'replace', 'search', 'trim', 'ucase', 'lcase', 'add',
+    'sub', 'mul', 'div', 'mod', 'min', 'max', 'gt', 'gte', 'lt',
+    'lte', 'eq', 'and', 'or', 'not']
+
+# function to install all chainables on Function::
+exports.chainable = ->
+    each CHAINABLE, (name) -> chainable name, exports[name]
+    exports
+
 exports.installTo = (obj, force) ->
     return obj if obj.__fnuc unless force
-    merge obj, exports
+    tutti = shallow exports
+    delete tutti.installTo
+    tutti.chainable = chainable
+    merge obj, tutti
+    exports
 
 if typeof module == 'object'
     module.exports = exports
