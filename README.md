@@ -20,6 +20,10 @@ Inject into global
 
     require('fnuc').installTo(global)
 
+Enable chainables (modifies `Function.prototype`)
+
+    require('./src/fnuc').installTo(global).installChainable()
+
 Or use it library style with a prefix:
 
     F = require `fnuc`  # all functions under F
@@ -66,6 +70,10 @@ Other least astonished variants that are *not in fnuc*:
     a.div b      # infix coffeescript style
 
 ### Chainable sequencing
+
+Note to install builtins on `Function.prototype` do:
+
+    require('./src/fnuc').installChainable()
 
 Most functions in fnuc are [chainable](api.md#chainable). This means
 as an alternative to [`sequence`](api.md#sequence) and

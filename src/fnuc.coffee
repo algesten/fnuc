@@ -222,7 +222,7 @@ CHAINABLE = ['clone', 'shallow', 'flip', 'tap', 'has', 'get', 'set',
     'lte', 'eq', 'and', 'or', 'not']
 
 # function to install all chainables on Function::
-exports.chainable = ->
+exports.installChainable = ->
     each CHAINABLE, (name) -> chainable name, exports[name]
     exports
 
@@ -230,7 +230,7 @@ exports.installTo = (obj, force) ->
     return obj if obj.__fnuc unless force
     tutti = shallow exports
     delete tutti.installTo
-    tutti.chainable = chainable
+    delete tutti.installChainable
     merge obj, tutti
     exports
 
