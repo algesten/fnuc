@@ -85,6 +85,7 @@ ncurry = (n, f, as=[]) ->
 
 curry = (f) ->
     n = arity(f)
+    return f if (n < 2)
     nf = arity(n) (as...) -> if as.length < n then ncurry n, f, as else f as...
     nf._curry = -> f
     return nf
