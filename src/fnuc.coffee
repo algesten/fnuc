@@ -168,8 +168,14 @@ not_     = curry binary (as..., f) -> !f(as...)
 
 # Make a function chainable off Function::
 chainable = (name, f) ->
-    Object.defineProperty Function::, name,
-        get: -> p = this; curry arity(arity(f) - 1) (as...) -> sequence(p, f(as...))
+    n = arity(f)
+    throw new Error("No chainable for arity 0") if n < 1
+    Object.defineProperty Function::, name, get: ->
+        p = this
+        if n == 1
+            sequence(p, f)
+        else
+            curry arity(n - 1) (as...) -> sequence(p, uncurry(f)(as...))
 
 
 ################################
