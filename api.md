@@ -204,6 +204,27 @@ Same as `arity(3)`.
     myconcat2 1, 2    # [1,2]
     myconcat2 1, 2, 3 # [1,2,3] SURPRISE! (or not)
 
+#### chainable
+
+Utility method to make a function chainable of
+`Function.prototype`. The function will be curried up to its arity
+less one, leaving one value for the function chain.
+
+`chainable(s,f)` `:: String, (a... -> a) -> null`
+
+args | desc
+:--- | :---
+`s`  | The string name of the function. Will be used as `Function::[s]`
+`f`  | The function to make chainable.
+
+##### chainable example
+
+    f = (a,b) -> if a == 42 then b else 0
+    chainable 'guard42', f        # attaches and curries
+    g = div(2).guard42(17)
+    g(100)                        # 0
+    g(84)                         # 17
+
 #### compose
 
 Makes a composition function out of a variable number of functions

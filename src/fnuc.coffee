@@ -175,7 +175,8 @@ chainable = (name, f) ->
         if n == 1
             sequence(p, f)
         else
-            curry arity(n - 1) (as...) -> sequence(p, uncurry(f)(as...))
+            curry arity(n - 1) (as...) -> sequence(p, f(as...))
+    null
 
 
 ################################
@@ -227,7 +228,7 @@ exports.installChainable = ->
     exports
 
 exports.installTo = (obj, force) ->
-    return obj if obj.__fnuc unless force
+    return exports if obj.__fnuc unless force
     tutti = shallow exports
     delete tutti.installTo
     delete tutti.installChainable
