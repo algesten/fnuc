@@ -289,7 +289,8 @@ curry.
 Flipping also works for partially applied curried functions.
 
 `flip(f)` `:: (a, b, ..., x, y -> z) -> (y, x, ..., b, a -> z)`  
-`flip(f)` `:: (y -> x -> ... -> b -> a -> z) -> (a -> b -> ... -> x -> y -> z)`
+`flip(f)` `:: (y -> x -> ... -> b -> a -> z) -> (a -> b -> ... -> x -> y -> z)`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -389,7 +390,8 @@ and returns the original value. The mother of all side effects.
 `tap(4,div(10))` divides 4 by 10 and ignores that result, returns 4.
 
 `tap(a,f)`  `:: a, (a -> a) -> a`  
-`tap(f)(a)` `:: (a -> a) -> a -> a`
+`tap(f)(a)` `:: (a -> a) -> a -> a`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -414,7 +416,8 @@ Deep clones a value. The value can be an `object`, `array`, `date`,
 only thing that can't be cloned is a non-plain object (other than
 date).
 
-`clone(o)` `:: * -> *`
+`clone(o)` `:: * -> *`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -433,7 +436,8 @@ Gets the property value from an object, `get o, 'bar'` gives the value
 of `o.bar`
 
 `get(o,k)`  `:: {k,v}, k -> v`  
-`get(k)(o)` `:: k -> {k,v} -> v`
+`get(k)(o)` `:: k -> {k,v} -> v`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -452,7 +456,8 @@ Tells whether an object has a property. `has o, 'bar'` is the same as
 `o.hasOwnProperty('bar')`.
 
 `has(o,k)`  `:: {k,v}, k -> Boolean`  
-`has(k)(o)` `:: k -> {k,v} -> Boolean`
+`has(k)(o)` `:: k -> {k,v} -> Boolean`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -469,7 +474,8 @@ args | desc
 
 Makes an array of the keys of an object. `keys o` is the same as `Object.keys(o)`.
 
-`keys(o)` `:: {k:v} -> [k]`
+`keys(o)` `:: {k:v} -> [k]`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -521,7 +527,8 @@ args | desc
 Sets a property of an object and returns the same object.
 
 `set(o,k,v)`   `:: {k:v}, k, v -> {k:v}`  
-`set(v)(k)(o)` `:: v -> k -> {k:v} -> {k:v}`
+`set(v)(k)(o)` `:: v -> k -> {k:v} -> {k:v}`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -545,7 +552,8 @@ Makes a shallow copy of the given argument. The argument can be an
 `null` or `undefined`. However shallowness is only defined for `array`
 and `object`.
 
-`shallow(o)` `:: * -> *`
+`shallow(o)` `:: * -> *`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -562,7 +570,8 @@ args | desc
 
 Makes an array of the values of an object.
 
-`values(o)` `:: {k:v} -> [v]`
+`values(o)` `:: {k:v} -> [v]`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -583,7 +592,8 @@ Tests if a condition is fulfilled for all elements of an array. Same
 as `[...].every`.
 
 `all(as,f)`  `:: [a], (a -> Boolean) -> Boolean`  
-`all(f)(as)` `:: (a -> Boolean) -> [a] -> Boolean`
+`all(f)(as)` `:: (a -> Boolean) -> [a] -> Boolean`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -604,7 +614,8 @@ Tests if a condition is fulfilled for any element of an array. Same as
 `[...].some`.
 
 `any(as,f)`  `:: [a], (a -> Boolean) -> Boolean`  
-`any(f)(as)` `:: (a -> Boolean) -> [a] -> Boolean`
+`any(f)(as)` `:: (a -> Boolean) -> [a] -> Boolean`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -628,7 +639,8 @@ has the same quirks as `Array::concat`:
 2. Joins a mix of array and values to one array.
 3. Joins plain values to one array.
 
-`concat(as...)` `:: [a], a, ... -> [a]`
+`concat(as...)` `:: [a], a, ... -> [a]`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -645,7 +657,8 @@ args | desc
 Tells if an array contains a value. Same as `index(a,v) >= 0`.
 
 `contains(as,a)`  `:: [a], a -> Boolean`  
-`contains(a)(as)` `:: a -> [a] -> Boolean`
+`contains(a)(as)` `:: a -> [a] -> Boolean`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -665,7 +678,8 @@ Performs side effects for each element of an array without altering
 the array or returning anything useful. Same as `[...].forEach`
 
 `each(as,f)`  `:: [a], (a -> *) -> undefined`  
-`each(f)(as)` `:: (a -> *) -> [a] -> undefined`
+`each(f)(as)` `:: (a -> *) -> [a] -> undefined`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -685,7 +699,8 @@ Creates a new list containing only elements for which a test function
 is true. Same as `[...].filter`.
 
 `filter(as,f)`  `:: [a], (a -> Boolean) -> [a]`  
-`filter(f)(as)` `:: (a -> Boolean) -> [a] -> [a]`
+`filter(f)(as)` `:: (a -> Boolean) -> [a] -> [a]`  
+`chainable`
 
 ##### filter example
 
@@ -701,7 +716,8 @@ value. Same as `[...].reduce(f, s)` but without the additional index
 or array arguments.
 
 `fold(as,f,s)`   `[b], ((a, b) -> a), a -> a`  
-`fold(s)(f)(as)` `a -> ((a, b) -> a) -> [b] -> a`
+`fold(s)(f)(as)` `a -> ((a, b) -> a) -> [b] -> a`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -723,7 +739,8 @@ Same as [fold](#fold) but no seed value. Same as `[...].reduce(f)` but
 without the additional index and array arguments.
 
 `fold1(as,f)`  `[b], ((a, b) -> a) -> a`  
-`fold1(f)(as)` `((a, b) -> a) -> [b] -> a`
+`fold1(f)(as)` `((a, b) -> a) -> [b] -> a`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -744,7 +761,8 @@ Same as [fold](#fold) but goes right to left with a seed value. Same
 as `[...].reduceRight(f,s)` without the additional index or array.
 
 `foldr(as,f,s)`   `[b], ((a, b) -> a), a -> a`  
-`foldr(s)(f)(as)` `a -> ((a, b) -> a) -> [b] -> a`
+`foldr(s)(f)(as)` `a -> ((a, b) -> a) -> [b] -> a`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -756,7 +774,8 @@ Same as [foldr](#foldr) but no seed value. Same as
 `[...].reduceRight(f)` without the additional index or array.
 
 `fold1(as,f)`  `[b], ((a, b) -> a) -> a`  
-`fold1(f)(as)` `((a, b) -> a) -> [b] -> a`
+`fold1(f)(as)` `((a, b) -> a) -> [b] -> a`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -766,7 +785,8 @@ args | desc
 
 Gets the head value of an array.
 
-`head(as)` `:: [a] -> a|undefined`
+`head(as)` `:: [a] -> a|undefined`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -783,7 +803,8 @@ Tells the index of a value in an array or -1 if not found. Same as
 `[...].indexOf(a)`. `undefined` for empty list.
 
 `index(as,a)`  `:: [a], a -> Number`  
-`index(a)(as)` `:: a -> [a] -> Number`
+`index(a)(as)` `:: a -> [a] -> Number`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -801,7 +822,8 @@ Creates a string from a list by inserting a given string in between
 each element. Same as `[...].join(s)`
 
 `join(as,s)`  `:: [a], s -> String`  
-`join(s)(as)` `:: s -> [a] -> String`
+`join(s)(as)` `:: s -> [a] -> String`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -817,7 +839,8 @@ args | desc
 
 Gets the last value of an array. `undefined` for empty list.
 
-`last(as)`  `:: [a] -> a|undefined`
+`last(as)`  `:: [a] -> a|undefined`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -835,7 +858,8 @@ function to each element. Same as `[...].map(f)` but does not pass the
 additional index and array arguments to the transformation function.
 
 `map(as,f)`  `:: [a], (a -> b) -> [b]`  
-`map(f)(as)` `:: ((a -> b) -> [a] -> [b]`
+`map(f)(as)` `:: ((a -> b) -> [a] -> [b]`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -855,7 +879,8 @@ args | desc
 
 Reverses the array. Same as `[...].reverse()`
 
-`reverse(as)` `:: [a] -> [a]`
+`reverse(as)` `:: [a] -> [a]`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -880,7 +905,8 @@ Specifically if `(a1,a2)` returns something `< 0`, `(a2,a1)` must
 returns something `> 0`.
 
 `sort(as,f)`  `:: [a], (a, a -> Number) -> [a]`  
-`sort(f)(as)` `:: (a, a -> Number) -> [a] -> [a]`
+`sort(f)(as)` `:: (a, a -> Number) -> [a] -> [a]`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -903,7 +929,8 @@ args | desc
 The tail of a list, that is, every element apart from the first. The
 tail of `[]` is `[]`.
 
-`tail(as)`  `:: [a] -> [a]`
+`tail(as)`  `:: [a] -> [a]`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -919,7 +946,8 @@ args | desc
 Creates an array where every element occurs only once (given `==`
 equality).
 
-`uniq(as)` `:: [a] -> [a]`
+`uniq(as)` `:: [a] -> [a]`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -937,7 +965,8 @@ Functions operating on strings.
 
 Turns the given string to lowercase. Same as `s.toLowerCase()`
 
-`lcase(s)`  `:: s -> s`
+`lcase(s)`  `:: s -> s`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -953,7 +982,8 @@ Matches a regexp in a string. Same as `s1.match(s2)`. The value
 returned is a special regexp match object.
 
 `match(s,m)`  `:: s, RegExp -> [a]|null`  
-`match(m)(s)` `:: RegExp -> s -> [a]|null`
+`match(m)(s)` `:: RegExp -> s -> [a]|null`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -972,7 +1002,8 @@ Returns a new string with occurences of a matching string/regexp with
 another string. Same as `s1.replace(s2,s3)`
 
 `replace(s,m,r)`   `:: s, s|RegExp, s -> s`  
-`replace(r)(m)(s)` `:: s -> s|RegExp -> s -> s`
+`replace(r)(m)(s)` `:: s -> s|RegExp -> s -> s`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -992,7 +1023,8 @@ Searches the string for a given regexp and returns the index of the
 match. Same as `s.search(m)`.
 
 `search(s,m)`  `:: s, RegExp -> Number`  
-`search(m)(s)` `:: RegExp -> s -> Number`
+`search(m)(s)` `:: RegExp -> s -> Number`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1014,7 +1046,8 @@ Splits a string into an array divided on a separator. Same as
 `s1.split(s2)`
 
 `split(s,e)`  `:: s, s|RegExp -> [s]`  
-`split(e)(s)` `:: s|RegExp -> s -> [s]`
+`split(e)(s)` `:: s|RegExp -> s -> [s]`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1031,7 +1064,8 @@ args | desc
 
 Trims whitespace off start and end of a string. Same as `s.trim()`
 
-`trim(s)`  `:: s -> s`
+`trim(s)`  `:: s -> s`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1045,7 +1079,8 @@ args | desc
 
 Turns the given string to uppercase. Same as `s.toUpperCase()`
 
-`ucase(s)` `:: s -> s`
+`ucase(s)` `:: s -> s`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1068,7 +1103,8 @@ as `and_`.
 
 `and_(f1,f2)`   `:: (a... -> Boolean), (a... -> Boolean) -> Boolean`  
 `and_(f2)(f1)`  `:: (a... -> Boolean) -> (a... -> Boolean) -> Boolean`  
-`and_(fs...)`   `:: (a... -> Boolean)... -> Boolean`
+`and_(fs...)`   `:: (a... -> Boolean)... -> Boolean`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1093,7 +1129,8 @@ Adds two (or more) numbers or strings together.
 
 `add(a,b)`   `:: a, a -> a`  
 `add(b)(a)`  `:: a -> a -> a`  
-`add(as...)` `:: a... -> a`
+`add(as...)` `:: a... -> a`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1108,7 +1145,8 @@ Division. `a` divided by `b`.
 
 `div(a,b)`   `:: a, a -> a`  
 `div(b)(a)`  `:: a -> a -> a`  
-`div(as...)` `:: a... -> a`
+`div(as...)` `:: a... -> a`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1123,7 +1161,8 @@ Equality test. `a` equal to `b`, strict (as in `===` in javascript-terms).
 
 `eq(a,b)`   `:: a, a -> a`  
 `eq(b)(a)`  `:: a -> a -> a`  
-`eq(as...)` `:: a... -> a`
+`eq(as...)` `:: a... -> a`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1137,7 +1176,8 @@ args | desc
 Greater than. `a` greater than `b`.
 
 `gt(a,b)`  `:: a, a -> Boolean`  
-`gt(b)(a)` `:: a -> a -> Boolean`
+`gt(b)(a)` `:: a -> a -> Boolean`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1149,7 +1189,8 @@ args | desc
 Greater than or equals. `a` greater than or equals `b`.
 
 `gte(a,b)`  `:: a, a -> Boolean`  
-`gte(b)(a)` `:: a -> a -> Boolean`
+`gte(b)(a)` `:: a -> a -> Boolean`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1161,7 +1202,8 @@ args | desc
 Less than. `a` less than `b`.
 
 `lt(a,b)`  `:: a, a -> Boolean`  
-`lt(b)(a)` `:: a -> a -> Boolean`
+`lt(b)(a)` `:: a -> a -> Boolean`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1173,7 +1215,8 @@ args | desc
 Less than or equals. `a` less than or equals `b`.
 
 `lte(a,b)`  `:: a, a -> Boolean`  
-`lte(b)(a)` `:: a -> a -> Boolean`
+`lte(b)(a)` `:: a -> a -> Boolean`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1186,7 +1229,8 @@ The max of two (or more) arguments. Same as `Math.max(a,b)`.
 
 `max(a,b)`   `:: a, a -> Boolean`  
 `max(b)(a)`  `:: a -> a -> Boolean`  
-`max(as...)` `:: a... -> Boolean`
+`max(as...)` `:: a... -> Boolean`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1201,7 +1245,8 @@ The min of two (or more) arguments. Same as `Math.min(a,b)`.
 
 `min(a,b)`   `:: a, a -> Boolean`  
 `min(b)(a)`  `:: a -> a -> Boolean`  
-`min(as...)` `:: a... -> Boolean`
+`min(as...)` `:: a... -> Boolean`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1216,7 +1261,8 @@ Modulus (javascript style). `a` modulus `b`.
 
 `mod(a,b)`   `:: a, a -> a`  
 `mod(b)(a)`  `:: a -> a -> a`  
-`mod(as...)` `:: a... -> a`
+`mod(as...)` `:: a... -> a`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1231,7 +1277,8 @@ Multiplication. `a` multiplied by `b`.
 
 `mul(a,b)`   `:: a, a -> a`  
 `mul(b)(a)`  `:: a -> a -> a`  
-`mul(as...)` `:: a... -> a`
+`mul(as...)` `:: a... -> a`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1245,7 +1292,8 @@ args | desc
 Returns a function does a logical not on the result of the initial
 function. For coffeescript this function is aliased as `not_`.
 
-`not_(f)`   `:: (a... -> Boolean), -> Boolean`
+`not_(f)`   `:: (a... -> Boolean), -> Boolean`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1265,7 +1313,8 @@ as `or_`.
 
 `or_(f1,f2)`   `:: (a... -> Boolean), (a... -> Boolean) -> Boolean`  
 `or_(f2)(f1)`  `:: (a... -> Boolean) -> (a... -> Boolean) -> Boolean`  
-`or_(fs...)`   `:: (a... -> Boolean)... -> Boolean`
+`or_(fs...)`   `:: (a... -> Boolean)... -> Boolean`  
+`chainable`
 
 args | desc
 :--- | :---
@@ -1290,7 +1339,8 @@ Subtraction. `a` subtracted by `b`.
 
 `sub(a,b)`   `:: a, a -> a`  
 `sub(b)(a)`  `:: a -> a -> a`  
-`sub(as...)` `:: a... -> a`
+`sub(as...)` `:: a... -> a`  
+`chainable`
 
 args | desc
 :--- | :---
