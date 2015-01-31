@@ -14,6 +14,7 @@ API
 [`contains`](api.md#contains)
 [`curry`](api.md#curry)
 [`div`](api.md#div)
+[`evolve`](api.md#evolve)
 [`each`](api.md#each)
 [`eq`](api.md#eq)
 [`filter`](api.md#filter)
@@ -45,7 +46,10 @@ API
 [`mod`](api.md#mod)
 [`mul`](api.md#mul)
 [`not`](api.md#not)
+[`ofilter`](api.md#ofilter)
+[`omap`](api.md#omap)
 [`or`](api.md#or)
+[`pick`](api.md#pick)
 [`replace`](api.md#replace)
 [`reverse`](api.md#reverse)
 [`rpartial`](api.md#rpartial)
@@ -60,6 +64,7 @@ API
 [`tap`](api.md#tap)
 [`trim`](api.md#trim)
 [`type`](api.md#type)
+[`typeis`](api.md#typeis)
 [`ucase`](api.md#ucase)
 [`uniq`](api.md#uniq)
 [`values`](api.md#values)
@@ -445,6 +450,29 @@ args | desc
     clone {a:[1,2,3]}   # {a:[1,2,3]} the nested array is cloned
     clone {d:new Date}  # {d:<date>}  the nested date is cloned
 
+#### evolve
+
+Creates a new object by evolving a shallow copy of object, by applying
+transformation functions in a second object. Values not transformed
+are copied by reference.
+
+`evolve(o,t)`  `:: {k:v}, {k:(v -> v)} -> {k:v}`  
+`evolve(t)(o)` `:: {k:(v -> v)} -> {k:v} -> {k:v}`
+
+args | desc
+:--- | :---
+`o` | Object to evolve.
+`t` | Object with transformation functions to apply to `o`.
+
+##### evolve example
+
+    o = {a:1,b:2,c:3}
+    t = {b:(v) -> v + 40}
+    o1 = evolve o, t             # {a:1,b:42,c:3}
+    o1 == o                      # false
+    badd40 = evolve t            # partial
+    badd40 o                     # {a:1,b:42,c:3}
+
 #### get
 
 Gets the property value from an object, `get o, 'bar'` gives the value
@@ -536,6 +564,79 @@ args | desc
 
     mixin (t={c:4}), {a:1}, {a:2,b:3}    # {a:2,b:3,c:4} t is {c:4}
     mixin {c:4}, {a:1, b:undefined}      # {a:1,c:4}
+
+#### ofilter
+
+Like `filter` but for objects. The filter function is invoked with
+key, value `(k,v)`.
+
+`ofilter(o,f)`  `:: {k:v}, ((k, v) -> Boolean) -> {k:v}`  
+`ofilter(f)(o)` `:: ((k, v) -> Boolean) -> {k:v} -> {k:v}`
+
+args | desc
+:--- | :---
+`o` | The object to invoke filter function on.
+`f` | Filter function with signature `(k, v) -> Boolean`. Truthy/falsey return.
+
+##### ofilter example
+
+    f = (k, v) -> k == 'a' or v % 2
+    o = {a:0, b:1, c:2}
+    ofilter o, f                # {a:0, b:1}
+    aOrOdd = ofilter f          # partial
+    aOrOdd o                    # {a:0, b:1}
+
+#### omap
+
+Like `map` but for objects. The mapping function is invoked with key,
+value `(k,v)`.
+
+`omap(o,f)`  `:: {k:v}, ((k, v) -> v) -> {k:v}`  
+`omap(f)(o)` `:: ((k, v) -> v) -> {k:v} -> {k:v}`
+
+args | desc
+:--- | :---
+`o` | The object to invoke mapping function on.
+`f` | Mapping function with signature `(k, v) -> v`.
+
+#### omap example
+
+    f = (k, v) -> if k == 'b' then v + 40 else v
+    omap {a:1,b:2,c:3}, f                         # {a:1,b:42,c:3}
+    bAdd40 = omap(f)                              # partial
+    bAdd40 {d:3,b:2}                              # {d:3,b:42}
+
+#### pick
+
+Picks a number of properties of an object into a new object. The
+properties to pick can either be supplied as an array of strings or
+variadic strings.
+
+`pick(o,as)`    `:: {k:v}, [k] -> {k:v}`  
+`pick(as)(o)`   `:: [k] -> {k:v} -> {k:v}`  
+`pick(o,as...)` `:: {k:v}, k1, k2, k3, ... -> {k:v}`  
+`pick(s)(o)`    `:: k -> {k:v} -> {k:v}`
+
+args | desc
+:--- | :---
+*Array variant*|
+`o`  | Object to pick properties from.
+`as` | Array of string property names to pick.
+*Vararg variant*|
+`o`  | Object to pick properties from.
+`as` | Property names to pick as variable number of string arguments.
+
+##### pick example
+
+    o = {a:1, b:2, c:3}
+    # as array
+    pick o,['a','b']            # {a:1, b:2}
+    p1 = pick ['a',b']          # partial
+    p1(o)                       # {a:1, b:2}
+    # as vararg
+    pick o, 'a', 'b'            # {a:1, b:2}
+    p3 = pick 'a'               # partial
+    p3(o)                       # {a:1}
 
 #### set
 

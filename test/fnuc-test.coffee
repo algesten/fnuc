@@ -598,6 +598,18 @@ FN_TEST = [
     {n:'eq',     s:'a... -> b',      f:eq,     ar:2, as:[0,0,1],             eq:false}
     {n:'not',    s:'a..., a -> b',   f:not_,   ar:2, as:[false, I],            eq:true}
     {n:'not',    s:'a..., a -> b',   f:not_,   ar:2, as:[0,1,(a,b) -> b == 1], eq:false}
+    {n:'pick',s:'{k:v}, [k] -> {k:v}',f:pick,  ar:2, as:[{a:1,b:2,c:3},['b','c']], eq:{b:2,c:3}}
+    {n:'pick',s:'{k:v}, k -> {k:v}',  f:pick,  ar:2, as:[{a:1,b:2,c:3},'b','c'],   eq:{b:2,c:3}}
+    {n:'pick',s:'{k:v}, k -> {k:v}',  f:pick,  ar:2, as:[{a:1,b:2,c:3},'b'],       eq:{b:2}}
+    {n:'evolve', s:'{k:v}, {k:(v->v)} -> {k:v}', f:evolve, ar:2,
+    as:[{a:1,b:2},{}], eq:{a:1,b:2}}
+    {n:'evolve', s:'{k:v}, {k:(v->v)} -> {k:v}', f:evolve, ar:2,
+    as:[{a:1,b:2},{a:(v) -> v+1}], eq:{a:2,b:2}}
+    {n:'omap',s:'{k:v}, ((k,v) -> v) -> {k:v}', f:omap, ar:2,
+    as:[{a:1,b:2,c:3},(k,v) -> if k == 'b' then v + 40 else v], eq:{a:1,b:42,c:3}}
+    {n:'ofilter',s:'{k:v}, ((k,v) -> Boolean) -> {k:v}', f:ofilter, ar:2,
+    as:[{a:1,b:2,c:3},(k,v) -> k == 'b'], eq:{b:2}}
+
 ]
 
 FN_TEST.forEach (spec) ->

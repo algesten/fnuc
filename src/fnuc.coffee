@@ -126,12 +126,16 @@ uniq     = (a) -> return a unless a; a.filter (v, i) -> a.indexOf(v) == i # [a] 
 
 
 # moar object
-has    = curry (o, k) -> o.hasOwnProperty(k)
-get    = curry (o, k) -> o[k]
-set    = curry (o, k, v) -> o[k] = v; o
-keys   = (o) -> Object.keys(o)
-values = (o) -> map (keys o), (k) -> o[k]
-
+has     = curry (o, k) -> o.hasOwnProperty(k)
+get     = curry (o, k) -> o[k]
+set     = curry (o, k, v) -> o[k] = v; o
+keys    = (o) -> Object.keys(o)
+values  = (o) -> map (keys o), (k) -> o[k]
+omap    = curry (o, f) -> r = {}; r[k] = f(k,v) for k, v of o; return r
+ofilter = curry (o, f) -> r = {}; r[k] = v for k, v of o when f(k,v); return r
+evolve  = curry (o, t) -> omap o, (k, v) -> if has(t,k) then t[k](v) else v
+pick    = curry binary (o, as...) ->
+    as = as[0] if typeis(as[0],'array'); r = {}; r[k] = o[k] for k in as; return r
 
 # string -----------------------------
 split    = curry binary  builtin String::split       # s, s -> s
@@ -193,7 +197,7 @@ exports = {
     sequence, I, ident, lpartial, rpartial, tap, chainable
 
     # object
-    merge, mixin, has, get, set, keys, values
+    merge, mixin, has, get, set, keys, values, pick, evolve, omap, ofilter
 
     # array
     concat, head, tail, last, fold, fold1, foldr, foldr1, each, map,
