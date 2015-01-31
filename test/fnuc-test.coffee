@@ -718,3 +718,31 @@ describe 'not', ->
 
     it 'is aliased', ->
         F.not.should.eql F.not_
+
+describe 'chainable', ->
+
+    it 'makes chainable functions for arity == 1', ->
+
+        f = (a) -> a + 14
+        chainable 'f', f
+        g = div(2).f
+        g(100).should.eql 64
+
+    it 'makes chainable functions for arity >= 2', ->
+
+        f = (a,b) -> if a == 42 then b else 0
+        chainable 'guard42', f
+        g = div(2).guard42(17)
+        g(100).should.eql 0
+        g(84).should.eql 17
+
+    it 'wants arity >= 1', ->
+        expect(->chainable('fail',->)).to.throw 'No chainable for arity 0'
+
+    it 'can redefine a chainable', ->
+        f1 = (a) -> 0
+        chainable 'f', f1
+        f2 = (b) -> 1
+        chainable 'f', f2
+        g = add(3).f
+        g(4).should.eql 1
