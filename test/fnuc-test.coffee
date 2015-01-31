@@ -52,10 +52,15 @@ describe 'type', ->
         TYPES.forEach (spec) ->
             it "works for #{spec.t}#{spec.d}", -> type(spec.v).should.eql(spec.t)
 
-    describe 'for 2 args', ->
-        describe 'can take a string argument', ->
-            TYPES.forEach (spec) ->
-                it "for type #{spec.t}#{spec.d}", -> type(spec.t, spec.v).should.be.true
+describe 'typeis', ->
+
+    describe 'works on the form (a,s)', ->
+        TYPES.forEach (spec) ->
+            it "for type #{spec.t}#{spec.d}", -> typeis(spec.v,spec.t).should.be.true
+
+    describe 'works curried (s)(a)', ->
+        TYPES.forEach (spec) ->
+            it "for type #{spec.t}#{spec.d}", -> typeis(spec.t)(spec.v).should.be.true
 
 describe 'isplain', ->
 
@@ -157,7 +162,7 @@ describe 'clone', ->
                     r = clone(spec.v)
                     r.should.not.equal spec.v
                     for a, i in r
-                        if type 'number', a
+                        if typeis a, 'number'
                             r[i].should.equal(spec.v[i])
                         else
                             r[i].should.not.equal(spec.v[i])
@@ -169,7 +174,7 @@ describe 'clone', ->
                     r = clone(spec.v)
                     r.should.not.equal spec.v
                     for k, v of r
-                        if type 'number', v
+                        if typeis v, 'number'
                             v.should.equal(spec.v[k])
                         else
                             v.should.not.equal(spec.v[k])

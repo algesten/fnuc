@@ -184,6 +184,7 @@ API
 [`tap`](api.md#tap)
 [`trim`](api.md#trim)
 [`type`](api.md#type)
+[`typeis`](api.md#typeis)
 [`ucase`](api.md#ucase)
 [`uniq`](api.md#uniq)
 [`values`](api.md#values)

@@ -38,7 +38,7 @@ shallow = (a) ->
 clone = (a) ->
     return a unless a # null, undefined, false, '', 0
     s = shallow(a)
-    if type 'array', s
+    if type(s) == 'array'
         s[i] = clone(s[i]) for i in [0...a.length] by 1
     else if isplain(s)
         s[k] = clone(v) for k, v of s
@@ -47,12 +47,7 @@ clone = (a) ->
 
 # type -----------------------------
 isplain       = (o) -> !!o && typeof o == 'object' && o.constructor == Object
-type          = (t, a) ->
-    if arguments.length == 1
-        _toString(t)[8...-1].toLowerCase()
-    else
-        type(a) == t
-
+type          = (a) -> _toString(a)[8...-1].toLowerCase()
 
 # object ----------------------------
 merge  = (t, os...) -> t[k] = v for k,v of o when v != undefined for o in os; t
@@ -66,7 +61,7 @@ last   = (a) -> a[a.length-1]
 # fn --------------------------------
 arity = (f, n) ->
     if arguments.length == 1
-        return f.length if type 'function', f
+        return f.length if type(f) == 'function'
         n = f
         f = undefined
     _ar = (f) -> ARITY[n](f)
@@ -109,6 +104,7 @@ compose = (fs...) -> ncurry arity(last(fs)), fs.reduce (f, g) -> (as...) -> f g 
 sequence = flip compose
 tap      = curry (a, f) -> f(a); a                  # a, fn -> a
 
+typeis        = curry (a,s) -> type(a) == s
 
 # array ----------------------------
 all      = curry binary  builtin Array::every       # [a], fn -> Boolean
@@ -190,7 +186,7 @@ exports = {
     shallow, clone
 
     # type
-    type, isplain
+    type, typeis, isplain
 
     # fn
     arity, unary, binary, ternary, curry, flip, compose,

@@ -95,39 +95,17 @@ args | desc
 
 #### type
 
-Tells or checks what type an object is depending on number of
-arguments.
+Tells what type an object is. Returns one of `'array'`, `'boolean'`,
+`'date'`, `'null'`, `'number'`, `'object'` `'string'` or
+`'undefined'`.
 
-With one argument, returns one of `'array'`, `'boolean'`, `'date'`,
-`'null'`, `'number'`, `'object'` `'string'` or `'undefined'`.
-
-With two arguments, checks whether the second argument is of the type
-specified in the first.
-
-`type(a)`   `:: a -> String`  
-`type(t,a)` `:: String, a -> Boolean`
+`type(a)`   `:: a -> String`
 
 args | desc
 :--- | :---
-*One arg variant*|
 `a`  | Object to find type for.
-*Two arg variant*|
-`t`  | The string type to check for.
-`a`  | Object to check.
 
-type | function
-:--- | :---
-`'array'`   | `Array`
-`'boolean'` | `Boolean`
-`'date'`    | `Date`
-`'null'`    | -
-`'number'`  | `Number`
-`'object'`  | `Object`
-`'string'`  | `String`
-`'symbol'`  | `Symbol` *untested*
-`'undefined'` | -
-
-##### type one arg example
+##### type example
 
     type 'abc'     # 'string'
     type 42        # 'number'
@@ -135,12 +113,26 @@ type | function
     type {}        # 'object'
     type undefined # 'undefined'
 
-##### type two arg example
+#### typeis
 
-    type 'string', 'abc'     # true
-    type 'string', null      # false
-    type type(a), a          # true
-    type 'number', 42        # true
+Checks that the first argument is of the type specified in the second.
+
+`typeis(a,s)`  `:: String, a, -> Boolean`  
+`typeis(s)(a)` `:: String -> a -> Boolean`
+
+args | desc
+:--- | :---
+`a`  | Object to check type of.
+`s`  | Type to check for. One of the returned types in [`type`](#type).
+
+##### typeis example
+
+    typeis 'abc', 'string'     # true
+    typeis null, 'string'      # false
+    typeis a, type(a)          # true
+    typeis 42, 'number'        # true
+    isnum = typeis('number')
+    isnum 42                   # true
 
 ### Function functions
 
@@ -193,7 +185,8 @@ Same as `arity(3)`.
     arity (->)        # 0
     arity I           # 1
     arity ((a,b)->)   # 2
-    arity type        # 2
+    arity type        # 1
+    arity typeis      # 2
     arity arity       # 2
 
     myconcat = (as....) -> [].concat as...
