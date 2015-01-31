@@ -113,7 +113,7 @@ expects one more argument.
 
 The API provides an easy way to define your own
 [chainable]((api.md#chainable)) function: `chainable(name,f)`.
-a
+
     even = (n) -> n % 2 == 0
     chainable 'even', even
 
