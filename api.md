@@ -7,6 +7,7 @@ API
 [`and`](api.md#and)
 [`any`](api.md#any)
 [`arity`](api.md#arity)
+[`chainable`](api.md#chainable)
 [`clone`](api.md#clone)
 [`compose`](api.md#compose)
 [`concat`](api.md#concat)
