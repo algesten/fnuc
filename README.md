@@ -71,7 +71,7 @@ Other least astonished variants that are *not in fnuc*:
 
 ### Chainable sequencing
 
-Note to install builtins on `Function.prototype` do:
+To install builtins on `Function.prototype` do:
 
     require('./src/fnuc').installChainable()
 
