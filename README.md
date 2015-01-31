@@ -112,7 +112,7 @@ expects one more argument.
 #### Making your own chainable
 
 The API provides an easy way to define your own
-[chainable]((api.md#chainable)) function: `chainable(name,f)`.
+[chainable](api.md#chainable) function: `chainable(name,f)`.
 
     even = (n) -> n % 2 == 0
     chainable 'even', even
