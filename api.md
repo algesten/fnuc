@@ -117,7 +117,7 @@ args | desc
 
 Checks that the first argument is of the type specified in the second.
 
-`typeis(a,s)`  `:: String, a, -> Boolean`  
+`typeis(a,s)`  `:: String, a -> Boolean`  
 `typeis(s)(a)` `:: String -> a -> Boolean`
 
 args | desc
@@ -1307,7 +1307,7 @@ args | desc
 Returns a function does a logical not on the result of the initial
 function. For coffeescript this function is aliased as `not_`.
 
-`not_(f)`   `:: (a... -> Boolean), -> Boolean`  
+`not_(f)`   `:: (a... -> Boolean) -> Boolean`  
 `chainable`
 
 args | desc
