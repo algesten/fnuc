@@ -100,7 +100,7 @@ flip = (f) ->
     rewrap = if f._curry then curry else I
     merge (rewrap arity(arity(f)) (as...) -> uncurry(f) as.reverse()...), _flip:f
 
-compose = (fs...) -> ncurry arity(last(fs)), fs.reduce (f, g) -> (as...) -> f g as...
+compose = (fs...) -> ncurry arity(last(fs)), fold1 fs, (f, g) -> (as...) -> f g as...
 sequence = flip compose
 tap      = curry (a, f) -> f(a); a                  # a, fn -> a
 
@@ -112,17 +112,39 @@ any      = curry binary  builtin Array::some        # [a], fn -> Boolean
 contains = curry (as, a) -> index(as, a) >= 0       # [a], a -> b
 concat   = curry binary (as...) -> [].concat as...
 each     = curry binary  builtin Array::forEach     # [a], fn    -> undef
-filter   = curry binary  builtin Array::filter      # [a], fn -> [a]|undef
-fold     = curry (as, f, v) -> as.reduce ((p,c) -> f(p,c)), v      # [a], fn, v -> *
-fold1    = curry (as, f)    -> as.reduce ((p,c) -> f(p,c))         # [a], fn -> *
-foldr    = curry (as, f, v) -> as.reduceRight ((p,c) -> f(p,c)), v # [a], fn, v -> *
-foldr1   = curry (as, f)    -> as.reduceRight ((p,c) -> f(p,c))    # [a], fn -> *
-index    = curry binary  builtin Array::indexOf     # [a], a -> n
+filter   = curry binary  (as, f) ->                 # [a], fn -> [a]|undef
+    r = []
+    ri = -1
+    (r[++ri] = v if f(v)) for v in as
+    r
+_fold = (as, f, acc, arrInit) ->
+    i = 0; len = as.length;
+    acc = as[i++] if arrInit
+    `for (;i < len; ++i) { acc = f(acc,as[i]) }`
+    acc
+_foldr = (as, f, acc, arrInit) ->
+    i = as.length;
+    acc = as[--i] if arrInit
+    `while (i--) { acc = f(acc,as[i]) }`
+    acc
+fold     = curry (as, f, v) -> _fold  as, f, v,    false # [a], fn, v -> *
+fold1    = curry (as, f)    -> _fold  as, f, null, true  # [a], fn -> *
+foldr    = curry (as, f, v) -> _foldr as, f, v,    false # [a], fn, v -> *
+foldr1   = curry (as, f)    -> _foldr as, f, null, true  # [a], fn -> *
+index    = curry binary (as, v, fr) ->                   # [a], a -> n
+    len = as?.length || 0
+    return -1 unless len
+    i = fr || 0
+    `for (;i < len; ++i) { if (as[i] == v) return i }`
+    -1
 join     = curry binary  builtin Array::join        # [a], s -> s
-map      = curry (as, f) -> as.map (a) -> f(a)      # [a], fn -> [a]
+map      = curry (as, f) ->                         # [a], fn -> [a]
+    r = Array(as.length); len = as.length; i = 0
+    `for (;i < len; ++i) { r[i] = f(as[i]) }`
+    r
 reverse  = unary builtin Array::reverse             # [a] -> [a]
 sort     = curry binary  builtin Array::sort        # [a] -> [a]
-uniq     = (a) -> return a unless a; a.filter (v, i) -> a.indexOf(v) == i # [a] -> [a]
+uniq     = (as) -> return as unless as; as.filter (v, i) -> index(as, v) == i # [a] -> [a]
 
 
 # moar object
@@ -148,11 +170,11 @@ lcase    = unary builtin String::toLowerCase         # s -> s
 
 
 # maths -----------------------------------
-add      = curry binary (as...) -> as.reduce (a,b) -> a + b
-sub      = curry binary (as...) -> as.reduce (a,b) -> a - b
-mul      = curry binary (as...) -> as.reduce (a,b) -> a * b
-div      = curry binary (as...) -> as.reduce (a,b) -> a / b
-mod      = curry binary (as...) -> as.reduce (a,b) -> a % b
+add      = curry binary (as...) -> fold1 as, (a,b) -> a + b
+sub      = curry binary (as...) -> fold1 as, (a,b) -> a - b
+mul      = curry binary (as...) -> fold1 as, (a,b) -> a * b
+div      = curry binary (as...) -> fold1 as, (a,b) -> a / b
+mod      = curry binary (as...) -> fold1 as, (a,b) -> a % b
 min      = curry binary (as...) -> Math.min as...
 max      = curry binary (as...) -> Math.max as...
 gt       = curry (a,b) -> a > b
@@ -160,9 +182,9 @@ gte      = curry (a,b) -> a >= b
 lt       = curry (a,b) -> a < b
 lte      = curry (a,b) -> a <= b
 _ = {} # internal placeholder
-eq       = curry binary (as...) -> as.reduce((a,b) -> if a == b then a else _) != _
-and_     = curry binary (as...) -> (bs...) -> as.reduce ((a,b) -> a and b(bs...)), true
-or_      = curry binary (as...) -> (bs...) -> as.reduce ((a,b) -> a or  b(bs...)), false
+eq       = curry binary (as...) -> fold1(as, (a,b) -> if a == b then a else _) != _
+and_     = curry binary (as...) -> (bs...) -> fold as, ((a,b) -> a and b(bs...)), true
+or_      = curry binary (as...) -> (bs...) -> fold as, ((a,b) -> a or  b(bs...)), false
 not_     = curry binary (as..., f) -> !f(as...)
 
 
