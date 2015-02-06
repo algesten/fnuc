@@ -211,103 +211,103 @@ describe 'arity', ->
             f = ternary (a,b,c,d,e) ->
             f.length.should.eql 3
 
-describe 'lpartial', ->
+describe 'partial', ->
 
     describe 'partially fills in arguments from the left', ->
 
         it 'executes arity(0)', ->
-            r = lpartial (->42)
+            r = partial (->42)
             r.should.eql 42
 
         it 'executes arity(0) with arguments', ->
-            r = lpartial (->42), 1, 2, 3
+            r = partial (->42), 1, 2, 3
             r.should.eql 42
 
         it 'handles arity(1)', ->
-            r = lpartial ((a) -> a + 42)
+            r = partial ((a) -> a + 42)
             r.should.be.a.function
             r(1,2,3).should.eql 43
 
         it 'executes arity(1) with arguments', ->
-            r = lpartial ((a) -> a + 42), 1, 2
+            r = partial ((a) -> a + 42), 1, 2
             r.should.not.be.a.function
             r.should.eql 43
 
         it 'works for arity(2)', ->
-            r = lpartial ((a,b) -> a / b), 42
+            r = partial ((a,b) -> a / b), 42
             r.should.be.a.function
             arity(r).should.eql 1
             r(2,3,4).should.eql 21
 
         it 'executes arity(2) with arguments', ->
-            r = lpartial ((a,b) -> a / b), 42, 2
+            r = partial ((a,b) -> a / b), 42, 2
             r.should.not.be.a.function
             r.should.eql 21
 
         it 'works for arity(3) with one arg', ->
-            r = lpartial ((a,b,c) -> a / (b / c)), 12
+            r = partial ((a,b,c) -> a / (b / c)), 12
             r.should.be.a.function
             arity(r).should.eql 2
             r(3,2,5).should.eql 8
 
         it 'works for arity(3) with two arg', ->
-            r = lpartial ((a,b,c) -> a / (b / c)), 12, 3
+            r = partial ((a,b,c) -> a / (b / c)), 12, 3
             r.should.be.a.function
             arity(r).should.eql 1
             r(2,5).should.eql 8
 
         it 'executes arity(3) with arguments', ->
-            r = lpartial ((a,b,c) -> a / (b / c)), 12, 3, 2, 5
+            r = partial ((a,b,c) -> a / (b / c)), 12, 3, 2, 5
             r.should.not.be.a.function
             r.should.eql 8
 
-describe 'rpartial', ->
+describe 'partialr', ->
 
     describe 'partially fills in arguments from the right', ->
 
         it 'executes arity(0)', ->
-            r = rpartial (->42)
+            r = partialr (->42)
             r.should.eql 42
 
         it 'executes arity(0) with arguments', ->
-            r = rpartial (->42), 1, 2, 3
+            r = partialr (->42), 1, 2, 3
             r.should.eql 42
 
         it 'handles arity(1)', ->
-            r = rpartial ((a) -> a + 42)
+            r = partialr ((a) -> a + 42)
             r.should.be.a.function
             r(1,2,3).should.eql 43
 
         it 'executes arity(1) with arguments', ->
-            r = rpartial ((a) -> a + 42), 1, 2
+            r = partialr ((a) -> a + 42), 1, 2
             r.should.not.be.a.function
             r.should.eql 43
 
         it 'works for arity(2)', ->
-            r = rpartial ((a,b) -> a / b), 2
+            r = partialr ((a,b) -> a / b), 2
             r.should.be.a.function
             arity(r).should.eql 1
             r(42,3,4).should.eql 21
 
         it 'executes arity(2) with arguments', ->
-            r = rpartial ((a,b) -> a / b), 42, 2
+            r = partialr ((a,b) -> a / b), 42, 2
             r.should.not.be.a.function
             r.should.eql 21
 
         it 'works for arity(3) with one arg', ->
-            r = rpartial ((a,b,c) -> a / (b / c)), 2
+            r = partialr ((a,b,c) -> a / (b / c)), 2
             r.should.be.a.function
             arity(r).should.eql 2
             r(12,3,5).should.eql 8
 
         it 'works for arity(3) with two arg', ->
-            r = rpartial ((a,b,c) -> a / (b / c)), 3, 2
+            r = partialr ((a,b,c) -> a / (b / c)), 3, 2
             r.should.be.a.function
             arity(r).should.eql 1
             r(12,5).should.eql 8
 
         it 'executes arity(3) with arguments', ->
-            r = rpartial ((a,b,c) -> a / (b / c)), 12, 3, 2, 5
+            r = partialr ((a,b,c) -> a / (b / c)), 12, 3, 2, 5
             r.should.not.be.a.function
             r.should.eql 8
 

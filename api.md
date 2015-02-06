@@ -14,9 +14,9 @@ API
 [`contains`](api.md#contains)
 [`curry`](api.md#curry)
 [`div`](api.md#div)
-[`evolve`](api.md#evolve)
 [`each`](api.md#each)
 [`eq`](api.md#eq)
+[`evolve`](api.md#evolve)
 [`filter`](api.md#filter)
 [`flip`](api.md#flip)
 [`fold1`](api.md#fold1)
@@ -34,7 +34,6 @@ API
 [`keys`](api.md#keys)
 [`last`](api.md#last)
 [`lcase`](api.md#lcase)
-[`lpartial`](api.md#lpartial)
 [`lt`](api.md#lt)
 [`lte`](api.md#lte)
 [`map`](api.md#map)
@@ -49,10 +48,11 @@ API
 [`ofilter`](api.md#ofilter)
 [`omap`](api.md#omap)
 [`or`](api.md#or)
+[`partial`](api.md#partial)
+[`partialr`](api.md#partialr)
 [`pick`](api.md#pick)
 [`replace`](api.md#replace)
 [`reverse`](api.md#reverse)
-[`rpartial`](api.md#rpartial)
 [`search`](api.md#search)
 [`sequence`](api.md#sequence)
 [`set`](api.md#set)
@@ -326,48 +326,48 @@ args | desc
     f3(2)(1)      # [3,2,1]
     g3(2)(1)      # [3,1,2]
 
-#### lpartial
+#### partial
 
 Creates a function that has the original function partially applied
-from the left (see also [rpartial](#rpartial)).
+from the left (see also [partialr](#partialr)).
 
-`lpartial ((a,b) -> a/b), 10` makes a function that will receive one
+`partial ((a,b) -> a/b), 10` makes a function that will receive one
 additional argument `x` to divide 10 by `x`.
 
-`lpartial(f,as...)` `:: ((a... -> a), a, b, ...) -> (a... -> a)`
+`partial(f,as...)` `:: ((a... -> a), a, b, ...) -> (a... -> a)`
 
 args | desc
 :--- | :---
 `f`  | Function to apply arguments for.
 `as...` | Variable number of arguments to apply from the left.
 
-##### lpartial example
+##### partial example
 
     l     = [1,2,3,...]
     even  = (a) -> a % 2 == 0    # even number filter
-    fl    = lpartial filter l    # fl always filters mylist
+    fl    = partial filter l    # fl always filters mylist
     le    = fl even              # keep only even
 
-#### rpartial
+#### partialr
 
 Creates a function that has the original function partially applied
-from the right (see also [lpartial](#lpartial)).
+from the right (see also [partial](#partial)).
 
-`rpartial ((a,b) -> a/b), 10` makes a function that will receive one
+`partialr ((a,b) -> a/b), 10` makes a function that will receive one
 additional argument `x` to divide `x` by 10.
 
-`rpartial(f,as...)` `:: ((a... -> a), a, b, ...) -> (a... -> a)`
+`partialr(f,as...)` `:: ((a... -> a), a, b, ...) -> (a... -> a)`
 
 args | desc
 :--- | :---
 `f`  | Function to apply arguments for.
 `as...` | Variable number of arguments to apply from the right.
 
-##### rpartial example
+##### partialr example
 
     l     = [1,2,3,...]
     even  = (a) -> a % 2 == 0         # even number filter
-    fr    = lpartial filter even      # applies even filter to any list
+    fr    = partial filter even       # applies even filter to any list
     le    = fr l                      # keeps only even
 
 #### sequence

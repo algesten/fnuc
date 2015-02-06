@@ -75,7 +75,7 @@ ncurry = (n, f, as=[]) ->
     nf = arity(l) (bs...) ->
         cs = (if bs.length <= l then bs else bs[0...l]).concat as
         if cs.length < n then ncurry n, f, cs else f cs...
-    nf._curry = -> rpartial f, as...
+    nf._curry = -> partialr f, as...
     return nf
 
 curry = (f) ->
@@ -88,10 +88,10 @@ curry = (f) ->
 # not a mathematical uncurry, it just unwraps our own curry
 uncurry = (f) -> if f._curry then f._curry() else f
 
-lpartial = (f, as...) ->
+partial = (f, as...) ->
     return f as... if (n = (arity(f) - as.length)) <= 0
     arity(n) (bs...) -> f as.concat(bs)...
-rpartial = (f, as...) ->
+partialr = (f, as...) ->
     return f as... if (n = (arity(f) - as.length)) <= 0
     arity(n) (bs...) -> f bs[0...n].concat(as)...
 
@@ -216,7 +216,7 @@ exports = {
 
     # fn
     arity, unary, binary, ternary, curry, flip, compose,
-    sequence, I, ident, lpartial, rpartial, tap, chainable
+    sequence, I, ident, partial, partialr, tap, chainable
 
     # object
     merge, mixin, has, get, set, keys, values, pick, evolve, omap, ofilter
