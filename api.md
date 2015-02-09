@@ -239,14 +239,18 @@ being invoked first (the opposite is [sequence](#sequence)).
 
 The result is curried if the rightmost function is of arity > 1.
 
-    h = compose(f,g)
-    z = h(1,2)
-    z = h(2)(1)
+```coffee
+h = compose(f,g)
+z = h(1,2)
+z = h(2)(1)
+```
 
 is equivalent to:
 
-    y = g(1,2)
-    z = f(y)
+```coffee
+y = g(1,2)
+z = f(y)
+```
 
 `compose(as...)` `:: ((y -> z), (x -> y), ..., (b -> c), (a... -> b)) -> (a... -> z)`
 
