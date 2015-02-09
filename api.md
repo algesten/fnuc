@@ -112,11 +112,13 @@ args | desc
 
 ##### type example
 
-    type 'abc'     # 'string'
-    type 42        # 'number'
-    type null      # 'null'
-    type {}        # 'object'
-    type undefined # 'undefined'
+```coffee
+type 'abc'     # 'string'
+type 42        # 'number'
+type null      # 'null'
+type {}        # 'object'
+type undefined # 'undefined'
+```
 
 #### typeis
 
@@ -132,12 +134,14 @@ args | desc
 
 ##### typeis example
 
-    typeis 'abc', 'string'     # true
-    typeis null, 'string'      # false
-    typeis a, type(a)          # true
-    typeis 42, 'number'        # true
-    isnum = typeis('number')
-    isnum 42                   # true
+```coffee
+typeis 'abc', 'string'     # true
+typeis null, 'string'      # false
+typeis a, type(a)          # true
+typeis 42, 'number'        # true
+isnum = typeis('number')
+isnum 42                   # true
+```
 
 ### Function functions
 
@@ -187,21 +191,22 @@ Same as `arity(3)`.
 
 ##### arity example
 
-    arity (->)        # 0
-    arity I           # 1
-    arity ((a,b)->)   # 2
-    arity type        # 1
-    arity typeis      # 2
-    arity arity       # 2
+```coffee
+arity (->)        # 0
+arity I           # 1
+arity ((a,b)->)   # 2
+arity type        # 1
+arity typeis      # 2
+arity arity       # 2
 
-    myconcat = (as....) -> [].concat as...
-    arity myconcat    # 0 for variadic functions.
+myconcat = (as....) -> [].concat as...
+arity myconcat    # 0 for variadic functions.
 
-    myconcat2 = arity(2) myconcat # could have used 'binary myconcat'
-    arity myconcat2   # 2
-
-    myconcat2 1, 2    # [1,2]
-    myconcat2 1, 2, 3 # [1,2,3] SURPRISE! (or not)
+myconcat2 = arity(2) myconcat # could have used 'binary myconcat'
+arity myconcat2   # 2
+myconcat2 1, 2    # [1,2]
+myconcat2 1, 2, 3 # [1,2,3] SURPRISE! (or not)
+```
 
 #### chainable
 
@@ -218,11 +223,13 @@ args | desc
 
 ##### chainable example
 
-    f = (a,b) -> if a == 42 then b else 0
-    chainable 'guard42', f        # attaches and curries
-    g = div(2).guard42(17)
-    g(100)                        # 0
-    g(84)                         # 17
+```coffee
+f = (a,b) -> if a == 42 then b else 0
+chainable 'guard42', f        # attaches and curries
+g = div(2).guard42(17)
+g(100)                        # 0
+g(84)                         # 17
+```
 
 #### compose
 
@@ -249,12 +256,14 @@ args | desc
 
 ##### compose example
 
-    div10 = div(10)
-    add50 = add(50)
-    pow   = (a,b) -> Math.pow(a,b)
-    calc  = compose div10, add50, pow
-    calc(10,2)  # 15 or (10 ^ 2 + 50) / 10
-    calc(2)(10) # 15
+```coffee
+div10 = div(10)
+add50 = add(50)
+pow   = (a,b) -> Math.pow(a,b)
+calc  = compose div10, add50, pow
+calc(10,2)  # 15 or (10 ^ 2 + 50) / 10
+calc(2)(10) # 15
+```
 
 #### curry
 
@@ -280,22 +289,24 @@ args | desc
 
 ##### curry example
 
-    f  = curry (a, b, c) -> a + b/c
-    f(5, 20, 10)   # 7
-    f(10)(20)(5)   # 7 YAY!
+```coffee
+f  = curry (a, b, c) -> a + b/c
+f(5, 20, 10)   # 7
+f(10)(20)(5)   # 7 YAY!
 
 Multiple arguments that are still less than the total arity of `f` are
 provided in the original order but filled in right-to-left.
 
-    f(10)(5, 20)   # 7 i.e. (c)(a, b)
-    f(20, 10)(5)   # 7 i.e. (b, c)(a)
+f(10)(5, 20)   # 7 i.e. (c)(a, b)
+f(20, 10)(5)   # 7 i.e. (b, c)(a)
 
 A variadic function must have a forced arity to be curryable.
 
-    f = curry ternary concat
-    f(1,2,3,4)       # [1,2,3,4] SURPRISE! (or not)
-    f(3)(2)(1)       # [1,2,3]
-    f(4)(3)(2)(1)    # TypeError: object is not a function
+f = curry ternary concat
+f(1,2,3,4)       # [1,2,3,4] SURPRISE! (or not)
+f(3)(2)(1)       # [1,2,3]
+f(4)(3)(2)(1)    # TypeError: object is not a function
+```
 
 #### flip
 
@@ -318,13 +329,15 @@ args | desc
 
 ##### flip example
 
-    f = flip curry ternary concat
-    f(1, 2, 3)    # [3,2,1]
-    f(3)(2)(1)    # [3,2,1] the curry was flipped
-    f3 = f(3)
-    g3 = flip f3  # flipping partially applied
-    f3(2)(1)      # [3,2,1]
-    g3(2)(1)      # [3,1,2]
+```coffee
+f = flip curry ternary concat
+f(1, 2, 3)    # [3,2,1]
+f(3)(2)(1)    # [3,2,1] the curry was flipped
+f3 = f(3)
+g3 = flip f3  # flipping partially applied
+f3(2)(1)      # [3,2,1]
+g3(2)(1)      # [3,1,2]
+```
 
 #### partial
 
@@ -343,10 +356,12 @@ args | desc
 
 ##### partial example
 
-    l     = [1,2,3,...]
-    even  = (a) -> a % 2 == 0    # even number filter
-    fl    = partial filter l    # fl always filters mylist
-    le    = fl even              # keep only even
+```coffee
+l     = [1,2,3,...]
+even  = (a) -> a % 2 == 0    # even number filter
+fl    = partial filter l    # fl always filters mylist
+le    = fl even              # keep only even
+```
 
 #### partialr
 
@@ -365,10 +380,12 @@ args | desc
 
 ##### partialr example
 
-    l     = [1,2,3,...]
-    even  = (a) -> a % 2 == 0         # even number filter
-    fr    = partial filter even       # applies even filter to any list
-    le    = fr l                      # keeps only even
+```coffee
+l     = [1,2,3,...]
+even  = (a) -> a % 2 == 0         # even number filter
+fr    = partial filter even       # applies even filter to any list
+le    = fr l                      # keeps only even
+```
 
 #### sequence
 
@@ -395,12 +412,14 @@ args | desc
 
 ##### sequence example
 
-    div10 = div(10)
-    add50 = add(50)
-    pow   = (a,b) -> Math.pow(a,b)
-    calc  = sequence pow, add50, div10
-    calc(10,2)  # 15 or (10 ^ 2 + 50) / 10
-    calc(2)(10) # 15
+```coffee
+div10 = div(10)
+add50 = add(50)
+pow   = (a,b) -> Math.pow(a,b)
+calc  = sequence pow, add50, div10
+calc(10,2)  # 15 or (10 ^ 2 + 50) / 10
+calc(2)(10) # 15
+```
 
 #### tap
 
@@ -420,10 +439,12 @@ args | desc
 
 ##### tap example
 
-    log   = (as...) -> console.log as...      # console.log returns undefined
-    dolog = tap(log)                          # dolog returns same value
-    calc  = sequence add(3), dolog, div(10)   # log the value between the operations
-    calc [1,2,3]                              # logs 4...5...6
+```coffee
+log   = (as...) -> console.log as...      # console.log returns undefined
+dolog = tap(log)                          # dolog returns same value
+calc  = sequence add(3), dolog, div(10)   # log the value between the operations
+calc [1,2,3]                              # logs 4...5...6
+```
 
 ### Object functions
 
@@ -445,10 +466,12 @@ args | desc
 
 ##### clone example
 
-    clone 42            # 42
-    clone {a:1}         # {a:1}
-    clone {a:[1,2,3]}   # {a:[1,2,3]} the nested array is cloned
-    clone {d:new Date}  # {d:<date>}  the nested date is cloned
+```coffee
+clone 42            # 42
+clone {a:1}         # {a:1}
+clone {a:[1,2,3]}   # {a:[1,2,3]} the nested array is cloned
+clone {d:new Date}  # {d:<date>}  the nested date is cloned
+```
 
 #### evolve
 
@@ -466,12 +489,14 @@ args | desc
 
 ##### evolve example
 
-    o = {a:1,b:2,c:3}
-    t = {b:(v) -> v + 40}
-    o1 = evolve o, t             # {a:1,b:42,c:3}
-    o1 == o                      # false
-    badd40 = evolve t            # partial
-    badd40 o                     # {a:1,b:42,c:3}
+```coffee
+o = {a:1,b:2,c:3}
+t = {b:(v) -> v + 40}
+o1 = evolve o, t             # {a:1,b:42,c:3}
+o1 == o                      # false
+badd40 = evolve t            # partial
+badd40 o                     # {a:1,b:42,c:3}
+```
 
 #### get
 
@@ -489,9 +514,11 @@ args | desc
 
 ##### get example
 
-    get {a:1,b:2}, 'b'     # 2
-    getb = get 'b'         # partial
-    getb {b:3}             # 3
+```coffee
+get {a:1,b:2}, 'b'     # 2
+getb = get 'b'         # partial
+getb {b:3}             # 3
+```
 
 #### has
 
@@ -509,9 +536,11 @@ args | desc
 
 ##### has example
 
-    has {a:1,b:2}, 'b'     # true
-    hasb = has 'b'         # partial
-    hasb {b:3}             # true
+```coffee
+has {a:1,b:2}, 'b'     # true
+hasb = has 'b'         # partial
+hasb {b:3}             # true
+```
 
 #### keys
 
@@ -526,8 +555,10 @@ args | desc
 
 ##### keys example
 
-    keys {a:1,b:2}          # ['a','b']
-    keys {}                 # []
+```coffee
+keys {a:1,b:2}          # ['a','b']
+keys {}                 # []
+```
 
 #### merge
 
@@ -544,8 +575,10 @@ args | desc
 
 ##### merge example
 
-    merge (t={c:4}), {a:1}, {a:2,b:3}    # t is {a:2,b:3,c:4}
-    merge {c:4}, {a:1, b:undefined}      # {a:1,c:4}
+```coffee
+merge (t={c:4}), {a:1}, {a:2,b:3}    # t is {a:2,b:3,c:4}
+merge {c:4}, {a:1, b:undefined}      # {a:1,c:4}
+```
 
 #### mixin
 
@@ -562,8 +595,10 @@ args | desc
 
 ##### mixin example
 
-    mixin (t={c:4}), {a:1}, {a:2,b:3}    # {a:2,b:3,c:4} t is {c:4}
-    mixin {c:4}, {a:1, b:undefined}      # {a:1,c:4}
+```coffee
+mixin (t={c:4}), {a:1}, {a:2,b:3}    # {a:2,b:3,c:4} t is {c:4}
+mixin {c:4}, {a:1, b:undefined}      # {a:1,c:4}
+```
 
 #### ofilter
 
@@ -580,11 +615,13 @@ args | desc
 
 ##### ofilter example
 
-    f = (k, v) -> k == 'a' or v % 2
-    o = {a:0, b:1, c:2}
-    ofilter o, f                # {a:0, b:1}
-    aOrOdd = ofilter f          # partial
-    aOrOdd o                    # {a:0, b:1}
+```coffee
+f = (k, v) -> k == 'a' or v % 2
+o = {a:0, b:1, c:2}
+ofilter o, f                # {a:0, b:1}
+aOrOdd = ofilter f          # partial
+aOrOdd o                    # {a:0, b:1}
+```
 
 #### omap
 
@@ -628,15 +665,17 @@ args | desc
 
 ##### pick example
 
-    o = {a:1, b:2, c:3}
-    # as array
-    pick o,['a','b']            # {a:1, b:2}
-    p1 = pick ['a',b']          # partial
-    p1(o)                       # {a:1, b:2}
-    # as vararg
-    pick o, 'a', 'b'            # {a:1, b:2}
-    p3 = pick 'a'               # partial
-    p3(o)                       # {a:1}
+```coffee
+o = {a:1, b:2, c:3}
+# as array
+pick o,['a','b']            # {a:1, b:2}
+p1 = pick ['a',b']          # partial
+p1(o)                       # {a:1, b:2}
+# as vararg
+pick o, 'a', 'b'            # {a:1, b:2}
+p3 = pick 'a'               # partial
+p3(o)                       # {a:1}
+```
 
 #### set
 
@@ -654,12 +693,14 @@ args | desc
 
 ##### set example
 
-    o = {a:1,b:3}
-    set(o,'a',2)          # {a:2,b:3}
-    seta3 = set(3)('a')   # partial
-    setb4 = set(4)('b')   # partial
-    f = sequence seta3, setb4
-    f(o)                  # {a:3,b:4}
+```coffee
+o = {a:1,b:3}
+set(o,'a',2)          # {a:2,b:3}
+seta3 = set(3)('a')   # partial
+setb4 = set(4)('b')   # partial
+f = sequence seta3, setb4
+f(o)                  # {a:3,b:4}
+```
 
 #### shallow
 
@@ -677,10 +718,12 @@ args | desc
 
 ##### shallow example
 
-    shallow 42            # 42
-    shallow {a:1}         # {a:1}
-    shallow {a:[1,2,3]}   # {a:[1,2,3]} the nested array is copy-by-reference
-    shallow {d:new Date}  # {d:<date>}  the nested date is copy-by-reference
+```coffee
+shallow 42            # 42
+shallow {a:1}         # {a:1}
+shallow {a:[1,2,3]}   # {a:[1,2,3]} the nested array is copy-by-reference
+shallow {d:new Date}  # {d:<date>}  the nested date is copy-by-reference
+```
 
 #### values
 
@@ -695,8 +738,10 @@ args | desc
 
 ##### values example
 
-    values {a:1,b:2}, 'b'     # ['1','2']
-    values {}                 # []
+```coffee
+values {a:1,b:2}, 'b'     # ['1','2']
+values {}                 # []
+```
 
 ### Array functions
 
@@ -718,11 +763,13 @@ args | desc
 
 ##### all example
 
-    as = [1,0,2]
-    all as, (a) -> a > 0      # false
-    all as, (a) -> a >= 0     # true
-    gt0 = all (a) -> a > 0    # partial
-    gt0 as                    # false
+```coffee
+as = [1,0,2]
+all as, (a) -> a > 0      # false
+all as, (a) -> a >= 0     # true
+gt0 = all (a) -> a > 0    # partial
+gt0 as                    # false
+```
 
 #### any
 
@@ -740,11 +787,13 @@ args | desc
 
 ##### any example
 
-    as = [1,0,2]
-    any as, (a) -> a > 0      # true
-    any as, (a) -> a > 2      # false
-    gt0 = any (a) -> a > 0    # partial
-    gt0 as                    # false
+```coffee
+as = [1,0,2]
+any as, (a) -> a > 0      # true
+any as, (a) -> a > 2      # false
+gt0 = any (a) -> a > 0    # partial
+gt0 as                    # false
+```
 
 #### concat
 
@@ -764,9 +813,11 @@ args | desc
 
 ##### concat example
 
-    concat [1,2], [3,4]   # [1,2,3,4]
-    concat [1,2], 3, 4    # [1,2,3,4]
-    concat 1, 2, 3, 4     # [1,2,3,4]
+```coffee
+concat [1,2], [3,4]   # [1,2,3,4]
+concat [1,2], 3, 4    # [1,2,3,4]
+concat 1, 2, 3, 4     # [1,2,3,4]
+```
 
 #### contains
 
@@ -783,10 +834,12 @@ args | desc
 
 ##### contains example
 
-    contains [1,2,3], 2    # true
-    contains [1,2,3], 5    # false
-    cont5 = contains(5)    # partial
-    cont5 [3,4,5]          # true
+```coffee
+contains [1,2,3], 2    # true
+contains [1,2,3], 5    # false
+cont5 = contains(5)    # partial
+cont5 [3,4,5]          # true
+```
 
 #### each
 
@@ -804,10 +857,12 @@ args | desc
 
 ##### each example
 
-    log = (a) -> console.log a
-    each [1,2,3], log            # prints 1...2...3
-    listlogger = each log        # partial
-    listlogger [1,2,3]           # prints 1...2...3
+```coffee
+log = (a) -> console.log a
+each [1,2,3], log            # prints 1...2...3
+listlogger = each log        # partial
+listlogger [1,2,3]           # prints 1...2...3
+```
 
 #### filter
 
@@ -820,10 +875,12 @@ is true. Same as `[...].filter`.
 
 ##### filter example
 
-    odd = (a) -> a % 2
-    filter [1,2,3], odd     # [1,3]
-    fo = filter odd         # partial
-    fo [1,2,3]              # [1,3]
+```coffee
+odd = (a) -> a % 2
+filter [1,2,3], odd     # [1,3]
+fo = filter odd         # partial
+fo [1,2,3]              # [1,3]
+```
 
 #### fold
 
@@ -846,8 +903,10 @@ args | desc
 
 ##### fold example
 
-    f = (p,c) -> if c % 2 then c + p else p   # sum odd numbers
-    fold [1,2,3], f, 5                        # 9
+```coffee
+f = (p,c) -> if c % 2 then c + p else p   # sum odd numbers
+fold [1,2,3], f, 5                        # 9
+```
 
 #### fold1
 
@@ -868,8 +927,10 @@ args | desc
 
 ##### fold1 example
 
-    f = (p,c) -> if c % 2 then c + p else p   # sum odd numbers
-    fold1 [2,3,4], f                          # 5 (in first iteration p=2 and c=3)
+```coffee
+f = (p,c) -> if c % 2 then c + p else p   # sum odd numbers
+fold1 [2,3,4], f                          # 5 (in first iteration p=2 and c=3)
+```
 
 #### foldr
 
@@ -910,8 +971,10 @@ args | desc
 
 ##### head example
 
-    head [1,2,3]   # 1
-    head []        # undefined
+```coffee
+head [1,2,3]   # 1
+head []        # undefined
+```
 
 #### index
 
@@ -929,8 +992,10 @@ args | desc
 
 ##### index example
 
-    index [1,2,3], 3       # 2
-    index [1,2,3], 4       # -1
+```coffee
+index [1,2,3], 3       # 2
+index [1,2,3], 4       # -1
+```
 
 #### join
 
@@ -948,8 +1013,10 @@ args | desc
 
 ##### join example
 
-    join [1,2,3], ''     # '123'
-    join [1,2,3], '-'    # '1-2-3'
+```coffee
+join [1,2,3], ''     # '123'
+join [1,2,3], '-'    # '1-2-3'
+```
 
 #### last
 
@@ -964,8 +1031,10 @@ args | desc
 
 ##### last example
 
-    last [1,2,3]     # 3
-    last []          # undefined
+```coffee
+last [1,2,3]     # 3
+last []          # undefined
+```
 
 #### map
 
@@ -986,10 +1055,12 @@ args | desc
 
 ##### map example
 
-    add1 = (a) -> a + 1
-    map [1,2,3], add1     # [2,3,4]
-    ladd1 = map add1      # partial
-    ladd1 [2,3,4]         # [3,4,5]
+```coffee
+add1 = (a) -> a + 1
+map [1,2,3], add1     # [2,3,4]
+ladd1 = map add1      # partial
+ladd1 [2,3,4]         # [3,4,5]
+```
 
 #### reverse
 
@@ -1004,7 +1075,9 @@ args | desc
 
 ##### reverse example
 
-    reverse [1,2,3]    # [3,2,1]
+```coffee
+reverse [1,2,3]    # [3,2,1]
+```
 
 #### sort
 
@@ -1034,11 +1107,13 @@ args | desc
 
 ##### sort example
 
-    sort [2,1,3]            # [1,2,3]
-    comp = (a,b) -> b - a
-    sort [2,1,3], comp      # [3,2,1]
-    s = sort(comp)          # partial
-    s [4,1,5,2]             # [5,4,2,1]
+```coffee
+sort [2,1,3]            # [1,2,3]
+comp = (a,b) -> b - a
+sort [2,1,3], comp      # [3,2,1]
+s = sort(comp)          # partial
+s [4,1,5,2]             # [5,4,2,1]
+```
 
 #### tail
 
@@ -1054,8 +1129,10 @@ args | desc
 
 ##### example
 
-    tail [1,2,3]    # [2,3]
-    tail []         # []
+```coffee
+tail [1,2,3]    # [2,3]
+tail []         # []
+```
 
 #### uniq
 
@@ -1071,7 +1148,9 @@ args | desc
 
 ##### uniq example
 
-    uniq [3,1,3,2,1,3,2,1]   # [3,1,2]
+```coffee
+uniq [3,1,3,2,1,3,2,1]   # [3,1,2]
+```
 
 ### String functions
 
@@ -1090,7 +1169,9 @@ args | desc
 
 ##### lcase example
 
-    lcase 'aBcD'   # 'abcd'
+```coffee
+lcase 'aBcD'   # 'abcd'
+```
 
 #### match
 
@@ -1108,9 +1189,11 @@ args | desc
 
 ##### match example
 
-    match 'a bar frog', '.'     # [ 'a', index: 0, input: 'a bar frog' ]
-    match 'a bar frog', 'fo'    # null
-    match 'a bar frog', /ar?/g  # ['a', 'ar']
+```coffee
+match 'a bar frog', '.'     # [ 'a', index: 0, input: 'a bar frog' ]
+match 'a bar frog', 'fo'    # null
+match 'a bar frog', /ar?/g  # ['a', 'ar']
+```
 
 #### replace
 
@@ -1129,9 +1212,11 @@ args | desc
 
 ##### replace example
 
-    replace 'abcab', 'b', 'c'    # 'accac'
-    replace 'abcab', 'd', 'c'    # 'abcab'
-    replace 'abcab', /a./g, 'f'  # 'fcf'
+```coffee
+replace 'abcab', 'b', 'c'    # 'accac'
+replace 'abcab', 'd', 'c'    # 'abcab'
+replace 'abcab', /a./g, 'f'  # 'fcf'
+```
 
 #### search
 
@@ -1149,12 +1234,14 @@ args | desc
 
 ##### search example
 
-    search 'abc',  '.'    # 0
-    search 'abc',  /./    # 0
-    search 'abc',  /d/    # -1
-    search 'abc',  '.c'   # 1
-    findC = search('c')   # partial
-    findC 'aqdc'          # 3
+```coffee
+search 'abc',  '.'    # 0
+search 'abc',  /./    # 0
+search 'abc',  /d/    # -1
+search 'abc',  '.c'   # 1
+findC = search('c')   # partial
+findC 'aqdc'          # 3
+```
 
 #### split
 
@@ -1172,9 +1259,11 @@ args | desc
 
 ##### split example
 
-    split 'abc', ''          # ['a','b','c']
-    split 'abc', 'b'         # ['a', 'c']
-    split 'cadabcab', /[ab]/ # ['c', 'd', '', 'c', '', '']
+```coffee
+split 'abc', ''          # ['a','b','c']
+split 'abc', 'b'         # ['a', 'c']
+split 'cadabcab', /[ab]/ # ['c', 'd', '', 'c', '', '']
+```
 
 #### trim
 
@@ -1189,7 +1278,9 @@ args | desc
 
 ##### trim example
 
-    trim '  ab  \n'    # 'ab'
+```coffee
+trim '  ab  \n'    # 'ab'
+```
 
 #### ucase
 
@@ -1204,8 +1295,9 @@ args | desc
 
 ##### ucase example
 
-    ucase 'aBcD'  # 'ABCD'
-
+```coffee
+ucase 'aBcD'  # 'ABCD'
+```
 
 ### Math functions
 
@@ -1231,13 +1323,15 @@ args | desc
 
 ##### and example
 
-    gt10  = gt(10)
-    even  = (a) -> a % 2 == 0
-    lt100 = lt(100)
-    f     = and_(gt10, even)
-    f(102)                        # true
-    g     = and_(gt10, even, lt100)
-    g(102)                        # false
+```coffee
+gt10  = gt(10)
+even  = (a) -> a % 2 == 0
+lt100 = lt(100)
+f     = and_(gt10, even)
+f(102)                        # true
+g     = and_(gt10, even, lt100)
+g(102)                        # false
+```
 
 #### add
 
@@ -1417,9 +1511,11 @@ args | desc
 
 ##### not example
 
-    even  = (a) -> a % 2 == 0
-    odd   = not_(even)
-    odd(11)            # true
+```coffee
+even  = (a) -> a % 2 == 0
+odd   = not_(even)
+odd(11)            # true
+```
 
 #### or
 
@@ -1441,13 +1537,15 @@ args | desc
 
 ##### or example
 
-    gt10  = gt(10)
-    even  = (a) -> a % 2 == 0
-    lt100 = lt(100)
-    f     = or_(gt10, even)
-    f(102)                        # true
-    g     = or_(gt10, even, lt100)
-    g(102)                        # false
+```coffee
+gt10  = gt(10)
+even  = (a) -> a % 2 == 0
+lt100 = lt(100)
+f     = or_(gt10, even)
+f(102)                        # true
+g     = or_(gt10, even, lt100)
+g(102)                        # false
+```
 
 #### sub
 

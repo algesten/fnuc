@@ -12,21 +12,33 @@ methods as pure functions is to facilitate
 
 ### Installing with NPM
 
-```bash`
+```bash
 npm install -S fnuc
 ```
 
 Inject into global
 
-    require('fnuc').installTo(global)
+```coffee
+require('fnuc').installTo(global)
+```
 
 Enable chainables (modifies `Function.prototype`)
 
-    require('./src/fnuc').installTo(global).installChainable()
+```coffee
+require('./src/fnuc').installTo(global).installChainable()
+```
 
 Or use it library style with a prefix:
 
-    F = require `fnuc`  # all functions under F
+```coffee
+F = require `fnuc`  # all functions under F
+```
+
+### Installing with Bower
+
+```bash
+bower install -S fnuc
+```
 
 ### Compatibility
 
@@ -55,41 +67,51 @@ Design philosophy:
 
 We expect a function such as `div` to have the following two forms:
 
-
-    div(a, b)    # a divided by b
-    div(b)(a)    # right section (`div` b)
-
+```coffee
+div(a, b)    # a divided by b
+div(b)(a)    # right section (`div` b)
+```
 
 `div` is [curried][curry] and `div10 = div(10)` can only have the meaning
 *division by 10*. Hence `div10 20` should equal `2`.
 
 Other least astonished variants that are *not in fnuc*:
 
-    div(_, b)    # left section (a `div`)
-    a `div` b    # infix haskell style
-    a.div b      # infix coffeescript style
+```coffee
+div(_, b)    # left section (a `div`)
+a `div` b    # infix haskell style
+a.div b      # infix coffeescript style
+```
 
 ### Chainable sequencing
 
 To install builtins on `Function.prototype` do:
 
-    require('./src/fnuc').installChainable()
+```coffee
+require('./src/fnuc').installChainable()
+```
 
 Most functions in fnuc are [chainable](api.md#chainable). This means
 as an alternative to [`sequence`](api.md#sequence) and
 [`compose`](api.md#compose), we can simply chain them together.
 
-    f = add(10).div(4).mul(5.6)
-    f(20)                         # 42
+```coffee
+f = add(10).div(4).mul(5.6)
+f(20)                         # 42
+```
 
 This is equivalent to
 
-    f = sequence add(10), div(4), mul(5.6)
+```coffee
+f = sequence add(10), div(4), mul(5.6)
+```
 
 In words: For a number, add 10 to it, divide the result by 4 and
 finally multiply the *that* result with 5.6
 
-    ((x + 10) / 4) * 5.6
+```coffee
+((x + 10) / 4) * 5.6
+```
 
 #### Arity `any -> 1 -> 1 -> 1`
 
@@ -98,7 +120,9 @@ sequenced result. However subsequent functions operate on the result
 of the previous, which can only be *1*. This means there's a risk of
 slipping up by not providing enough parameters when chaining.
 
-    f = add(10).mul      # Warning! mul needs 2 arguments.
+```coffee
+f = add(10).mul      # Warning! mul needs 2 arguments.
+```
 
 This chain produces a function, but I struggle to find any sane use
 for it.
@@ -106,21 +130,24 @@ for it.
 As a rule of thumb, try to ensure each function in a chain only
 expects one more argument.
 
-    f = split('').join('_').replace(/a/g,'b')
-    f('aaacc')                                  # 'b_b_b_c_c'
+```coffee
+f = split('').join('_').replace(/a/g,'b')
+f('aaacc')                                  # 'b_b_b_c_c'
+```
 
 #### Making your own chainable
 
 The API provides an easy way to define your own
 [chainable](api.md#chainable) function: `chainable(name,f)`.
 
-    even = (n) -> n % 2 == 0
-    chainable 'even', even
+```coffee
+even = (n) -> n % 2 == 0
+chainable 'even', even
 
-    f = mul(3).even
-    f(10)            # true
-    f(11)            # false
-
+f = mul(3).even
+f(10)            # true
+f(11)            # false
+```
 
 API
 ---
@@ -198,7 +225,7 @@ License
 
 The MIT License (MIT)
 
-Copyright (c) 2015 Martin Algesten
+Copyright © 2015 Martin Algesten
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
