@@ -680,6 +680,15 @@ describe 'and', ->
         lt102.should.have.been.calledWith 100, 42
         f(102).should.eql false
 
+    it 'is lazy', ->
+        f1 = spy -> false
+        f2 = spy -> true
+        f = and_ f1, f2
+        f().should.eql false
+        f1.should.have.been.calledOnce
+        f2.should.not.have.been.calledOnce
+
+
     it 'is aliased', ->
         F.and.should.eql F.and_
 
@@ -713,6 +722,15 @@ describe 'or', ->
         even.should.have.been.calledWith 9, 42
         lt102.should.have.been.calledOnce
         lt102.should.have.been.calledWith 9, 42
+
+    it 'is lazy', ->
+        f1 = spy -> true
+        f2 = spy -> false
+        f = or_ f1, f2
+        f().should.eql true
+        f1.should.have.been.calledOnce
+        f2.should.not.have.been.calledOnce
+
 
     it 'is aliased', ->
         F.or.should.eql F.or_

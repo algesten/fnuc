@@ -100,11 +100,11 @@ flip = (f) ->
     rewrap = if f._curry then curry else I
     merge (rewrap arity(arity(f)) (as...) -> uncurry(f) as.reverse()...), _flip:f
 
-compose = (fs...) -> ncurry arity(last(fs)), fold1 fs, (f, g) -> (as...) -> f g as...
+compose  = (fs...) -> ncurry arity(last(fs)), fold1 fs, (f, g) -> (as...) -> f g as...
 sequence = flip compose
 tap      = curry (a, f) -> f(a); a                  # a, fn -> a
 
-typeis        = curry (a,s) -> type(a) == s
+typeis   = curry (a,s) -> type(a) == s
 
 # array ----------------------------
 all      = curry binary  builtin Array::every       # [a], fn -> Boolean
@@ -159,6 +159,7 @@ evolve  = curry (o, t) -> omap o, (k, v) -> if has(t,k) then t[k](v) else v
 pick    = curry binary (o, as...) ->
     as = as[0] if typeis(as[0],'array'); r = {}; r[k] = o[k] for k in as; return r
 
+
 # string -----------------------------
 split    = curry binary  builtin String::split       # s, s -> s
 match    = curry binary  builtin String::match       # s, re -> [s]|null
@@ -183,8 +184,14 @@ lt       = curry (a,b) -> a < b
 lte      = curry (a,b) -> a <= b
 _ = {} # internal placeholder
 eq       = curry binary (as...) -> fold1(as, (a,b) -> if a == b then a else _) != _
-and_     = curry binary (as...) -> (bs...) -> fold as, ((a,b) -> a and b(bs...)), true
-or_      = curry binary (as...) -> (bs...) -> fold as, ((a,b) -> a or  b(bs...)), false
+and_     = curry binary (as...) -> (bs...) ->
+    len = as.length; i = 0
+    `for (;i < len; ++i) { if (!as[i].apply(null,bs)) { return false } }`
+    true
+or_      = curry binary (as...) -> (bs...) ->
+    len = as.length; i = 0
+    `for (;i < len; ++i) { if (as[i].apply(null,bs)) { return true } }`
+    false
 not_     = curry binary (as..., f) -> !f(as...)
 
 
