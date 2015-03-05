@@ -8,7 +8,8 @@ else
     chai.use(require 'sinon-chai')
     sinon = require 'sinon'
     F = require('../src/fnuc')
-    F.installTo(global, true)
+    delete global.__fnuc
+    F.expose(global)
 
 { assert, spy, mock, stub, sandbox } = sinon
 

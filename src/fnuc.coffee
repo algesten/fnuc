@@ -231,8 +231,6 @@ chainable = (name, f) ->
 ################################
 exports = {
 
-    __fnuc: true # identifier
-
     # generic
     shallow, clone
 
@@ -264,26 +262,29 @@ exports.and = exports.and_
 exports.or = exports.or_
 exports.not = exports.not_
 
-CHAINABLE = ['clone', 'shallow', 'flip', 'tap', 'has', 'get', 'set',
-    'keys', 'values', 'concat', 'head', 'tail', 'last', 'fold',
-    'fold1', 'foldr', 'foldr1', 'each', 'map', 'filter', 'all', 'any',
-    'join', 'reverse', 'sort', 'index', 'contains', 'uniq', 'split',
-    'match', 'replace', 'search', 'trim', 'ucase', 'lcase', 'add',
-    'sub', 'mul', 'div', 'mod', 'min', 'max', 'gt', 'gte', 'lt',
-    'lte', 'eq', 'and', 'or', 'not']
+CHAINABLE = split 'clone shallow flip tap has get set
+    keys values concat head tail last fold
+    fold1 foldr foldr1 each map filter all any
+    join reverse sort index contains uniq split
+    match replace search trim ucase lcase add
+    sub mul div mod min max gt gte lt
+    lte eq and or not eql', ' '
 
 # function to install all chainables on Function::
 exports.installChainable = ->
     each CHAINABLE, (name) -> chainable name, exports[name]
     exports
 
-exports.installTo = (obj, force) ->
-    return exports if obj.__fnuc unless force
-    tutti = shallow exports
-    delete tutti.installTo
-    delete tutti.installChainable
-    merge obj, tutti
-    exports
+# helper to expose selected functions
+expose = (exp, guard) -> (obj, funs...) ->
+    if funs?.length
+        obj[k] = exp[k] for k in funs
+    else unless obj[guard]
+        obj[k] = v for k, v of exp when k.indexOf("_") != 0
+        obj[guard] = true
+    exp
+
+exports.expose = expose(exports, '__fnuc')
 
 if typeof module == 'object'
     module.exports = exports

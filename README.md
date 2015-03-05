@@ -19,13 +19,13 @@ npm install -S fnuc
 Inject into global
 
 ```coffee
-require('fnuc').installTo(global)
+require('fnuc').expose(global)
 ```
 
 Enable chainables (modifies `Function.prototype`)
 
 ```coffee
-require('./src/fnuc').installTo(global).installChainable()
+require('./src/fnuc').expose(global).installChainable()
 ```
 
 Or use it library style with a prefix:
