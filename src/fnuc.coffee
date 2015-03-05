@@ -195,6 +195,24 @@ or_      = curry binary (as...) -> (bs...) ->
 not_     = curry binary (as..., f) -> !f(as...)
 
 
+# Deep equals
+eql = do ->
+    eqtype  = (a, b) -> type(a) == type(b)
+    eqarr   = (a, b) ->
+        return false unless a.length == b.length
+        (for i in [0...a.length] by 1 then return false unless eql a[i], b[i]); true
+    eqplain = (a, b) -> isplain(a) and isplain(b)
+    sortstr = sort (s1, s2) -> s1.localeCompare s2
+    eqobj   = (a, b) ->
+        ka = sortstr keys a
+        return false unless eqarr ka, sortstr keys b
+        (for k in ka then return false unless eql a[k], b[k]); true
+    curry (a, b) ->
+        return true if a == b
+        (and_ eqtype, if (t = type(a)) == 'object' then and_ eqplain, eqobj else
+            if t == 'array' then eqarr else -> false)(a, b)
+
+
 # Make a function chainable off Function::
 chainable = (name, f) ->
     n = arity(f)
@@ -226,7 +244,8 @@ exports = {
     sequence, I, ident, partial, partialr, tap, chainable
 
     # object
-    merge, mixin, has, get, set, keys, values, pick, evolve, omap, ofilter
+    merge, mixin, has, get, set, keys, values, pick, evolve, omap,
+    ofilter, eql
 
     # array
     concat, head, tail, last, fold, fold1, foldr, foldr1, each, map,

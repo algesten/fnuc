@@ -167,6 +167,7 @@ API
 [`div`](api.md#div)
 [`each`](api.md#each)
 [`eq`](api.md#eq)
+[`eql`](api.md#eql)
 [`evolve`](api.md#evolve)
 [`filter`](api.md#filter)
 [`flip`](api.md#flip)

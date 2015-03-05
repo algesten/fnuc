@@ -39,6 +39,8 @@ TYPES = [
     {v:{},        t:'object',    d:'[empty]', truthy:true,  func:Object, plain:true}
     {v:{a:1,b:{}},t:'object',    d:'',        truthy:true,  func:Object, plain:true}
     {v:new Foo,   t:'object',    d:'[proto]', truthy:true,  func:Object}
+    {v:{a:[{b:1}]}, t:'object',  d:'',        truthy:true,  func:Object, plain:true}
+    {v:{a:[{}]},  t:'object',    d:'',        truthy:true,  func:Object, plain:true}
 ]
 TYPE_PROTO    = TYPES.filter (spec) -> spec.t == 'object' and not spec.plain
 TYPE_NO_PROTO = TYPES.filter (spec) -> spec.t != 'object' or spec.plain
@@ -781,3 +783,15 @@ describe 'chainable', ->
         chainable 'f', f2
         g = add(3).f
         g(4).should.eql 1
+
+describe 'eql', ->
+
+    TYPES.forEach (v1, i1) -> TYPES.forEach (v2, i2) ->
+        s1 = JSON.stringify(v1.v)
+        s2 = JSON.stringify(v2.v)
+        if i1 == i2
+            it "equals for #{s1}, #{s2}", ->
+                eql(v1.v, v2.v).should.eql true
+        else
+            it "not equals for #{s1}, #{s2}", ->
+                eql(v1.v, v2.v).should.eql false

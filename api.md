@@ -16,6 +16,7 @@ API
 [`div`](api.md#div)
 [`each`](api.md#each)
 [`eq`](api.md#eq)
+[`eql`](api.md#eql)
 [`evolve`](api.md#evolve)
 [`filter`](api.md#filter)
 [`flip`](api.md#flip)
@@ -501,6 +502,20 @@ o1 == o                      # false
 badd40 = evolve t            # partial
 badd40 o                     # {a:1,b:42,c:3}
 ```
+
+#### eql
+
+Deep equals. `a` equal to `b` which will recursively traverse nested
+arrays and objects.
+
+`eq(a,b)`   `:: a, a -> Boolean`  
+`eq(b)(a)`  `:: a -> a -> Boolean`  
+`chainable`
+
+args | desc
+:--- | :---
+`a`  | Argument 1.
+`b`  | Argument 2.
 
 #### get
 
