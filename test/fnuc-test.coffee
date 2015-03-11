@@ -554,6 +554,9 @@ FN_TEST = [
     {n:'replace',s:'s, re, s -> s',  f:replace,ar:3, as:['aba',/a/g,'b'],    eq:'bbb'}
     {n:'search', s:'s, s -> b',      f:search, ar:2, as:['aaaca', 'c'],      eq:3}
     {n:'search', s:'s, re -> b',     f:search, ar:2, as:['aaaca', /ac/],     eq:2}
+    {n:'slice',  s:'s, n, n -> s',   f:slice,  ar:3, as:['abcdef', 1, 3],    eq:'bc'}
+    {n:'slicefr',s:'s, n -> s',      f:slicefr,ar:2, as:['abcdef', 2],       eq:'cdef'}
+    {n:'sliceto',s:'s, n -> s',      f:sliceto,ar:2, as:['abcdef', 2],       eq:'ab'}
     {n:'trim',   s:'s -> s',         f:trim,   ar:1, as:['  abc '],          eq:'abc'}
     {n:'ucase',  s:'s -> s',         f:ucase,  ar:1, as:['abc'],             eq:'ABC'}
     {n:'lcase',  s:'s -> s',         f:lcase,  ar:1, as:['ABC'],             eq:'abc'}
@@ -796,3 +799,26 @@ describe 'eql', ->
         else
             it "not equals for #{s1}, #{s2}", ->
                 eql(v1.v, v2.v).should.eql false
+
+describe 'groupby', ->
+
+    it 'is is arity 2', ->
+        arity(groupby).should.eql 2
+
+    it 'groups objects according to key function', ->
+        as = [{n:'apa'},{n:'banan'},{n:'ananas'}]
+        fn = compose sliceto(1), get('n')
+        gs = groupby as, fn
+        gs.should.eql {
+            a: [{n:'apa'},{n:'ananas'}]
+            b: [{n:'banan'}]
+        }
+
+    it 'handles empty', ->
+        groupby([], ->).should.eql {}
+
+    it 'is curried', ->
+        as = [{n:'apa'}]
+        fn = compose sliceto(1), get('n')
+        gs = groupby(fn)(as)
+        gs.should.eql a:[{n:'apa'}]

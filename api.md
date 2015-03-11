@@ -25,6 +25,7 @@ API
 [`foldr1`](api.md#foldr1)
 [`foldr`](api.md#foldr)
 [`get`](api.md#get)
+[`groupby`](api.md#groupby)
 [`gt`](api.md#gt)
 [`gte`](api.md#gte)
 [`has`](api.md#has)
@@ -58,6 +59,9 @@ API
 [`sequence`](api.md#sequence)
 [`set`](api.md#set)
 [`shallow`](api.md#shallow)
+[`slice`](api.md#slice)
+[`slicefr`](api.md#slicefr)
+[`sliceto`](api.md#sliceto)
 [`sort`](api.md#sort)
 [`split`](api.md#split)
 [`sub`](api.md#sub)
@@ -516,6 +520,28 @@ args | desc
 :--- | :---
 `a`  | Argument 1.
 `b`  | Argument 2.
+
+#### groupby
+
+Groups objects in array `os` by a string value extracted from each
+element using `f`.
+
+`groupby(os,f)`  `:: [{k1:v}], (k1 -> k2) -> {k2:[{k1:v}]}`  
+`groupby(f)(os)` `:: (k1 -> k2) -> [{k1:v}] -> {k2:[{k1:v}]}`  
+`chainable`
+
+args | desc
+:--- | :---
+`os` | Array of objects to invoke group by key function on.
+`f`  | Function that transforms each object in `os` to a string.
+
+##### groupby example
+
+```coffee
+as = [{n:'apa'},{n:'banan'},{n:'ananas'}]
+fn = compose strto(1), get('n')
+gs = groupby as, fn              # {a:[{n:'apa'},{n:'ananas'}], b:[{n:'banan'}]}
+```
 
 #### get
 
@@ -1282,6 +1308,64 @@ args | desc
 split 'abc', ''          # ['a','b','c']
 split 'abc', 'b'         # ['a', 'c']
 split 'cadabcab', /[ab]/ # ['c', 'd', '', 'c', '', '']
+```
+
+#### slice
+
+Slice of a string `s` from `m` to `n`, same as `s.slice(m,n)`.
+
+`slice(s,m,n)`   `:: s, n, n, -> s`  
+`slice(n)(m)(s)` `:: n -> n -> n -> s`  
+`chainable`
+
+args | desc
+:--- | :---
+`s`  | String to slice
+`m`  | Slice from
+`n`  | Slice to. Optional.
+
+##### slice example
+
+```coffee
+slice 'abcdef', 1, 3    # bc
+```
+
+#### slicefr
+
+Slice the end of a string `s` from `m`, same as `s.slice(m)`.
+
+`slicefr(s,m)`  `:: s, n, -> s`  
+`slicefr(m)(s)` `:: n -> n -> s`  
+`chainable`
+
+args | desc
+:--- | :---
+`s`  | String to slice end of
+`m`  | Slice from
+
+##### slicefr example
+
+```coffee
+slicefr 'abcdef', 2    # cdef
+```
+
+#### sliceto
+
+Slice the beginning of a string `s` up to `n`, same as `s.slice(0, n)`.
+
+`sliceto(s,n)`  `:: s, n, -> s`  
+`sliceto(n)(s)` `:: n -> n -> s`  
+`chainable`
+
+args | desc
+:--- | :---
+`s`  | String to slice beginning of
+`n`  | Slice up to
+
+##### sliceto example
+
+```coffee
+sliceto 'abcdef', 2    # ab
 ```
 
 #### trim
