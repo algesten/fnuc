@@ -14,6 +14,7 @@ API
 [`contains`](api.md#contains)
 [`curry`](api.md#curry)
 [`div`](api.md#div)
+[`drop`](api.md#drop)
 [`each`](api.md#each)
 [`eq`](api.md#eq)
 [`eql`](api.md#eql)
@@ -60,12 +61,11 @@ API
 [`set`](api.md#set)
 [`shallow`](api.md#shallow)
 [`slice`](api.md#slice)
-[`slicefr`](api.md#slicefr)
-[`sliceto`](api.md#sliceto)
 [`sort`](api.md#sort)
 [`split`](api.md#split)
 [`sub`](api.md#sub)
 [`tail`](api.md#tail)
+[`take`](api.md#take)
 [`tap`](api.md#tap)
 [`trim`](api.md#trim)
 [`type`](api.md#type)
@@ -1330,12 +1330,12 @@ args | desc
 slice 'abcdef', 1, 3    # bc
 ```
 
-#### slicefr
+#### drop
 
 Slice the end of a string `s` from `m`, same as `s.slice(m)`.
 
-`slicefr(s,m)`  `:: s, n, -> s`  
-`slicefr(m)(s)` `:: n -> n -> s`  
+`drop(s,m)`  `:: s, n, -> s`  
+`drop(m)(s)` `:: n -> n -> s`  
 `chainable`
 
 args | desc
@@ -1343,18 +1343,18 @@ args | desc
 `s`  | String to slice end of
 `m`  | Slice from
 
-##### slicefr example
+##### drop example
 
 ```coffee
-slicefr 'abcdef', 2    # cdef
+drop 'abcdef', 2    # cdef
 ```
 
-#### sliceto
+#### take
 
 Slice the beginning of a string `s` up to `n`, same as `s.slice(0, n)`.
 
-`sliceto(s,n)`  `:: s, n, -> s`  
-`sliceto(n)(s)` `:: n -> n -> s`  
+`take(s,n)`  `:: s, n, -> s`  
+`take(n)(s)` `:: n -> n -> s`  
 `chainable`
 
 args | desc
@@ -1362,10 +1362,10 @@ args | desc
 `s`  | String to slice beginning of
 `n`  | Slice up to
 
-##### sliceto example
+##### take example
 
 ```coffee
-sliceto 'abcdef', 2    # ab
+take 'abcdef', 2    # ab
 ```
 
 #### trim

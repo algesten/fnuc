@@ -165,12 +165,15 @@ split    = curry binary  builtin String::split       # s, s -> s
 match    = curry binary  builtin String::match       # s, re -> [s]|null
 replace  = curry ternary builtin String::replace     # s, s, s -> s
 search   = curry binary  builtin String::search      # s, s -> Boolean
-slice    = curry (s, m, n) -> s.slice m, n           # s, n, n -> s
-slicefr  = curry (s, n)    -> s.slice n              # s, n -> s
-sliceto  = curry (s, n)    -> s.slice 0, n           # s, n -> s
 trim     = unary builtin String::trim                # s -> s
 ucase    = unary builtin String::toUpperCase         # s -> s
 lcase    = unary builtin String::toLowerCase         # s -> s
+
+
+# string or array
+slice    = curry (s, m, n) -> s.slice m, n  # s, n, n -> s
+drop     = curry (s, n)    -> s.slice n     # s, n -> s
+take     = curry (s, n)    -> s.slice 0, n  # s, n -> s
 
 
 # maths -----------------------------------
@@ -260,8 +263,8 @@ exports = {
     filter, all, any, join, reverse, sort, index, contains, uniq
 
     # string
-    split, match, replace, search, trim, ucase, lcase, slice,
-    slicefr, sliceto
+    split, match, replace, search, trim, ucase, lcase, slice, drop,
+    take
 
     # maths
     add, sub, mul, div, mod, min, max, gt, gte, lt, lte, eq, and_,
@@ -276,8 +279,8 @@ exports.not = exports.not_
 CHAINABLE = split 'clone shallow flip tap has get set keys values
     concat head tail last fold fold1 foldr foldr1 each map filter all
     any join reverse sort index contains uniq split match replace
-    search slice, slicefr, sliceto, trim ucase lcase add sub mul div
-    mod min max gt gte lt lte eq and or not eql groupby', ' '
+    search slice, drop, take, trim ucase lcase add sub mul div mod min
+    max gt gte lt lte eq and or not eql groupby', ' '
 
 # function to install all chainables on Function::
 exports.installChainable = ->
