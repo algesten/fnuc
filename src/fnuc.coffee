@@ -46,17 +46,17 @@ clone = (a) ->
 
 
 # type -----------------------------
-isplain       = (o) -> !!o && typeof o == 'object' && o.constructor == Object
-type          = (a) -> _toString(a)[8...-1].toLowerCase()
+isplain = (o) -> !!o && typeof o == 'object' && o.constructor == Object
+type    = (a) -> _toString(a)[8...-1].toLowerCase()
 
 # object ----------------------------
-merge  = (t, os...) -> t[k] = v for k,v of o when v != undefined for o in os; t
-mixin  = (os...)    -> merge {}, os...
+merge   = (t, os...) -> t[k] = v for k,v of o when v != undefined for o in os; t
+mixin   = (os...)    -> merge {}, os...
 
 # array 1
-head   = (a) -> a[0]
-tail   = (a) -> a[1..]
-last   = (a) -> a[a.length-1]
+head    = (a) -> a[0]
+tail    = (a) -> a[1..]
+last    = (a) -> a[a.length-1]
 
 # fn --------------------------------
 arity = (f, n) ->
@@ -161,13 +161,13 @@ pick    = curry binary (o, as...) ->
 
 
 # string -----------------------------
-split    = curry binary  builtin String::split       # s, s -> s
-match    = curry binary  builtin String::match       # s, re -> [s]|null
-replace  = curry ternary builtin String::replace     # s, s, s -> s
-search   = curry binary  builtin String::search      # s, s -> Boolean
-trim     = unary builtin String::trim                # s -> s
-ucase    = unary builtin String::toUpperCase         # s -> s
-lcase    = unary builtin String::toLowerCase         # s -> s
+split    = curry binary  builtin String::split    # s, s -> s
+match    = curry binary  builtin String::match    # s, re -> [s]|null
+replace  = curry ternary builtin String::replace  # s, s, s -> s
+search   = curry binary  builtin String::search   # s, s -> Boolean
+trim     = unary builtin String::trim             # s -> s
+ucase    = unary builtin String::toUpperCase      # s -> s
+lcase    = unary builtin String::toLowerCase      # s -> s
 
 
 # string or array
