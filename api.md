@@ -886,6 +886,10 @@ cont5 = contains(5)    # partial
 cont5 [3,4,5]          # true
 ```
 
+#### drop (array)
+
+See [`drop`](api.md#drop)
+
 #### each
 
 Performs side effects for each element of an array without altering
@@ -1124,6 +1128,10 @@ args | desc
 reverse [1,2,3]    # [3,2,1]
 ```
 
+#### slice (array)
+
+See [`slice`](api.md#slice)
+
 #### sort
 
 Sorts an array according to a comparator function. Same as
@@ -1178,6 +1186,10 @@ args | desc
 tail [1,2,3]    # [2,3]
 tail []         # []
 ```
+
+#### take (array)
+
+See [`take`](api.md#take)
 
 #### uniq
 
@@ -1314,25 +1326,30 @@ split 'cadabcab', /[ab]/ # ['c', 'd', '', 'c', '', '']
 
 Slice of a string `s` from `m` to `n`, same as `s.slice(m,n)`.
 
+Also applicable for array objects.
+
 `slice(s,m,n)`   `:: s, n, n, -> s`  
 `slice(n)(m)(s)` `:: n -> n -> n -> s`  
 `chainable`
 
 args | desc
 :--- | :---
-`s`  | String to slice
+`s`  | String/array to slice
 `m`  | Slice from
 `n`  | Slice to. Optional.
 
 ##### slice example
 
 ```coffee
-slice 'abcdef', 1, 3    # bc
+slice 'abcdef',  1, 3    # bc
+slice [0,1,2,3], 1, 3    # [1,2]
 ```
 
 #### drop
 
 Slice the end of a string `s` from `m`, same as `s.slice(m)`.
+
+Also applicable for array.
 
 `drop(s,m)`  `:: s, n, -> s`  
 `drop(m)(s)` `:: n -> n -> s`  
@@ -1340,18 +1357,21 @@ Slice the end of a string `s` from `m`, same as `s.slice(m)`.
 
 args | desc
 :--- | :---
-`s`  | String to slice end of
+`s`  | String/array to slice end of
 `m`  | Slice from
 
 ##### drop example
 
 ```coffee
-drop 'abcdef', 2    # cdef
+drop 'abcdef',  2   # cdef
+drop [0,2,3,4], 2   # [3,4]
 ```
 
 #### take
 
 Slice the beginning of a string `s` up to `n`, same as `s.slice(0, n)`.
+
+Also applicable for array.
 
 `take(s,n)`  `:: s, n, -> s`  
 `take(n)(s)` `:: n -> n -> s`  
@@ -1359,13 +1379,14 @@ Slice the beginning of a string `s` up to `n`, same as `s.slice(0, n)`.
 
 args | desc
 :--- | :---
-`s`  | String to slice beginning of
+`s`  | String/array to slice beginning of
 `n`  | Slice up to
 
 ##### take example
 
 ```coffee
-take 'abcdef', 2    # ab
+take 'abcdef',  2    # ab
+take [0,1,2,3], 2    # [0,1]
 ```
 
 #### trim
