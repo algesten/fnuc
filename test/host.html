@@ -27,8 +27,6 @@
     <script src="../lib/fnuc.js"></script>
     <script>
       mocha.setup('bdd');
-    </script>
-    <script>
       F.expose(window);
       browsertest = true;
     </script>
@@ -38,6 +36,13 @@
     <div id="mocha"><p><a href=".">Index</a></p></div>
     <div id="messages"></div>
     <div id="fixtures"></div>
-    <script>window.onload = function() { mocha.run(); }</script>
+    <script>
+      window.onload = function() {
+        runner = mocha.run();
+        runner.on('end', function() {
+          window.mochaResults = runner.stats;
+        });
+      }
+    </script>
   </body>
 </html>
