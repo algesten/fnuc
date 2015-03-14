@@ -1,6 +1,8 @@
 if browsertest?
     `sinon = window.sinon`
+    `chai = window.chai`
     `expect = window.chai.expect`
+    `F = window.F`
 else
     chai   = require 'chai'
     chai.use(require 'sinon-chai')

@@ -26,11 +26,10 @@
     <script src="../node_modules/sinon-chai/lib/sinon-chai.js"></script>
     <script src="../lib/fnuc.js"></script>
     <script>
-      chai.should();
       mocha.setup('bdd');
     </script>
     <script>
-      F.installTo(window);
+      F.expose(window);
       browsertest = true;
     </script>
     <script src="../lib/fnuc-test.js"></script>
