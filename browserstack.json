@@ -1,14 +1,32 @@
 {
-    "test_path": "test/host.html",
-    "test_framework": "mocha",
-    "browsers": [
-        "chrome_previous",
-        "chrome_latest",
-        "firefox_previous",
-        "firefox_latest",
-        "safari_previous",
-        "safari_latest",
-        "ie_10",
-        "ie_11"
-    ]
+  "test_path": "test/host.html",
+  "test_framework": "mocha",
+  "browsers": [
+    "chrome_previous",
+    "chrome_latest",
+    "firefox_previous",
+    "firefox_latest",
+    "safari_previous",
+    "safari_latest",
+    "ie_8",
+    "ie_9",
+    "ie_10",
+    "ie_11",
+    {
+      "os": "ios",
+      "os_version": "7.0"
+    } ,
+    {
+      "os": "ios",
+      "os_version": "6.1"
+    },
+    {
+      "os": "android",
+      "os_version": "5.0"
+    },
+    {
+      "os": "android",
+      "os_version": "4.4"
+    }
+  ]
 }
