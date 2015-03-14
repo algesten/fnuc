@@ -29,25 +29,36 @@ shallow = (a) ->
         r[i] = a[i] for i in [0...a.length] by 1
     else if t == 'date'
         r = new Date(a.getTime())
+    else if t == 'tuple'
+        r = a.unpack tuple
     else if isplain(a)
         r = merge {}, a
     else
         throw new TypeError "Can't shallow " + a
     return r
 
+
 clone = (a) ->
     return a unless a # null, undefined, false, '', 0
-    s = shallow(a)
-    if type(s) == 'array'
-        s[i] = clone(s[i]) for i in [0...a.length] by 1
-    else if isplain(s)
-        s[k] = clone(v) for k, v of s
+    if (t = type a) == 'tuple'
+        s = a.unpack (as...) -> tuple clone(as)...
+    else
+        s = shallow(a)
+        if t == 'array'
+            s[i] = clone(s[i]) for i in [0...a.length] by 1
+        else if isplain(s)
+            s[k] = clone(v) for k, v of s
     return s
 
 
 # type -----------------------------
 isplain = (o) -> !!o && typeof o == 'object' && o.constructor == Object
-type    = (a) -> _toString(a)[8...-1].toLowerCase()
+Tuple   = -> # placeholder
+type    = (a) ->
+    if a instanceof Tuple
+        'tuple'
+    else
+        _toString(a)[8...-1].toLowerCase()
 
 # object ----------------------------
 merge   = (t, os...) -> t[k] = v for k,v of o when v != undefined for o in os; t
@@ -70,18 +81,22 @@ unary   = arity 1
 binary  = arity 2
 ternary = arity 3
 
-ncurry = (n, f, as=[]) ->
+# n  - arity
+# v  - true if we allow varargs. false to chop.
+# f  - function to curry
+# as - arguments so far
+ncurry = (n, v, f, as=[]) ->
     l = n - as.length
     nf = arity(l) (bs...) ->
-        cs = (if bs.length <= l then bs else bs[0...l]).concat as
-        if cs.length < n then ncurry n, f, cs else f cs...
+        cs = (if bs.length <= l then bs else (if v then bs else bs[0...l])).concat as
+        if cs.length < n then ncurry n, v, f, cs else f cs...
     Object.defineProperty nf, '_curry', value: -> partialr f, as...
     return nf
 
 curry = (f) ->
     n = arity(f)
     return f if (n < 2)
-    nf = arity(n) (as...) -> if as.length < n then ncurry n, f, as else f as...
+    nf = arity(n) (as...) -> if as.length < n then ncurry n, false, f, as else f as...
     Object.defineProperty nf, '_curry', value: -> f
     return nf
 
@@ -102,7 +117,7 @@ flip = (f) ->
     Object.defineProperty g, '_flip', value:f
     return g
 
-compose  = (fs...) -> ncurry arity(last(fs)), fold1 fs, (f, g) -> (as...) -> f g as...
+compose  = (fs...) -> ncurry arity(last(fs)), false, fold1 fs, (f, g) -> (as...) -> f g as...
 sequence = flip compose
 tap      = curry (a, f) -> f(a); a                  # a, fn -> a
 
@@ -203,9 +218,42 @@ or_      = curry binary (as...) -> (bs...) ->
 not_     = curry binary (as..., f) -> !f(as...)
 
 
+# tuples
+class Tuple
+    constructor: (as) ->
+        Object.defineProperty @, '_as', value:as
+        for i in [0...as.length] by 1
+            Object.defineProperty @, String(i), {value:as[i],enumerable:true}
+        Object.defineProperty @, 'length', value:as.length
+    unpack: (un) -> un @_as...
+    toString: -> "[tuple #{JSON.stringify(this)}]"
+tuple = ncurry 2, true, (as...) -> new Tuple as
+fst   = (t) -> t.unpack I
+snd   = (t) -> t.unpack (a, b) -> b
+nth   = curry (t, n) -> t.unpack (as...) -> as[n]
+len   = (t) -> t.length
+
+
+# zipping
+zipwith = ncurry 3, true, (as..., f) ->
+    ml = min (a.length for a in as)...
+    f (as[n][i] for n in [0...as.length] by 1)... for i in [0...ml] by 1
+zip   = zipwith tuple
+unzip = (z) ->
+    return [] unless z.length
+    l = len z[0]
+    r = (new Array(z.length) for n in [0...l] by 1)
+    un = (i) -> (as...) ->
+        r[n][i] = as[n] for n in [0...l] by 1
+        null
+    z[i].unpack un(i) for i in [0...z.length] by 1
+    tuple r...
+
+
 # Deep equals
 eql = do ->
     eqtype  = (a, b) -> type(a) == type(b)
+    eqtuple = (a, b) -> a.unpack (as...) -> b.unpack (bs...) -> eql as, bs
     eqarr   = (a, b) ->
         return false unless a.length == b.length
         (for i in [0...a.length] by 1 then return false unless eql a[i], b[i]); true
@@ -217,8 +265,11 @@ eql = do ->
         (for k in ka then return false unless eql a[k], b[k]); true
     curry (a, b) ->
         return true if a == b
-        (and_ eqtype, if (t = type(a)) == 'object' then and_ eqplain, eqobj else
-            if t == 'array' then eqarr else -> false)(a, b)
+        (and_ eqtype, switch type(a)
+            when 'tuple'  then eqtuple
+            when 'object' then and_ eqplain, eqobj
+            when 'array'  then eqarr
+            else -> false)(a,b)
 
 groupby = curry (as, fn) -> fold as,
     (acc, a) ->
@@ -271,6 +322,9 @@ exports = {
     # maths
     add, sub, mul, div, mod, min, max, gt, gte, lt, lte, eq, and_,
     or_, not_
+
+    # tuple
+    tuple, fst, snd, len, nth, zip, unzip, zipwith
 
 }
 
