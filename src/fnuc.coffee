@@ -75,14 +75,14 @@ ncurry = (n, f, as=[]) ->
     nf = arity(l) (bs...) ->
         cs = (if bs.length <= l then bs else bs[0...l]).concat as
         if cs.length < n then ncurry n, f, cs else f cs...
-    nf._curry = -> partialr f, as...
+    Object.defineProperty nf, '_curry', value: -> partialr f, as...
     return nf
 
 curry = (f) ->
     n = arity(f)
     return f if (n < 2)
     nf = arity(n) (as...) -> if as.length < n then ncurry n, f, as else f as...
-    nf._curry = -> f
+    Object.defineProperty nf, '_curry', value: -> f
     return nf
 
 # not a mathematical uncurry, it just unwraps our own curry
@@ -98,7 +98,9 @@ partialr = (f, as...) ->
 flip = (f) ->
     return f._flip if f._flip
     rewrap = if f._curry then curry else I
-    merge (rewrap arity(arity(f)) (as...) -> uncurry(f) as.reverse()...), _flip:f
+    g = (rewrap arity(arity(f)) (as...) -> uncurry(f) as.reverse()...)
+    Object.defineProperty g, '_flip', value:f
+    return g
 
 compose  = (fs...) -> ncurry arity(last(fs)), fold1 fs, (f, g) -> (as...) -> f g as...
 sequence = flip compose
