@@ -3,15 +3,16 @@ if browsertest?
     `expect = window.chai.expect`
 else
     chai   = require 'chai'
-    chai.should()
-    expect = chai.expect
     chai.use(require 'sinon-chai')
     sinon = require 'sinon'
     F = require('../src/fnuc')
     delete global.__fnuc
     F.expose(global)
 
-{ assert, spy, mock, stub, sandbox } = sinon
+assert = chai.assert
+eql = assert.deepEqual
+
+{ spy, mock, stub, sandbox } = sinon
 
 # String
 # Number
@@ -53,64 +54,64 @@ describe 'type', ->
 
     describe 'for 1 arg', ->
         TYPES.forEach (spec) ->
-            it "works for #{spec.t}#{spec.d}", -> type(spec.v).should.eql(spec.t)
+            it "works for #{spec.t}#{spec.d}", -> eql type(spec.v), spec.t
 
 describe 'typeis', ->
 
     describe 'works on the form (a,s)', ->
         TYPES.forEach (spec) ->
-            it "for type #{spec.t}#{spec.d}", -> typeis(spec.v,spec.t).should.be.true
+            it "for type #{spec.t}#{spec.d}", -> eql typeis(spec.v,spec.t), true
 
     describe 'works curried (s)(a)', ->
         TYPES.forEach (spec) ->
-            it "for type #{spec.t}#{spec.d}", -> typeis(spec.t)(spec.v).should.be.true
+            it "for type #{spec.t}#{spec.d}", -> eql typeis(spec.t)(spec.v), true
 
 describe 'isplain', ->
 
     describe 'tells whether something is a plain object', ->
         TYPES.forEach (spec) ->
-            it "for type #{spec.t}#{spec.d}", -> isplain(spec.v).should.eql !!spec.plain
+            it "for type #{spec.t}#{spec.d}", -> eql isplain(spec.v), !!spec.plain
 
 describe 'merge', ->
 
     describe 'alters first argument with consecutive and', ->
 
-        it 'handles no object', -> expect(merge()).to.be.undefined
-        it 'handles one object', -> merge(a:1).should.eql a:1
-        it 'handles two objects', -> merge({a:1},{b:2}).should.eql a:1,b:2
-        it 'handles three objects', -> merge({a:1},{b:2},{c:3}).should.eql a:1,b:2,c:3
-        it 'overwrites existing keys', -> merge({a:1},{a:2}).should.eql a:2
-        it 'overwrites with precedence', -> merge({a:1},{a:2},{a:3}).should.eql a:3
-        it 'ignores undefined values', -> merge({a:1},{a:undefined}).should.eql a:1
+        it 'handles no object', -> eql merge(), undefined
+        it 'handles one object', -> eql merge(a:1), a:1
+        it 'handles two objects', -> eql merge({a:1},{b:2}), {a:1,b:2}
+        it 'handles three objects', -> eql merge({a:1},{b:2},{c:3}), {a:1,b:2,c:3}
+        it 'overwrites existing keys', -> eql merge({a:1},{a:2}), a:2
+        it 'overwrites with precedence', -> eql merge({a:1},{a:2},{a:3}), a:3
+        it 'ignores undefined values', -> eql merge({a:1},{a:undefined}), a:1
         it 'leaves undefined in first be', ->
-            merge({a:undefined},{b:2}).should.eql a:undefined,b:2
+            eql merge({a:undefined},{b:2}), {a:undefined,b:2}
 
 describe 'mixin', ->
 
     describe 'returns a new object with all arguments merged and', ->
 
-        it 'handles no object', -> expect(mixin()).to.eql {}
+        it 'handles no object', -> eql mixin(), {}
         it 'handles one object', ->
-            (r = mixin(a = a:1)).should.eql a:1
-            a.should.not.equal r
+            eql (r = mixin(a = a:1)), a:1
+            assert.ok a != r
         it 'handles two objects', ->
-            mixin(a = {a:1},{b:2}).should.eql a:1,b:2
-            a.should.eql a:1
+            eql mixin(a = {a:1},{b:2}), {a:1,b:2}
+            eql a, a:1
         it 'handles three objects', ->
-            mixin(a = {a:1},{b:2},{c:3}).should.eql a:1,b:2,c:3
-            a.should.eql a:1
+            eql mixin(a = {a:1},{b:2},{c:3}), {a:1,b:2,c:3}
+            eql a, a:1
         it 'overwrites existing keys', ->
-            mixin(a = {a:1},{a:2}).should.eql a:2
-            a.should.eql a:1
+            eql mixin(a = {a:1},{a:2}), a:2
+            eql a, a:1
         it 'overwrites with precedence', ->
-            mixin(a = {a:1},{a:2},{a:3}).should.eql a:3
-            a.should.eql a:1
+            eql mixin(a = {a:1},{a:2},{a:3}), a:3
+            eql a, a:1
         it 'ignores undefined values', ->
-            mixin(a = {a:1},{a:undefined}).should.eql a:1
-            a.should.eql a:1
+            eql mixin(a = {a:1},{a:undefined}), a:1
+            eql a, a:1
         it 'leaves undefined in first be', ->
-            mixin(a = {a:undefined},{b:2}).should.eql b:2
-            a.should.eql a:undefined
+            eql mixin(a = {a:undefined},{b:2}), b:2
+            eql a, a:undefined
 
 describe 'shallow', ->
 
@@ -118,12 +119,12 @@ describe 'shallow', ->
         TYPE_NO_PROTO.forEach (spec) ->
             it "for built in type #{spec.t}#{spec.d}", ->
                 r = shallow(spec.v)
-                expect(r).to.eql spec.v
+                eql r, spec.v
 
     describe 'wont handle proto', ->
         TYPE_PROTO.forEach (spec) ->
             it 'throws an exception', ->
-                expect(->shallow(spec.v)).to.throw 'Can\'t shallow [object Object]'
+                assert.throws (->shallow(spec.v)), 'Can\'t shallow [object Object]'
 
     describe 'specifically', ->
 
@@ -132,17 +133,17 @@ describe 'shallow', ->
             TYPE_ARR.forEach (spec) ->
                 it "copies nested by reference for #{spec.t}#{spec.d}", ->
                     r = shallow(spec.v)
-                    r.should.not.equal spec.v
-                    r[i].should.equal(spec.v[i]) for a, i in r
-                    r.length.should.eql spec.v.length
+                    assert.ok r != spec.v
+                    (assert.ok r[i] == spec.v[i]) for a, i in r
+                    eql r.length, spec.v.length
 
         describe 'for objects', ->
             TYPE_PLAIN.forEach (spec) ->
                 it "copies nested by reference for #{spec.t}#{spec.d}", ->
                     r = shallow(spec.v)
-                    r.should.not.equal spec.v
-                    v.should.equal(spec.v[k]) for k, v of r
-                    Object.keys(r).length.should.eql Object.keys(spec.v).length
+                    assert.ok r != spec.v
+                    (assert.ok v == spec.v[k]) for k, v of r
+                    eql Object.keys(r).length, Object.keys(spec.v).length
 
 describe 'clone', ->
 
@@ -150,12 +151,12 @@ describe 'clone', ->
         TYPE_NO_PROTO.forEach (spec) ->
             it "for built in type #{spec.t}#{spec.d}", ->
                 r = clone(spec.v)
-                expect(r).to.eql spec.v
+                eql r, spec.v
 
     describe 'wont handle proto', ->
         TYPE_PROTO.forEach (spec) ->
             it 'throws an exception', ->
-                expect(->clone(spec.v)).to.throw 'Can\'t shallow [object Object]'
+                assert.throws (->clone(spec.v)), 'Can\'t shallow [object Object]'
 
     describe 'specifically', ->
 
@@ -163,56 +164,56 @@ describe 'clone', ->
             TYPE_ARR.forEach (spec) ->
                 it "clones nested for #{spec.t}#{spec.d}", ->
                     r = clone(spec.v)
-                    r.should.not.equal spec.v
+                    assert.ok r != spec.v
                     for a, i in r
                         if typeis a, 'number'
-                            r[i].should.equal(spec.v[i])
+                            assert.ok r[i] == spec.v[i]
                         else
-                            r[i].should.not.equal(spec.v[i])
-                    r.length.should.eql spec.v.length
+                            assert.ok r[i] != spec.v[i]
+                    eql r.length, spec.v.length
 
         describe 'for objects', ->
             TYPE_PLAIN.forEach (spec) ->
                 it "clones nested for #{spec.t}#{spec.d}", ->
                     r = clone(spec.v)
-                    r.should.not.equal spec.v
+                    assert.ok r != spec.v
                     for k, v of r
                         if typeis v, 'number'
-                            v.should.equal(spec.v[k])
+                            assert.ok v == spec.v[k]
                         else
-                            v.should.not.equal(spec.v[k])
-                    Object.keys(r).length.should.eql Object.keys(spec.v).length
+                            assert.ok v != spec.v[k]
+                    eql Object.keys(r).length,  Object.keys(spec.v).length
 
 describe 'arity', ->
 
     it 'returns the arity of (f)', ->
-        arity(()->).should.eql 0
-        arity((a)->).should.eql 1
-        arity((a,b)->).should.eql 2
+        eql arity(->), 0
+        eql arity((a)->), 1
+        eql arity((a,b)->), 2
 
     it 'chops the arity to the given number if (f,n)', ->
-        arity(arity(((a,b,c)->),n)).should.eql n for n in [0..10]
+        eql arity(arity(((a,b,c)->),n)), n for n in [0..10]
 
     it 'has a curried variant for (n)', ->
-        arity(arity(n)((a,b,c)->)).should.eql n for n in [0..10]
+        eql arity(arity(n)((a,b,c)->)), n for n in [0..10]
 
     describe 'unary', ->
 
         it 'is arity(1)', ->
             f = unary ((a,b,c,d,e) ->)
-            f.length.should.eql 1
+            eql f.length, 1
 
     describe 'binary', ->
 
         it 'is arity(2)', ->
             f = binary (a,b,c,d,e) ->
-            f.length.should.eql 2
+            eql f.length, 2
 
     describe 'ternary', ->
 
         it 'is arity(3)', ->
             f = ternary (a,b,c,d,e) ->
-            f.length.should.eql 3
+            eql f.length, 3
 
 describe 'partial', ->
 
@@ -220,49 +221,49 @@ describe 'partial', ->
 
         it 'executes arity(0)', ->
             r = partial (->42)
-            r.should.eql 42
+            eql r, 42
 
         it 'executes arity(0) with arguments', ->
             r = partial (->42), 1, 2, 3
-            r.should.eql 42
+            eql r, 42
 
         it 'handles arity(1)', ->
             r = partial ((a) -> a + 42)
-            r.should.be.a.function
-            r(1,2,3).should.eql 43
+            assert.isFunction r
+            eql r(1,2,3), 43
 
         it 'executes arity(1) with arguments', ->
             r = partial ((a) -> a + 42), 1, 2
-            r.should.not.be.a.function
-            r.should.eql 43
+            assert.isNotFunction r
+            eql r, 43
 
         it 'works for arity(2)', ->
             r = partial ((a,b) -> a / b), 42
-            r.should.be.a.function
-            arity(r).should.eql 1
-            r(2,3,4).should.eql 21
+            assert.isFunction r
+            eql arity(r), 1
+            eql r(2,3,4), 21
 
         it 'executes arity(2) with arguments', ->
             r = partial ((a,b) -> a / b), 42, 2
-            r.should.not.be.a.function
-            r.should.eql 21
+            assert.isNotFunction r
+            eql r, 21
 
         it 'works for arity(3) with one arg', ->
             r = partial ((a,b,c) -> a / (b / c)), 12
-            r.should.be.a.function
-            arity(r).should.eql 2
-            r(3,2,5).should.eql 8
+            assert.isFunction r
+            eql arity(r), 2
+            eql r(3,2,5), 8
 
         it 'works for arity(3) with two arg', ->
             r = partial ((a,b,c) -> a / (b / c)), 12, 3
-            r.should.be.a.function
-            arity(r).should.eql 1
-            r(2,5).should.eql 8
+            assert.isFunction r
+            eql arity(r), 1
+            eql r(2,5), 8
 
         it 'executes arity(3) with arguments', ->
             r = partial ((a,b,c) -> a / (b / c)), 12, 3, 2, 5
-            r.should.not.be.a.function
-            r.should.eql 8
+            assert.isNotFunction r
+            eql r, 8
 
 describe 'partialr', ->
 
@@ -270,61 +271,61 @@ describe 'partialr', ->
 
         it 'executes arity(0)', ->
             r = partialr (->42)
-            r.should.eql 42
+            eql r, 42
 
         it 'executes arity(0) with arguments', ->
             r = partialr (->42), 1, 2, 3
-            r.should.eql 42
+            eql r, 42
 
         it 'handles arity(1)', ->
             r = partialr ((a) -> a + 42)
-            r.should.be.a.function
-            r(1,2,3).should.eql 43
+            assert.isFunction r
+            eql r(1,2,3), 43
 
         it 'executes arity(1) with arguments', ->
             r = partialr ((a) -> a + 42), 1, 2
-            r.should.not.be.a.function
-            r.should.eql 43
+            assert.isNotFunction r
+            eql r, 43
 
         it 'works for arity(2)', ->
             r = partialr ((a,b) -> a / b), 2
-            r.should.be.a.function
-            arity(r).should.eql 1
-            r(42,3,4).should.eql 21
+            assert.isFunction r
+            eql arity(r), 1
+            eql r(42,3,4), 21
 
         it 'executes arity(2) with arguments', ->
             r = partialr ((a,b) -> a / b), 42, 2
-            r.should.not.be.a.function
-            r.should.eql 21
+            assert.isNotFunction r
+            eql r, 21
 
         it 'works for arity(3) with one arg', ->
             r = partialr ((a,b,c) -> a / (b / c)), 2
-            r.should.be.a.function
-            arity(r).should.eql 2
-            r(12,3,5).should.eql 8
+            assert.isFunction r
+            eql arity(r), 2
+            eql r(12,3,5), 8
 
         it 'works for arity(3) with two arg', ->
             r = partialr ((a,b,c) -> a / (b / c)), 3, 2
-            r.should.be.a.function
-            arity(r).should.eql 1
-            r(12,5).should.eql 8
+            assert.isFunction r
+            eql arity(r), 1
+            eql r(12,5), 8
 
         it 'executes arity(3) with arguments', ->
             r = partialr ((a,b,c) -> a / (b / c)), 12, 3, 2, 5
-            r.should.not.be.a.function
-            r.should.eql 8
+            assert.isNotFunction r
+            eql r, 8
 
 describe 'curry', ->
 
     it 'does nothing for arity(f) == 0', ->
         f = ->
         g = curry f
-        g.should.equal f
+        assert.ok g == f
 
     it 'does nothing for arity(f) == 1', ->
         f = (n) ->
         g = curry f
-        g.should.equal f
+        assert.ok g == f
 
     describe '(a,b) ->', ->
 
@@ -332,17 +333,17 @@ describe 'curry', ->
 
         it 'turns to (b) -> (a) ->', ->
             div2 = div(2)
-            div2(10).should.eql 5
+            eql div2(10), 5
 
         it 'maintains arity for curried func', ->
-            arity(div).should.eql 2
+            eql arity(div), 2
 
         it 'returns a smaller arity func after partial apply', ->
             div2 = div(2)
-            arity(div2).should.eql 1
+            eql arity(div2), 1
 
         it 'can still apply (a,b) to curried (a,b) ->', ->
-            div(10, 2).should.eql 5
+            eql div(10, 2), 5
 
     describe '(a,b,c) ->', ->
 
@@ -351,35 +352,35 @@ describe 'curry', ->
         it 'turns to (c) -> (b) -> (a) ->', ->
             div2 = divt(2)
             div4 = div2(8)
-            div4(80).should.eql 20
+            eql div4(80), 20
 
         it 'maintains arity for curried func', ->
-            arity(divt).should.eql 3
+            eql arity(divt), 3
 
         it 'returns a small arity func after partial apply', ->
             div2 = divt(2)
             div4 = div2(8)
-            arity(div2).should.eql 2
-            arity(div4).should.eql 1
+            eql arity(div2), 2
+            eql arity(div4), 1
 
         it 'can be partially applied with (b,c)', ->
             div4 = divt(8, 2)
-            div4(80).should.equal 20
+            eql div4(80), 20
 
         it 'does correct arity for partial applied', ->
             div4 = divt(8, 2)
-            arity(div4).should.eql 1
+            eql arity(div4), 1
 
         it 'can still apply (a,b,c) to curried (a,b,c) ->', ->
-            divt(80, 8, 2).should.eql 20
+            eql divt(80, 8, 2), 20
 
         it 'can apply (b,c) to partial applied curried (a,b,c) ->', ->
             div2 = divt(2)
-            div2(80,8).should.eql 20
+            eql div2(80,8), 20
 
         it 'doesnt splice in more arguments for a partially applied', ->
             div2 = divt(2)
-            div2(100,25,4).should.eql 8
+            eql div2(100,25,4), 8
 
 describe 'flip', ->
 
@@ -388,61 +389,61 @@ describe 'flip', ->
         f = flip (f1 = (a,b) -> a / b)
 
         it 'flips the arguments to (b,a) ->', ->
-            f(2, 10).should.eql 5
+            eql f(2, 10), 5
 
         it 'keeps arity', ->
-            arity(f).should.eql 2
+            eql arity(f), 2
 
         it 'is commutative', ->
-            flip(f).should.equal f1
+            assert.ok flip(f) == f1
 
         it 'flips curried functions', ->
             f = flip curry (a,b) -> a / b
-            f(2,10).should.equal 5
-            f(10)(2).should.equal 5
+            eql f(2,10), 5
+            eql f(10)(2), 5
 
         it 'is commutative for curried functions', ->
             f = flip (f1 = curry (a,b) -> a / b)
-            flip(f).should.equal f1
+            assert.ok flip(f) == f1
 
         it 'flips partially applied curried functions', ->
             f = flip (curry (a,b) -> a / b)(2)
-            f(8).should.eql 4
+            eql f(8), 4
 
         it 'is commutative for partially applied curried functions', ->
             f = flip (f1 = (curry (a,b) -> a / b)(2))
-            flip(f).should.equal f1
+            assert.ok flip(f), f1
 
     describe '(a,b,c) ->', ->
 
         f = flip (f1 = (a,b,c) -> a / (b / c))
 
         it 'flips the arguments to (c,b,a) ->', ->
-            f(2, 3, 12).should.eql 8
+            eql f(2, 3, 12), 8
 
         it 'keeps arity', ->
-            arity(f).should.eql 3
+            eql arity(f), 3
 
         it 'is commutative', ->
-            flip(f).should.equal f1
+            eql flip(f), f1
 
         it 'flips curried functions', ->
             f = flip curry (a,b,c) -> a / (b / c)
-            f(2,3,12).should.equal 8
-            f(12)(3)(2).should.equal 8
+            eql f(2,3,12), 8
+            eql f(12)(3)(2), 8
 
         it 'is commutative for curried functions', ->
             f = flip (f1 = curry (a,b,c) -> a / (b / c))
-            flip(f).should.equal f1
+            assert.ok flip(f) == f1
 
         it 'flips partially applied curried functions', ->
             f = flip (curry (a,b,c) -> a / (b / c))(2)
-            f(3,12).should.eql 8
-            f(12)(3).should.eql 8
+            eql f(3,12), 8
+            eql f(12)(3), 8
 
         it 'is commutative partially applied curried functions', ->
             f = flip (f1 = (curry (a,b,c) -> a / (b / c))(2))
-            flip(f).should.equal f1
+            assert.ok flip(f) == f1
 
 describe 'compose', ->
 
@@ -453,10 +454,10 @@ describe 'compose', ->
         f = compose f2, f1
 
         it 'is turned to f2(f1)', ->
-            f(6,4).should.eql 5
+            eql f(6,4), 5
 
         it 'maintains arity for f1', ->
-            arity(f).should.eql 2
+            eql arity(f), 2
 
     describe '(f3,f2,f1)', ->
 
@@ -466,10 +467,10 @@ describe 'compose', ->
         f = compose f3, f2, f1
 
         it 'is turned to f3(f2(f1))', ->
-            f(7,5).should.eql 2
+            eql f(7,5), 2
 
         it 'maintains arity for f1', ->
-            arity(f).should.eql 2
+            eql arity(f), 2
 
 describe 'sequence', ->
 
@@ -480,10 +481,10 @@ describe 'sequence', ->
         f = sequence f1, f2
 
         it 'is turned to f2(f1)', ->
-            f(6,4).should.eql 5
+            eql f(6,4), 5
 
         it 'maintains arity for f1', ->
-            arity(f).should.eql 2
+            eql arity(f), 2
 
     describe '(f1,f2,f3)', ->
 
@@ -493,35 +494,35 @@ describe 'sequence', ->
         f = sequence f1, f2, f3
 
         it 'is turned to f3(f2(f1))', ->
-            f(7,5).should.eql 2
+            eql f(7,5), 2
 
         it 'maintains arity for f1', ->
-            arity(f).should.eql 2
+            eql arity(f), 2
 
 describe 'I/ident', ->
 
     it 'returns the arg in', ->
-        I(42).should.eql 42
+        eql I(42), 42
 
     it 'is of arity 1', ->
-        arity(I).should.eql 1
+        eql arity(I), 1
 
     it 'ignores additional args', ->
-        I(42,2).should.eql 42
+        eql I(42,2), 42
 
 describe 'tap', ->
 
     f = spy I
 
     it 'is the mother of all side effect funcs', ->
-        tap(42,f).should.eql 42
-        f.should.have.been.calledWith 42
+        eql tap(42,f), 42
+        eql f.args[0], [42]
 
     it 'is curried', ->
-        tap(f)(42).should.eql 42
+        eql tap(f)(42), 42
 
     it 'has arity 2', ->
-        tap.length.should.eql 2
+        eql tap.length, 2
 
 foldfn = (p, c) -> p + c / p
 FN_TEST = [
@@ -621,16 +622,16 @@ FN_TEST = [
 FN_TEST.forEach (spec) ->
     describe spec.n, ->
         it "has signature #{spec.s}", ->
-            expect(spec.f(spec.as...)).to.eql spec.eq
+            eql spec.f(spec.as...), spec.eq
         if spec.ar == spec.as.length
             if spec.ar > 1
                 it "has a curried variant", ->
                     if spec.ar == 2
-                        expect(spec.f(spec.as[1])(spec.as[0])).to.eql spec.eq
+                        eql spec.f(spec.as[1])(spec.as[0]), spec.eq
                     else if spec.ar == 3
-                        expect(spec.f(spec.as[2])(spec.as[1])(spec.as[0])).to.eql spec.eq
+                        eql spec.f(spec.as[2])(spec.as[1])(spec.as[0]), spec.eq
             it "is of arity(#{spec.ar})", ->
-                spec.f.length.should.eql spec.ar
+                eql spec.f.length, spec.ar
 
 describe 'map', ->
 
@@ -638,8 +639,8 @@ describe 'map', ->
 
     it 'doesnt pass multiple args to map function', ->
         map as, (v, i, as) ->
-            expect(i).to.be.undefined
-            expect(as).to.be.undefined
+            eql i, undefined
+            eql as, undefined
             v
 
 describe 'fold/fold1/foldr/foldr1', ->
@@ -650,8 +651,8 @@ describe 'fold/fold1/foldr/foldr1', ->
     each fs, (f) ->
         it 'doesnt pass multiple args to fold function', ->
             f as, ((p, c, i, as) ->
-                expect(i).to.be.undefined
-                expect(as).to.be.undefined
+                eql i, undefined
+                eql as,  undefined
                 p + c), 1
 
 describe 'and', ->
@@ -664,39 +665,39 @@ describe 'and', ->
         lt102 = spy lt(102)
 
     it 'is of arity(2)', ->
-        arity(and_).should.eql 2
+        eql arity(and_), 2
 
     it 'wraps two functions f, g and invokes both with &&', ->
         f = and_(gt10, even)
-        f(100, 42).should.eql true
-        gt10.should.have.been.calledOnce
-        gt10.should.have.been.calledWith 100, 42
-        even.should.have.been.calledOnce
-        even.should.have.been.calledWith 100, 42
-        f(8).should.eql false
+        eql f(100, 42), true
+        eql gt10.callCount, 1
+        eql gt10.args[0], [100, 42]
+        eql even.callCount, 1
+        eql even.args[0], [100, 42]
+        eql f(8), false
 
     it 'wraps moar functions f, g, h and invokes both with &&', ->
         f = and_(gt10, even, lt102)
-        f(100,42).should.eql true
-        gt10.should.have.been.calledOnce
-        gt10.should.have.been.calledWith 100, 42
-        even.should.have.been.calledOnce
-        even.should.have.been.calledWith 100, 42
-        lt102.should.have.been.calledOnce
-        lt102.should.have.been.calledWith 100, 42
-        f(102).should.eql false
+        eql f(100,42), true
+        eql gt10.callCount, 1
+        eql gt10.args[0], [100, 42]
+        eql even.callCount, 1
+        eql even.args[0], [100, 42]
+        eql lt102.callCount, 1
+        eql lt102.args[0], [100, 42]
+        eql f(102), false
 
     it 'is lazy', ->
         f1 = spy -> false
         f2 = spy -> true
         f = and_ f1, f2
-        f().should.eql false
-        f1.should.have.been.calledOnce
-        f2.should.not.have.been.calledOnce
+        eql f(), false
+        eql f1.callCount, 1
+        eql f2.callCount, 0
 
 
     it 'is aliased', ->
-        F.and.should.eql F.and_
+        assert.ok F.and == F.and_
 
 describe 'or', ->
 
@@ -708,38 +709,34 @@ describe 'or', ->
         lt102 = spy lt(102)
 
     it 'is of arity(2)', ->
-        arity(or_).should.eql 2
+        eql arity(or_), 2
 
     it 'wraps two functions f, g and invokes both with ||', ->
         f = or_(gt10, even)
-        f(8, 42).should.eql true
-        gt10.should.have.been.calledOnce
-        gt10.should.have.been.calledWith 8, 42
-        even.should.have.been.calledOnce
-        even.should.have.been.calledWith 8, 42
-        f(9).should.eql false
+        eql f(8, 42), true
+        eql gt10.callCount, 1
+        eql gt10.args[0], [8, 42]
+        eql even.callCount, 1
+        eql even.args[0], [8, 42]
+        eql f(9), false
 
     it 'wraps moar functions f, g, h and invokes both with ||', ->
         f = or_(gt10, even, lt102)
-        f(9,42).should.eql true
-        gt10.should.have.been.calledOnce
-        gt10.should.have.been.calledWith 9, 42
-        even.should.have.been.calledOnce
-        even.should.have.been.calledWith 9, 42
-        lt102.should.have.been.calledOnce
-        lt102.should.have.been.calledWith 9, 42
+        eql f(9,42), true
+        eql gt10.args, [[9,42]]
+        eql even.args, [[9, 42]]
+        eql lt102.args, [[9, 42]]
 
     it 'is lazy', ->
         f1 = spy -> true
         f2 = spy -> false
         f = or_ f1, f2
-        f().should.eql true
-        f1.should.have.been.calledOnce
-        f2.should.not.have.been.calledOnce
-
+        eql f(), true
+        eql f1.callCount, 1
+        eql f2.callCount, 0
 
     it 'is aliased', ->
-        F.or.should.eql F.or_
+        assert.ok F.or == F.or_
 
 describe 'not', ->
 
@@ -749,16 +746,16 @@ describe 'not', ->
         gt10  = spy gt(10)
 
     it 'is of arity(2)', ->
-        arity(not_).should.eql 2
+        eql arity(not_), 2
 
     it 'wraps a function and nots the output', ->
         f = not_(gt10)
-        f(12).should.eql false
-        gt10.should.have.been.calledOnce
-        gt10.should.have.been.calledWith 12
+        eql f(12), false
+        eql gt10.callCount, 1
+        eql gt10.args[0], [12]
 
     it 'is aliased', ->
-        F.not.should.eql F.not_
+        assert.ok F.not == F.not_
 
 describe 'chainable', ->
 
@@ -767,18 +764,18 @@ describe 'chainable', ->
         f = (a) -> a + 14
         chainable 'f', f
         g = div(2).f
-        g(100).should.eql 64
+        eql g(100), 64
 
     it 'makes chainable functions for arity >= 2', ->
 
         f = (a,b) -> if a == 42 then b else 0
         chainable 'guard42', f
         g = div(2).guard42(17)
-        g(100).should.eql 0
-        g(84).should.eql 17
+        eql g(100), 0
+        eql g(84), 17
 
     it 'wants arity >= 1', ->
-        expect(->chainable('fail',->)).to.throw 'No chainable for arity 0'
+        assert.throw (->chainable('fail',->)), 'No chainable for arity 0'
 
     it 'can redefine a chainable', ->
         f1 = (a) -> 0
@@ -786,7 +783,7 @@ describe 'chainable', ->
         f2 = (b) -> 1
         chainable 'f', f2
         g = add(3).f
-        g(4).should.eql 1
+        eql g(4), 1
 
 describe 'eql', ->
 
@@ -795,30 +792,30 @@ describe 'eql', ->
         s2 = JSON.stringify(v2.v)
         if i1 == i2
             it "equals for #{s1}, #{s2}", ->
-                eql(v1.v, v2.v).should.eql true
+                eql F.eql(v1.v, v2.v), true
         else
             it "not equals for #{s1}, #{s2}", ->
-                eql(v1.v, v2.v).should.eql false
+                eql F.eql(v1.v, v2.v), false
 
 describe 'groupby', ->
 
     it 'is is arity 2', ->
-        arity(groupby).should.eql 2
+        eql arity(groupby), 2
 
     it 'groups objects according to key function', ->
         as = [{n:'apa'},{n:'banan'},{n:'ananas'}]
         fn = compose take(1), get('n')
         gs = groupby as, fn
-        gs.should.eql {
+        eql gs, {
             a: [{n:'apa'},{n:'ananas'}]
             b: [{n:'banan'}]
         }
 
     it 'handles empty', ->
-        groupby([], ->).should.eql {}
+        eql groupby([], ->), {}
 
     it 'is curried', ->
         as = [{n:'apa'}]
         fn = compose take(1), get('n')
         gs = groupby(fn)(as)
-        gs.should.eql a:[{n:'apa'}]
+        eql gs, a:[{n:'apa'}]
