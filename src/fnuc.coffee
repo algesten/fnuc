@@ -227,11 +227,12 @@ class Tuple
         Object.defineProperty @, 'length', value:as.length
     unpack: (un) -> un @_as...
     toString: -> "[tuple #{JSON.stringify(this)}]"
-tuple = ncurry 2, true, (as...) -> new Tuple as
-fst   = (t) -> t.unpack I
-snd   = (t) -> t.unpack (a, b) -> b
-nth   = curry (t, n) -> t.unpack (as...) -> as[n]
-len   = (t) -> t.length
+tuple  = ncurry 2, true, (as...) -> new Tuple as
+unpack = curry (t, f) -> t.unpack f
+fst    = (t) -> t.unpack I
+snd    = (t) -> t.unpack (a, b) -> b
+nth    = curry (t, n) -> t.unpack (as...) -> as[n]
+len    = (t) -> t.length
 
 
 # zipping
@@ -324,7 +325,7 @@ exports = {
     or_, not_
 
     # tuple
-    tuple, fst, snd, len, nth, zip, unzip, zipwith
+    tuple, unpack, fst, snd, len, nth, zip, unzip, zipwith
 
 }
 

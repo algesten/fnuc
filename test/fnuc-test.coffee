@@ -878,6 +878,20 @@ describe 'tuple', ->
         t2 = tuple [a:1], tuple(2,3)
         assert.ok not F.eql t1, t2
 
+    describe 'unpack', ->
+
+        it 'unpacks to function', ->
+            t = tuple 1, 2, 3
+            eql (unpack t, (as...) -> as), [1,2,3]
+
+        it 'is arity 2', ->
+            eql arity(unpack), 2
+
+        it 'is curried', ->
+            t = tuple 1, 2, 3
+            f = unpack (as...) -> as
+            eql f(t), [1,2,3]
+
 describe 'zip', ->
 
     describe 'based on generic zipwith', ->
