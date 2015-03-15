@@ -607,8 +607,8 @@ FN_TEST = [
     {n:'eq',     s:'a... -> b',      f:eq,     ar:2, as:[1,1,2],             eq:false}
     {n:'eq',     s:'a... -> b',      f:eq,     ar:2, as:[false,false,false], eq:true}
     {n:'eq',     s:'a... -> b',      f:eq,     ar:2, as:[0,0,1],             eq:false}
-    {n:'not',    s:'a..., a -> b',   f:not_,   ar:2, as:[false, I],            eq:true}
-    {n:'not',    s:'a..., a -> b',   f:not_,   ar:2, as:[0,1,(a,b) -> b == 1], eq:false}
+    {n:'not',    s:'a..., a -> b',   f:nnot,   ar:2, as:[false, I],            eq:true}
+    {n:'not',    s:'a..., a -> b',   f:nnot,   ar:2, as:[0,1,(a,b) -> b == 1], eq:false}
     {n:'pick',s:'{k:v}, [k] -> {k:v}',f:pick,  ar:2, as:[{a:1,b:2,c:3},['b','c']], eq:{b:2,c:3}}
     {n:'pick',s:'{k:v}, k -> {k:v}',  f:pick,  ar:2, as:[{a:1,b:2,c:3},'b','c'],   eq:{b:2,c:3}}
     {n:'pick',s:'{k:v}, k -> {k:v}',  f:pick,  ar:2, as:[{a:1,b:2,c:3},'b'],       eq:{b:2}}
@@ -669,10 +669,10 @@ describe 'and', ->
         lt102 = spy lt(102)
 
     it 'is of arity(2)', ->
-        eql arity(and_), 2
+        eql arity(aand), 2
 
     it 'wraps two functions f, g and invokes both with &&', ->
-        f = and_(gt10, even)
+        f = aand(gt10, even)
         eql f(100, 42), true
         eql gt10.callCount, 1
         eql gt10.args[0], [100, 42]
@@ -681,7 +681,7 @@ describe 'and', ->
         eql f(8), false
 
     it 'wraps moar functions f, g, h and invokes both with &&', ->
-        f = and_(gt10, even, lt102)
+        f = aand(gt10, even, lt102)
         eql f(100,42), true
         eql gt10.callCount, 1
         eql gt10.args[0], [100, 42]
@@ -694,14 +694,14 @@ describe 'and', ->
     it 'is lazy', ->
         f1 = spy -> false
         f2 = spy -> true
-        f = and_ f1, f2
+        f = aand f1, f2
         eql f(), false
         eql f1.callCount, 1
         eql f2.callCount, 0
 
 
     it 'is aliased', ->
-        assert.ok F.and == F.and_
+        assert.ok F.and == F.aand
 
 describe 'or', ->
 
@@ -713,10 +713,10 @@ describe 'or', ->
         lt102 = spy lt(102)
 
     it 'is of arity(2)', ->
-        eql arity(or_), 2
+        eql arity(oor), 2
 
     it 'wraps two functions f, g and invokes both with ||', ->
-        f = or_(gt10, even)
+        f = oor(gt10, even)
         eql f(8, 42), true
         eql gt10.callCount, 1
         eql gt10.args[0], [8, 42]
@@ -725,7 +725,7 @@ describe 'or', ->
         eql f(9), false
 
     it 'wraps moar functions f, g, h and invokes both with ||', ->
-        f = or_(gt10, even, lt102)
+        f = oor(gt10, even, lt102)
         eql f(9,42), true
         eql gt10.args, [[9,42]]
         eql even.args, [[9, 42]]
@@ -734,13 +734,13 @@ describe 'or', ->
     it 'is lazy', ->
         f1 = spy -> true
         f2 = spy -> false
-        f = or_ f1, f2
+        f = oor f1, f2
         eql f(), true
         eql f1.callCount, 1
         eql f2.callCount, 0
 
     it 'is aliased', ->
-        assert.ok F.or == F.or_
+        assert.ok F.or == F.oor
 
 describe 'not', ->
 
@@ -750,16 +750,16 @@ describe 'not', ->
         gt10  = spy gt(10)
 
     it 'is of arity(2)', ->
-        eql arity(not_), 2
+        eql arity(nnot), 2
 
     it 'wraps a function and nots the output', ->
-        f = not_(gt10)
+        f = nnot(gt10)
         eql f(12), false
         eql gt10.callCount, 1
         eql gt10.args[0], [12]
 
     it 'is aliased', ->
-        assert.ok F.not == F.not_
+        assert.ok F.not == F.nnot
 
 describe 'chainable', ->
 

@@ -207,15 +207,15 @@ lt       = curry (a,b) -> a < b
 lte      = curry (a,b) -> a <= b
 _ = {} # internal placeholder
 eq       = curry binary (as...) -> fold1(as, (a,b) -> if a == b then a else _) != _
-and_     = curry binary (as...) -> (bs...) ->
+aand     = curry binary (as...) -> (bs...) ->
     len = as.length; i = 0
     `for (;i < len; ++i) { if (!as[i].apply(null,bs)) { return false } }`
     true
-or_      = curry binary (as...) -> (bs...) ->
+oor      = curry binary (as...) -> (bs...) ->
     len = as.length; i = 0
     `for (;i < len; ++i) { if (as[i].apply(null,bs)) { return true } }`
     false
-not_     = curry binary (as..., f) -> !f(as...)
+nnot     = curry binary (as..., f) -> !f(as...)
 
 
 # tuples
@@ -266,9 +266,9 @@ eql = do ->
         (for k in ka then return false unless eql a[k], b[k]); true
     curry (a, b) ->
         return true if a == b
-        (and_ eqtype, switch type(a)
+        (aand eqtype, switch type(a)
             when 'tuple'  then eqtuple
-            when 'object' then and_ eqplain, eqobj
+            when 'object' then aand eqplain, eqobj
             when 'array'  then eqarr
             else -> false)(a,b)
 
@@ -321,17 +321,18 @@ exports = {
     take
 
     # maths
-    add, sub, mul, div, mod, min, max, gt, gte, lt, lte, eq, and_,
-    or_, not_
+    add, sub, mul, div, mod, min, max, gt, gte, lt, lte, eq, aand,
+    oor, nnot
 
     # tuple
     tuple, unpack, fst, snd, len, nth, zip, unzip, zipwith
 
 }
 
-exports.and = exports.and_
-exports.or = exports.or_
-exports.not = exports.not_
+# aliases
+exports.and = exports.aand
+exports.or  = exports.oor
+exports.not = exports.nnot
 
 CHAINABLE = split 'clone shallow flip tap has get set keys values
     concat head tail last fold fold1 foldr foldr1 each map filter all
