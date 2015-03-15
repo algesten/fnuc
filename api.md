@@ -1508,11 +1508,11 @@ Functions for math.
 
 Returns a function that wraps two (or more) functions and performs
 logical and on the result. For coffeescript this function is aliased
-as `and_`.
+as `aand`.
 
-`and_(f1,f2)`   `:: (a... -> Boolean), (a... -> Boolean) -> Boolean`  
-`and_(f2)(f1)`  `:: (a... -> Boolean) -> (a... -> Boolean) -> Boolean`  
-`and_(fs...)`   `:: (a... -> Boolean)... -> Boolean`  
+`aand(f1,f2)`   `:: (a... -> Boolean), (a... -> Boolean) -> Boolean`  
+`aand(f2)(f1)`  `:: (a... -> Boolean) -> (a... -> Boolean) -> Boolean`  
+`aand(fs...)`   `:: (a... -> Boolean)... -> Boolean`  
 `chainable`
 
 args | desc
@@ -1528,9 +1528,9 @@ args | desc
 gt10  = gt(10)
 even  = (a) -> a % 2 == 0
 lt100 = lt(100)
-f     = and_(gt10, even)
+f     = aand(gt10, even)
 f(102)                        # true
-g     = and_(gt10, even, lt100)
+g     = aand(gt10, even, lt100)
 g(102)                        # false
 ```
 
@@ -1701,9 +1701,9 @@ args | desc
 #### not
 
 Returns a function does a logical not on the result of the initial
-function. For coffeescript this function is aliased as `not_`.
+function. For coffeescript this function is aliased as `nnot`.
 
-`not_(f)`   `:: (a... -> Boolean) -> Boolean`  
+`nnot(f)`   `:: (a... -> Boolean) -> Boolean`  
 `chainable`
 
 args | desc
@@ -1714,7 +1714,7 @@ args | desc
 
 ```coffee
 even  = (a) -> a % 2 == 0
-odd   = not_(even)
+odd   = nnot(even)
 odd(11)            # true
 ```
 
@@ -1722,11 +1722,11 @@ odd(11)            # true
 
 Returns a function that wraps two (or more) functions and performs
 logical or on the result. For coffeescript this function is aliased
-as `or_`.
+as `oor`.
 
-`or_(f1,f2)`   `:: (a... -> Boolean), (a... -> Boolean) -> Boolean`  
-`or_(f2)(f1)`  `:: (a... -> Boolean) -> (a... -> Boolean) -> Boolean`  
-`or_(fs...)`   `:: (a... -> Boolean)... -> Boolean`  
+`oor(f1,f2)`   `:: (a... -> Boolean), (a... -> Boolean) -> Boolean`  
+`oor(f2)(f1)`  `:: (a... -> Boolean) -> (a... -> Boolean) -> Boolean`  
+`oor(fs...)`   `:: (a... -> Boolean)... -> Boolean`  
 `chainable`
 
 args | desc
@@ -1742,9 +1742,9 @@ args | desc
 gt10  = gt(10)
 even  = (a) -> a % 2 == 0
 lt100 = lt(100)
-f     = or_(gt10, even)
+f     = oor(gt10, even)
 f(102)                        # true
-g     = or_(gt10, even, lt100)
+g     = oor(gt10, even, lt100)
 g(102)                        # false
 ```
 
