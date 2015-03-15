@@ -25,6 +25,7 @@ API
 [`fold`](api.md#fold)
 [`foldr1`](api.md#foldr1)
 [`foldr`](api.md#foldr)
+[`fst`](api.md#fst)
 [`get`](api.md#get)
 [`groupby`](api.md#groupby)
 [`gt`](api.md#gt)
@@ -37,6 +38,7 @@ API
 [`keys`](api.md#keys)
 [`last`](api.md#last)
 [`lcase`](api.md#lcase)
+[`len`](api.md#len)
 [`lt`](api.md#lt)
 [`lte`](api.md#lte)
 [`map`](api.md#map)
@@ -48,6 +50,7 @@ API
 [`mod`](api.md#mod)
 [`mul`](api.md#mul)
 [`not`](api.md#not)
+[`nth`](api.md#nth)
 [`ofilter`](api.md#ofilter)
 [`omap`](api.md#omap)
 [`or`](api.md#or)
@@ -61,6 +64,7 @@ API
 [`set`](api.md#set)
 [`shallow`](api.md#shallow)
 [`slice`](api.md#slice)
+[`snd`](api.md#snd)
 [`sort`](api.md#sort)
 [`split`](api.md#split)
 [`sub`](api.md#sub)
@@ -68,11 +72,16 @@ API
 [`take`](api.md#take)
 [`tap`](api.md#tap)
 [`trim`](api.md#trim)
+[`tuple`](api.md#tuple)
 [`type`](api.md#type)
 [`typeis`](api.md#typeis)
 [`ucase`](api.md#ucase)
+[`unpack`](api.md#unpack)
 [`uniq`](api.md#uniq)
+[`unzip`](api.md#unzip)
 [`values`](api.md#values)
+[`zip`](api.md#zip)
+[`zipwith`](api.md#zipwith)
 
 
 ### Type functions
@@ -97,7 +106,6 @@ args | desc
 
 ##### isplain example
 
-
     isplain null          # false
     isplain new Date      # false
     isplain {}            # true
@@ -106,7 +114,7 @@ args | desc
 #### type
 
 Tells what type an object is. Returns one of `'array'`, `'boolean'`,
-`'date'`, `'null'`, `'number'`, `'object'` `'string'` or
+`'date'`, `'null'`, `'number'`, `'object'` `'string'`, `'tuple'` or
 `'undefined'`.
 
 `type(a)`   `:: a -> String`
@@ -123,6 +131,7 @@ type 42        # 'number'
 type null      # 'null'
 type {}        # 'object'
 type undefined # 'undefined'
+type tuple(3,4) # 'tuple'
 ```
 
 #### typeis
@@ -1209,6 +1218,74 @@ args | desc
 uniq [3,1,3,2,1,3,2,1]   # [3,1,2]
 ```
 
+#### unzip
+
+Takes a [`zip`](#zip) and goes backwards to a [`tuple`](#tuple) with
+unzipped values.
+
+`unzip(z)`  `:: [(a,b)] -> ([a],[b])`
+
+args | desc
+:--- | :---
+`z`  | Array of tuples to unzip.
+
+##### unzip example
+
+```coffee
+z = zip [1,2,3], ['a','b','c']   # [(1,a),(2,b),(3,c)]
+u = unzip z                      # ([1,2,3], ['a','b','c'])
+type(u)                          # 'tuple'
+```
+
+#### zip
+
+Takes two (or more) arrays and combines each position into a single
+array of tuples.
+
+Returned array is the minimum length argument arrays.
+
+Same as `zipwith(tuple)`.
+
+`zip(as,bs)`   `:: [a], [b] -> [(a,b)]`  
+`zip(bs)(as)`  `:: [b] -> [a] -> [(a,b)]`  
+`zip(cs...)`   `:: [a], ..., [z] -> [(a,...,z)]`
+
+args | desc
+:--- | :---
+`as` | Array/string of values for first value in tuple
+`bs` | Array/string of values for second value in tuple
+*Variadic*|
+`cs` | Variable number of arrays/strings to make into tuples
+
+##### zip example
+
+```coffee
+zip [1,2,3], ['a','b','c']   # [(1,a),(2,b),(3,c)]
+```
+
+#### zipwith
+
+Takes two (or more) arrays and combines each position by invoking a
+function for each position.
+
+`zipwith(as,bs,f)`   `:: [a], [b], ((a,b) -> c) -> [c]`  
+`zipwith(f)(bs)(as)` `:: ((a,b) -> c) -> [b] -> [a] -> [c]`  
+`zipwith(cs...,f)`   `:: [a], ... [z], ((a,...,z) -> c) -> [c]`
+
+args | desc
+:--- | :---
+`as` | Array/string of values for first value to function.
+`bs` | Array/string of values for second value to function.
+`f`  | Function to invoke for each position.
+*Variadic*|
+`cs` | Variable number of arrays/strings to provide to function.
+
+##### zipwith example
+
+```coffee
+zipwith(add) [1,2,3], [3,4,5]    # [4,6,8]
+```
+
 ### String functions
 
 Functions operating on strings.
@@ -1687,6 +1764,131 @@ args | desc
 *Variadic*|
 `as` | Variable number of arguments. I.e. `sub(a,b,c)` is `a - b - c`.
 
+
+
+### tuple functions
+
+#### fst
+
+Extracts the first value of a tuple.
+
+`fst(t)`   `:: tuple -> a`
+
+args | desc
+:--- | :---
+`t`  | Tuple
+
+##### fst example
+
+```coffee
+t = tuple 2,3   # (2,3)
+fst t           # 2
+```
+
+#### len
+
+Returns the length of a tuple.
+
+`len(t)`   `:: tuple -> n`
+
+args | desc
+:--- | :---
+`t`  | Tuple
+
+##### len example
+
+```coffee
+t = tuple 2,3,4 # (2,3,4)
+len t           # 3
+```
+
+#### nth
+
+Extracts the nth value of a tuple.
+
+`nth(t, n)`   `:: tuple, n -> a`  
+`nth(n)(t)`   `:: n -> tuple -> a`
+
+args | desc
+:--- | :---
+`t`  | Tuple
+`n`  | Number of argument to extract starting from 0.
+
+##### nth example
+
+```coffee
+t = tuple 2,3,4   # (2,3,4)
+nth t, 1          # 3
+nth t, 2          # 4
+```
+
+#### snd
+
+Extracts the second value of a tuple.
+
+`snd(t)`   `:: tuple -> a`
+
+args | desc
+:--- | :---
+`t`  | Tuple
+
+##### snd example
+
+```coffee
+t = tuple 2,3   # (2,3)
+snd t           # 3
+```
+
+
+#### tuple
+
+Constructs a tuple. Typically used for pairs, but is variadic.
+
+Tuples are unpacked with the following functions:
+
+* [`unpack(t,f)`](#unpack) generic unpack tuple to function
+* [`fst(t)`](#fst) first value of tuple
+* [`snd(t)`](#snd) second value of tuple
+* [`nth(t,n)`](#nth) nth value of tuple
+* [`len(t)`](#len) length of tuple
+
+`tuple(a,b)`   `:: a, a -> tuple`  
+`tuple(b)(a)`  `:: a -> a -> tuple`  
+`tuple(as...)` `:: a1, a2, ..., az -> tuple`
+
+args | desc
+:--- | :---
+`a`  | First argument.
+`b`  | Second argument.
+*Variadic*|
+`as` | Variable number of arguments. I.e. `tuple(1,2,3)`
+
+##### tuple example
+
+```coffee
+t = tuple 1,2       # (1,2)
+fst t               # 1
+snd t               # 2
+```
+
+#### unpack
+
+Unpacks a tuple into a provided function.
+
+`unpack(t,f)`   `:: tuple, ((a,a) -> a) -> a`  
+`unpack(f)(t)`  `:: ((a,a) -> a) -> tuple -> a`
+
+args | desc
+:--- | :---
+`t`  | Tuple to unpack.
+`f`  | Function that will receive all tuple values as arguments.
+
+##### unpack example
+
+```coffee
+t = tuple 2,3,4     # (2,3,4)
+unpack t, (a,b,c) -> ...     # a=2, b=3, c=4
+```
 
 [curry]: https://en.wikipedia.org/wiki/Currying
 [fold]:  https://en.wikipedia.org/wiki/Fold_%28higher-order_function%29
