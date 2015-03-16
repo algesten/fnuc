@@ -347,12 +347,10 @@ exports.installChainable = ->
 
 # helper to expose selected functions
 expose = (exp, guard) -> (obj, funs...) ->
-    val = (v) -> value:v, enumerable:true
-    def = (k, v) -> Object.defineProperty obj, k, val(v)
     if funs?.length
-        def k, exp[k] for k in funs
+        obj[k] = exp[k] for k in funs
     else unless obj[guard]
-        def k, v for k, v of exp when k.indexOf("_") != 0
+        obj[k] = v for k, v of exp when k.indexOf("_") != 0
         obj[guard] = true
     exp
 
