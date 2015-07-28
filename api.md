@@ -33,6 +33,7 @@ API
 [`has`](api.md#has)
 [`head`](api.md#head)
 [`index`](api.md#index)
+[`indexfn`](api.md#indexfn)
 [`isplain`](api.md#isplain)
 [`join`](api.md#join)
 [`keys`](api.md#keys)
@@ -1053,6 +1054,27 @@ args | desc
 ```coffee
 index [1,2,3], 3       # 2
 index [1,2,3], 4       # -1
+```
+
+#### indexfn
+
+Finds the index of first value for which a function is true in an
+array or -1 if not found. `undefined` for empty list.
+
+`indexfn(as,fn)`  `:: [a], (a -> Boolean) -> Number`  
+`indexfn(fn)(as)` `:: (a -> Boolean) -> [a] -> Number`  
+`chainable`
+
+args | desc
+:--- | :---
+`as` | The array to evaluate `fn` on each element in.
+`fn` | Function to run on each element. Truthy will give index.
+
+##### indexfn example
+
+```coffee
+indexfn [1,2,3], (a) -> a % 2 == 0       # 2
+indexfn [1,2,3], (a) -> a > 4            # -1
 ```
 
 #### join

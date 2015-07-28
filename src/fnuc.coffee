@@ -154,6 +154,12 @@ index    = curry binary (as, v, fr) ->                   # [a], a -> n
     i = fr || 0
     `for (;i < len; ++i) { if (as[i] == v) return i }`
     -1
+indexfn = curry binary (as, fn, fr) ->
+    len = as?.length || 0
+    return -1 unless len
+    i = fr || 0
+    `for (;i < len; ++i) { if (fn(as[i])) return i }`
+    -1
 join     = curry binary  builtin Array::join        # [a], s -> s
 map      = curry (as, f) ->                         # [a], fn -> [a]
     r = Array(as.length); len = as.length; i = 0
@@ -314,7 +320,7 @@ exports = {
 
     # array
     concat, head, tail, last, fold, fold1, foldr, foldr1, each, map,
-    filter, all, any, join, reverse, sort, index, contains, uniq
+    filter, all, any, join, reverse, sort, index, indexfn, contains, uniq
 
     # string
     split, match, replace, search, trim, ucase, lcase, slice, drop,
@@ -336,7 +342,7 @@ exports.not = exports.nnot
 
 CHAINABLE = split 'clone shallow flip tap has get set keys values
     concat head tail last fold fold1 foldr foldr1 each map filter all
-    any join reverse sort index contains uniq split match replace
+    any join reverse sort index indexfn contains uniq split match replace
     search slice, drop, take, trim ucase lcase add sub mul div mod min
     max gt gte lt lte eq and or not eql groupby', ' '
 

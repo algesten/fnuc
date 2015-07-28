@@ -183,6 +183,7 @@ API
 [`has`](api.md#has)
 [`head`](api.md#head)
 [`index`](api.md#index)
+[`indexfn`](api.md#indexfn)
 [`isplain`](api.md#isplain)
 [`join`](api.md#join)
 [`keys`](api.md#keys)

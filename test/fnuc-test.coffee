@@ -572,6 +572,8 @@ FN_TEST = [
     {n:'uniq',   s:'[a] -> [a]',     f:uniq,   ar:1, as:[[1,2,2,1,2,3]],     eq:[1,2,3]}
     {n:'index',  s:'[a], a -> n',    f:index,  ar:2, as:[[1,2,3,4], 3],      eq:2}
     {n:'index',  s:'[a], a -> n',    f:index,  ar:2, as:[[1,2,3,4], 5],      eq:-1}
+    {n:'indexfn',s:'[a], fn -> n',   f:indexfn,ar:2, as:[[1,2,3,4],(a)->a%2==0], eq:1}
+    {n:'indexfn',s:'[a], fn -> n',   f:indexfn,ar:2, as:[[1,2,3,4],(a)->a>4], eq:-1}
     {n:'contains',s:'[a], a -> b',   f:contains,ar:2,as:[[1,2,3,4], 3],      eq:true}
     {n:'contains',s:'[a], a -> b',   f:contains,ar:2,as:[[1,2,3,4], 5],      eq:false}
     {n:'has',    s:'{k:v}, k -> b',  f:has,    ar:2, as:[{a:1,b:2}, 'b'],    eq:true}
