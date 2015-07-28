@@ -45,8 +45,6 @@ TYPES = [
     {v:new Foo,   t:'object',    d:'[proto]', truthy:true,  func:Object}
     {v:{a:[{b:1}]}, t:'object',  d:'',        truthy:true,  func:Object, plain:true}
     {v:{a:[{}]},  t:'object',    d:'',        truthy:true,  func:Object, plain:true}
-    {v:tuple({a:1},[1]),t:'tuple',d:'',       truthy:true,  func:Object}
-    {v:tuple(2,3),t:'tuple',     d:'',        truthy:true,  func:Object}
 ]
 TYPE_PROTO    = TYPES.filter (spec) -> spec.t == 'object' and not spec.plain
 TYPE_NO_PROTO = TYPES.filter (spec) -> spec.t != 'object' or spec.plain
@@ -827,74 +825,6 @@ describe 'groupby', ->
         gs = groupby(fn)(as)
         eql gs, a:[{n:'apa'}]
 
-describe 'tuple', ->
-
-    jst = JSON.stringify
-
-    it 'creates a tuple from 2 args', ->
-        t = tuple 22, 23
-        eql jst(t), '{"0":22,"1":23}'
-
-    it 'creates a tuple from 3 args', ->
-        t = tuple 22, 23, 24
-        eql jst(t), '{"0":22,"1":23,"2":24}'
-
-    it 'is arity 2', ->
-        eql arityof(tuple), 2
-
-    it 'is curried', ->
-        f = tuple 23
-        t = f 22
-        eql jst(t), '{"0":22,"1":23}'
-
-    it 'is vararg curried', ->
-        f = tuple 24
-        t = f 22, 23
-        eql jst(t), '{"0":22,"1":23,"2":24}'
-
-    it 'unpacks with fst', ->
-        t = tuple 22, 23, 24
-        eql fst(t), 22
-
-    it 'unpacks with snd', ->
-        t = tuple 22, 23, 24
-        eql snd(t), 23
-
-    it 'unpacks with nth', ->
-        t = tuple 22, 23, 24
-        eql nth(2)(t), 24
-
-    it 'unpacks with length for len', ->
-        t = tuple 22, 23
-        eql len(t), 2
-        t = tuple 22, 23, 24
-        eql len(t), 3
-
-    it 'deep equals with eql', ->
-        t1 = tuple [a:1], {c:[2]}
-        t2 = tuple [a:1], {c:[2]}
-        assert.ok F.eql t1, t2
-        t1 = tuple [a:1], tuple(2,3)
-        t2 = tuple [a:1], tuple(2,3)
-        assert.ok F.eql t1, t2
-        t1 = tuple [a:1], tuple(2,3), 3
-        t2 = tuple [a:1], tuple(2,3)
-        assert.ok not F.eql t1, t2
-
-    describe 'unpack', ->
-
-        it 'unpacks to function', ->
-            t = tuple 1, 2, 3
-            eql (unpack t, (as...) -> as), [1,2,3]
-
-        it 'is arity 2', ->
-            eql arityof(unpack), 2
-
-        it 'is curried', ->
-            t = tuple 1, 2, 3
-            f = unpack (as...) -> as
-            eql f(t), [1,2,3]
-
 describe 'zip', ->
 
     describe 'based on generic zipwith', ->
@@ -916,13 +846,13 @@ describe 'zip', ->
             r = zipwith((as...) -> join(as,'-')) 'ab', 'de'
             eql r, ['a-d', 'b-e']
 
-    describe 'to tuples', ->
+    describe 'to array', ->
 
-        it 'is an array of tuples', ->
+        it 'is an array of arrays', ->
             r = zip [1,2], [3,4]
             eql type(r), 'array'
-            eql type(r[0]), 'tuple'
-            eql r.toString(), '[tuple {"0":1,"1":3}],[tuple {"0":2,"1":4}]'
+            eql type(r[0]), 'array'
+            eql JSON.stringify(r), '[[1,3],[2,4]]'
 
         it 'is arity 2', ->
             eql arityof(zip), 2
@@ -930,34 +860,13 @@ describe 'zip', ->
         it 'is curried', ->
             z = zip [3,4]
             r = z [1,2]
-            eql r.toString(), '[tuple {"0":1,"1":3}],[tuple {"0":2,"1":4}]'
+            eql JSON.stringify(r), '[[1,3],[2,4]]'
 
         it 'is vararg curried', ->
             z = zip [5,6]
             r = z [1,2], [3,4]
-            eql r.toString(), '[tuple {"0":1,"1":3,"2":5}],[tuple {"0":2,"1":4,"2":6}]'
+            eql JSON.stringify(r), '[[1,3,5],[2,4,6]]'
 
         it 'handles strings', ->
             r = zip 'ab', 'de'
-            eql r.toString(), '[tuple {"0":"a","1":"d"}],[tuple {"0":"b","1":"e"}]'
-
-
-        describe 'unzips with unzip', ->
-
-            it 'is arity 1', ->
-                eql arityof(unzip), 1
-
-            it 'goes backwards to tuple', ->
-                r = zip [1,2], [3,4]
-                u = unzip r
-                eql type(u), 'tuple'
-                eql fst(u), [1,2]
-                eql snd(u), [3,4]
-
-            it 'is vararg number of zipped tuples', ->
-                r = zip [1,2], [3,4], [5,6]
-                u = unzip r
-                eql type(u), 'tuple'
-                eql fst(u), [1,2]
-                eql snd(u), [3,4]
-                eql nth(2)(u), [5,6]
+            eql JSON.stringify(r), '[["a","d"],["b","e"]]'

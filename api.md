@@ -26,7 +26,6 @@ API
 [`fold`](api.md#fold)
 [`foldr1`](api.md#foldr1)
 [`foldr`](api.md#foldr)
-[`fst`](api.md#fst)
 [`get`](api.md#get)
 [`groupby`](api.md#groupby)
 [`gt`](api.md#gt)
@@ -66,7 +65,6 @@ API
 [`set`](api.md#set)
 [`shallow`](api.md#shallow)
 [`slice`](api.md#slice)
-[`snd`](api.md#snd)
 [`sort`](api.md#sort)
 [`split`](api.md#split)
 [`sub`](api.md#sub)
@@ -74,11 +72,9 @@ API
 [`take`](api.md#take)
 [`tap`](api.md#tap)
 [`trim`](api.md#trim)
-[`tuple`](api.md#tuple)
 [`type`](api.md#type)
 [`typeis`](api.md#typeis)
 [`ucase`](api.md#ucase)
-[`unpack`](api.md#unpack)
 [`uniq`](api.md#uniq)
 [`unzip`](api.md#unzip)
 [`values`](api.md#values)
@@ -116,7 +112,7 @@ args | desc
 #### type
 
 Tells what type an object is. Returns one of `'array'`, `'boolean'`,
-`'date'`, `'null'`, `'number'`, `'object'` `'string'`, `'tuple'` or
+`'date'`, `'null'`, `'number'`, `'object'`, `'string'`  or
 `'undefined'`.
 
 `type(a)`   `:: a -> String`
@@ -133,7 +129,6 @@ type 42        # 'number'
 type null      # 'null'
 type {}        # 'object'
 type undefined # 'undefined'
-type tuple(3,4) # 'tuple'
 ```
 
 #### typeis
@@ -1243,44 +1238,23 @@ args | desc
 uniq [3,1,3,2,1,3,2,1]   # [3,1,2]
 ```
 
-#### unzip
-
-Takes a [`zip`](#zip) and goes backwards to a [`tuple`](#tuple) with
-unzipped values.
-
-`unzip(z)`  `:: [(a,b)] -> ([a],[b])`
-
-args | desc
-:--- | :---
-`z`  | Array of tuples to unzip.
-
-##### unzip example
-
-```coffee
-z = zip [1,2,3], ['a','b','c']   # [(1,a),(2,b),(3,c)]
-u = unzip z                      # ([1,2,3], ['a','b','c'])
-type(u)                          # 'tuple'
-```
-
 #### zip
 
 Takes two (or more) arrays and combines each position into a single
-array of tuples.
+array of arrays.
 
 Returned array is the minimum length argument arrays.
 
-Same as `zipwith(tuple)`.
-
-`zip(as,bs)`   `:: [a], [b] -> [(a,b)]`  
-`zip(bs)(as)`  `:: [b] -> [a] -> [(a,b)]`  
-`zip(cs...)`   `:: [a], ..., [z] -> [(a,...,z)]`
+`zip(as,bs)`   `:: [a], [b] -> [[a,b]]`  
+`zip(bs)(as)`  `:: [b] -> [a] -> [[a,b]]`  
+`zip(cs...)`   `:: [a], ..., [z] -> [[a,...,z]]`
 
 args | desc
 :--- | :---
-`as` | Array/string of values for first value in tuple
-`bs` | Array/string of values for second value in tuple
+`as` | Array/string of values for first value
+`bs` | Array/string of values for second value
 *Variadic*|
-`cs` | Variable number of arrays/strings to make into tuples
+`cs` | Variable number of arrays/strings to use
 
 ##### zip example
 
@@ -1489,6 +1463,25 @@ args | desc
 ```coffee
 take 'abcdef',  2    # ab
 take [0,1,2,3], 2    # [0,1]
+```
+
+#### len
+
+Length of string (or array)
+
+Same as `s.length`.
+
+`len(s)`  `:: s -> n`  
+
+args | desc
+:--- | :---
+`s`  | String/array to get length of
+
+##### len example
+
+```coffee
+len 'abcd'   # 4
+len [2,1]    # 2
 ```
 
 #### trim
@@ -1789,131 +1782,6 @@ args | desc
 *Variadic*|
 `as` | Variable number of arguments. I.e. `sub(a,b,c)` is `a - b - c`.
 
-
-
-### tuple functions
-
-#### fst
-
-Extracts the first value of a tuple.
-
-`fst(t)`   `:: tuple -> a`
-
-args | desc
-:--- | :---
-`t`  | Tuple
-
-##### fst example
-
-```coffee
-t = tuple 2,3   # (2,3)
-fst t           # 2
-```
-
-#### len
-
-Returns the length of a tuple.
-
-`len(t)`   `:: tuple -> n`
-
-args | desc
-:--- | :---
-`t`  | Tuple
-
-##### len example
-
-```coffee
-t = tuple 2,3,4 # (2,3,4)
-len t           # 3
-```
-
-#### nth
-
-Extracts the nth value of a tuple.
-
-`nth(t, n)`   `:: tuple, n -> a`  
-`nth(n)(t)`   `:: n -> tuple -> a`
-
-args | desc
-:--- | :---
-`t`  | Tuple
-`n`  | Number of argument to extract starting from 0.
-
-##### nth example
-
-```coffee
-t = tuple 2,3,4   # (2,3,4)
-nth t, 1          # 3
-nth t, 2          # 4
-```
-
-#### snd
-
-Extracts the second value of a tuple.
-
-`snd(t)`   `:: tuple -> a`
-
-args | desc
-:--- | :---
-`t`  | Tuple
-
-##### snd example
-
-```coffee
-t = tuple 2,3   # (2,3)
-snd t           # 3
-```
-
-
-#### tuple
-
-Constructs a tuple. Typically used for pairs, but is variadic.
-
-Tuples are unpacked with the following functions:
-
-* [`unpack(t,f)`](#unpack) generic unpack tuple to function
-* [`fst(t)`](#fst) first value of tuple
-* [`snd(t)`](#snd) second value of tuple
-* [`nth(t,n)`](#nth) nth value of tuple
-* [`len(t)`](#len) length of tuple
-
-`tuple(a,b)`   `:: a, a -> tuple`  
-`tuple(b)(a)`  `:: a -> a -> tuple`  
-`tuple(as...)` `:: a1, a2, ..., az -> tuple`
-
-args | desc
-:--- | :---
-`a`  | First argument.
-`b`  | Second argument.
-*Variadic*|
-`as` | Variable number of arguments. I.e. `tuple(1,2,3)`
-
-##### tuple example
-
-```coffee
-t = tuple 1,2       # (1,2)
-fst t               # 1
-snd t               # 2
-```
-
-#### unpack
-
-Unpacks a tuple into a provided function.
-
-`unpack(t,f)`   `:: tuple, ((a,a) -> a) -> a`  
-`unpack(f)(t)`  `:: ((a,a) -> a) -> tuple -> a`
-
-args | desc
-:--- | :---
-`t`  | Tuple to unpack.
-`f`  | Function that will receive all tuple values as arguments.
-
-##### unpack example
-
-```coffee
-t = tuple 2,3,4     # (2,3,4)
-unpack t, (a,b,c) -> ...     # a=2, b=3, c=4
-```
 
 [curry]: https://en.wikipedia.org/wiki/Currying
 [fold]:  https://en.wikipedia.org/wiki/Fold_%28higher-order_function%29
