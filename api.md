@@ -77,7 +77,6 @@ API
 [`ucase`](api.md#ucase)
 [`uniq`](api.md#uniq)
 [`uniqfn`](api.md#uniqfn)
-[`unzip`](api.md#unzip)
 [`values`](api.md#values)
 [`zip`](api.md#zip)
 [`zipwith`](api.md#zipwith)
