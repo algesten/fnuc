@@ -540,6 +540,7 @@ FN_TEST = [
     {n:'concat', s:'[a], a -> [a]',  f:concat, ar:0, as:[[0,1],2],           eq:[0,1,2]}
     {n:'concat', s:'a, [a] -> [a]',  f:concat, ar:0, as:[0,1,[2,3]],         eq:[0,1,2,3]}
     {n:'concat', s:'[a], [a] -> [a]',f:concat, ar:0, as:[[0,1],[2,3]],       eq:[0,1,2,3]}
+    {n:'concat', s:'[] -> []',       f:concat, ar:0, as:[],                  eq:[]}
     {n:'each',   s:'[a], fn -> undef',f:each,  ar:2, as:[[0,1,2],((a) -> a + 1)],  eq:undefined}
     {n:'map',    s:'[a], fn -> [a]', f:map,    ar:2, as:[[0,1,2],((a) -> a + 1)],  eq:[1,2,3]}
     {n:'filter', s:'[a], fn -> [a]', f:filter, ar:2, as:[[0,1,2],((a) -> a % 2)],  eq:[1]}

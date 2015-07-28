@@ -127,7 +127,7 @@ typeis   = curry (a,s) -> type(a) == s
 all      = curry binary  builtin Array::every       # [a], fn -> Boolean
 any      = curry binary  builtin Array::some        # [a], fn -> Boolean
 contains = curry (as, a) -> index(as, a) >= 0       # [a], a -> b
-concat   = curry binary (as...) -> [].concat as...
+concat   = (as...) -> [].concat as...
 each     = curry binary  builtin Array::forEach     # [a], fn    -> undef
 filter   = curry binary  (as, f) ->                 # [a], fn -> [a]|undef
     r = []
