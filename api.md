@@ -76,6 +76,7 @@ API
 [`typeis`](api.md#typeis)
 [`ucase`](api.md#ucase)
 [`uniq`](api.md#uniq)
+[`uniqfn`](api.md#uniqfn)
 [`unzip`](api.md#unzip)
 [`values`](api.md#values)
 [`zip`](api.md#zip)
@@ -1225,6 +1226,8 @@ See [`take`](api.md#take)
 Creates an array where every element occurs only once (given `==`
 equality).
 
+Same as `uniqfn I`.
+
 `uniq(as)` `:: [a] -> [a]`  
 `chainable`
 
@@ -1236,6 +1239,25 @@ args | desc
 
 ```coffee
 uniq [3,1,3,2,1,3,2,1]   # [3,1,2]
+```
+
+#### uniqfn
+
+Creates an array where every element occurs only once given a function
+applied for each element.
+
+`uniqfn(as)` `:: [a], (a -> v) -> [a]`  
+`chainable`
+
+args | desc
+:--- | :---
+`as` | Array to dedupe.
+`fn` | Function to apply to every value in the array to dedupe.
+
+##### uniqfn example
+
+```coffee
+uniqfn [6,1,3,4,1,3,2,1], (a) -> a % 3   # [6,1,2]
 ```
 
 #### zip

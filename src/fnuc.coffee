@@ -157,6 +157,10 @@ map      = curry (as, f) ->                         # [a], fn -> [a]
     r
 reverse  = unary builtin Array::reverse             # [a] -> [a]
 sort     = curry binary  builtin Array::sort        # [a] -> [a]
+uniqfn   = curry (as, fn) ->                        # [a] -> [a]
+    return as unless as
+    fned = map as, fn
+    as.filter (v, i) -> index(fned, fned[i]) == i
 uniq     = (as) -> return as unless as; as.filter (v, i) -> index(as, v) == i # [a] -> [a]
 
 
@@ -282,7 +286,7 @@ exports = {
     # array
     concat, head, tail, last, fold, fold1, foldr, foldr1, each, map,
     filter, all, any, join, reverse, sort, index, indexfn, contains,
-    uniq, zip, zipwith, len
+    uniq, uniqfn, zip, zipwith, len
 
     # string
     split, match, replace, search, trim, ucase, lcase, slice, drop,
@@ -301,7 +305,7 @@ exports.not = exports.nnot
 
 CHAINABLE = split 'clone shallow flip tap has get set keys values
     concat head tail last fold fold1 foldr foldr1 each map filter all
-    any join reverse sort index indexfn contains uniq split match replace
+    any join reverse sort index indexfn contains uniq uniqfn split match replace
     search slice, drop, take, trim ucase lcase add sub mul div mod min
     max gt gte lt lte eq and or not eql groupby', ' '
 
