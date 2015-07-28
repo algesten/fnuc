@@ -72,11 +72,11 @@ last    = (a) -> a[a.length-1]
 # fn --------------------------------
 arity = (f, n) ->
     if arguments.length == 1
-        return f.length if type(f) == 'function'
         n = f
         f = undefined
-    _ar = (f) -> ARITY[n](f)
-    if f then return _ar(f) else _ar
+    ar = ARITY[n]
+    if f then ar(f) else ar
+arityof = (f) -> return f.length if type(f) == 'function'
 unary   = arity 1
 binary  = arity 2
 ternary = arity 3
@@ -94,7 +94,7 @@ ncurry = (n, v, f, as=[]) ->
     return nf
 
 curry = (f) ->
-    n = arity(f)
+    n = arityof(f)
     return f if (n < 2)
     nf = arity(n) (as...) -> if as.length < n then ncurry n, false, f, as else f as...
     Object.defineProperty nf, '_curry', value: -> f
@@ -104,20 +104,20 @@ curry = (f) ->
 uncurry = (f) -> if f._curry then f._curry() else f
 
 partial = (f, as...) ->
-    return f as... if (n = (arity(f) - as.length)) <= 0
+    return f as... if (n = (arityof(f) - as.length)) <= 0
     arity(n) (bs...) -> f as.concat(bs)...
 partialr = (f, as...) ->
-    return f as... if (n = (arity(f) - as.length)) <= 0
+    return f as... if (n = (arityof(f) - as.length)) <= 0
     arity(n) (bs...) -> f bs[0...n].concat(as)...
 
 flip = (f) ->
     return f._flip if f._flip
     rewrap = if f._curry then curry else I
-    g = (rewrap arity(arity(f)) (as...) -> uncurry(f) as.reverse()...)
+    g = (rewrap arity(arityof(f)) (as...) -> uncurry(f) as.reverse()...)
     Object.defineProperty g, '_flip', value:f
     return g
 
-compose  = (fs...) -> ncurry arity(last(fs)), false, fold1 fs, (f, g) -> (as...) -> f g as...
+compose  = (fs...) -> ncurry arityof(last(fs)), false, fold1 fs, (f, g) -> (as...) -> f g as...
 sequence = flip compose
 tap      = curry (a, f) -> f(a); a                  # a, fn -> a
 
@@ -288,7 +288,7 @@ groupby = curry (as, fn) -> fold as,
 
 # Make a function chainable off Function::
 chainable = (name, f) ->
-    n = arity(f)
+    n = arityof(f)
     throw new Error("No chainable for arity 0") if n < 1
     g = if f._curry then f else curry(f)
     Object.defineProperty Function::, name, {configurable: true, get: ->
@@ -311,7 +311,7 @@ exports = {
     type, typeis, isplain
 
     # fn
-    arity, unary, binary, ternary, curry, flip, compose,
+    arity, arityof, unary, binary, ternary, curry, flip, compose,
     sequence, I, ident, partial, partialr, tap, chainable
 
     # object

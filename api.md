@@ -7,6 +7,7 @@ API
 [`and`](api.md#and)
 [`any`](api.md#any)
 [`arity`](api.md#arity)
+[`arityof`](api.md#arityof)
 [`chainable`](api.md#chainable)
 [`clone`](api.md#clone)
 [`compose`](api.md#compose)
@@ -164,33 +165,20 @@ Functions operating on functions.
 
 #### arity
 
-Dual purpose method to check or force function arity.
-
-To check the arity of a function `arity(f)` returns the number of
-arguments `f` takes (same as `f.length`).
+Forces function arity.
 
 To make a function `f1` of `f` that reports a certain arity we use the
 form `f1 = arity(f,n)` where `n` is the number of arguments we want
 `f` to report (`f1.length` will equal `n`). Note that this doesn't
 stop `f1` from receiving more arguments.
 
-`arity(f)`   `:: (a... -> a) -> Number`  
 `arity(f,n)` `:: (a... -> a), n -> (a... -> a)`  
 `arity(n)(f)` `:: n -> (a... -> a) -> (a... -> a)`
 
 args | desc
 :--- | :---
-*One arg variant*|
-`f`  | Function to check arity of.
-*Two arg variant*|
 `f`  | Function to make a new function with fixed arity of.
 `n`  | The arity of the new function.
-
-
-args | desc
-:--- | :---
-`f`  | Function to force arity of.
-`n`  | Number of reported arguments.
 
 ##### unary
 
@@ -207,20 +195,35 @@ Same as `arity(3)`.
 ##### arity example
 
 ```coffee
-arity (->)        # 0
-arity I           # 1
-arity ((a,b)->)   # 2
-arity type        # 1
-arity typeis      # 2
-arity arity       # 2
-
 myconcat = (as....) -> [].concat as...
-arity myconcat    # 0 for variadic functions.
+arityof myconcat   # 0 for variadic functions.
 
-myconcat2 = arity(2) myconcat # could have used 'binary myconcat'
-arity myconcat2   # 2
+myconcat2 = arity(2) myconcat   # could have used 'binary myconcat'
+arityof myconcat2 # 2
 myconcat2 1, 2    # [1,2]
 myconcat2 1, 2, 3 # [1,2,3] SURPRISE! (or not)
+```
+
+#### arityof
+
+Checks the arity of a function `arityof(f)` returns the number of
+arguments `f` takes (same as `f.length`).
+
+`arityof(f)`   `:: (a... -> a) -> Number`  
+
+args | desc
+:--- | :---
+`f`  | Function to check arity of.
+
+##### arityof example
+
+```coffee
+arityof (->)        # 0
+arityof I           # 1
+arityof ((a,b)->)   # 2
+arityof type        # 1
+arityof typeis      # 2
+arityof arity       # 2
 ```
 
 #### chainable

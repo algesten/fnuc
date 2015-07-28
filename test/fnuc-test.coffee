@@ -191,15 +191,15 @@ describe 'clone', ->
 describe 'arity', ->
 
     it 'returns the arity of (f)', ->
-        eql arity(->), 0
-        eql arity((a)->), 1
-        eql arity((a,b)->), 2
+        eql arityof(->), 0
+        eql arityof((a)->), 1
+        eql arityof((a,b)->), 2
 
     it 'chops the arity to the given number if (f,n)', ->
-        eql arity(arity(((a,b,c)->),n)), n for n in [0..10]
+        eql arityof(arity(((a,b,c)->),n)), n for n in [0..10]
 
     it 'has a curried variant for (n)', ->
-        eql arity(arity(n)((a,b,c)->)), n for n in [0..10]
+        eql arityof(arity(n)((a,b,c)->)), n for n in [0..10]
 
     describe 'unary', ->
 
@@ -244,7 +244,7 @@ describe 'partial', ->
         it 'works for arity(2)', ->
             r = partial ((a,b) -> a / b), 42
             assert.isFunction r
-            eql arity(r), 1
+            eql arityof(r), 1
             eql r(2,3,4), 21
 
         it 'executes arity(2) with arguments', ->
@@ -255,13 +255,13 @@ describe 'partial', ->
         it 'works for arity(3) with one arg', ->
             r = partial ((a,b,c) -> a / (b / c)), 12
             assert.isFunction r
-            eql arity(r), 2
+            eql arityof(r), 2
             eql r(3,2,5), 8
 
         it 'works for arity(3) with two arg', ->
             r = partial ((a,b,c) -> a / (b / c)), 12, 3
             assert.isFunction r
-            eql arity(r), 1
+            eql arityof(r), 1
             eql r(2,5), 8
 
         it 'executes arity(3) with arguments', ->
@@ -294,7 +294,7 @@ describe 'partialr', ->
         it 'works for arity(2)', ->
             r = partialr ((a,b) -> a / b), 2
             assert.isFunction r
-            eql arity(r), 1
+            eql arityof(r), 1
             eql r(42,3,4), 21
 
         it 'executes arity(2) with arguments', ->
@@ -305,13 +305,13 @@ describe 'partialr', ->
         it 'works for arity(3) with one arg', ->
             r = partialr ((a,b,c) -> a / (b / c)), 2
             assert.isFunction r
-            eql arity(r), 2
+            eql arityof(r), 2
             eql r(12,3,5), 8
 
         it 'works for arity(3) with two arg', ->
             r = partialr ((a,b,c) -> a / (b / c)), 3, 2
             assert.isFunction r
-            eql arity(r), 1
+            eql arityof(r), 1
             eql r(12,5), 8
 
         it 'executes arity(3) with arguments', ->
@@ -340,11 +340,11 @@ describe 'curry', ->
             eql div2(10), 5
 
         it 'maintains arity for curried func', ->
-            eql arity(div), 2
+            eql arityof(div), 2
 
         it 'returns a smaller arity func after partial apply', ->
             div2 = div(2)
-            eql arity(div2), 1
+            eql arityof(div2), 1
 
         it 'can still apply (a,b) to curried (a,b) ->', ->
             eql div(10, 2), 5
@@ -359,13 +359,13 @@ describe 'curry', ->
             eql div4(80), 20
 
         it 'maintains arity for curried func', ->
-            eql arity(divt), 3
+            eql arityof(divt), 3
 
         it 'returns a small arity func after partial apply', ->
             div2 = divt(2)
             div4 = div2(8)
-            eql arity(div2), 2
-            eql arity(div4), 1
+            eql arityof(div2), 2
+            eql arityof(div4), 1
 
         it 'can be partially applied with (b,c)', ->
             div4 = divt(8, 2)
@@ -373,7 +373,7 @@ describe 'curry', ->
 
         it 'does correct arity for partial applied', ->
             div4 = divt(8, 2)
-            eql arity(div4), 1
+            eql arityof(div4), 1
 
         it 'can still apply (a,b,c) to curried (a,b,c) ->', ->
             eql divt(80, 8, 2), 20
@@ -396,7 +396,7 @@ describe 'flip', ->
             eql f(2, 10), 5
 
         it 'keeps arity', ->
-            eql arity(f), 2
+            eql arityof(f), 2
 
         it 'is commutative', ->
             assert.ok flip(f) == f1
@@ -426,7 +426,7 @@ describe 'flip', ->
             eql f(2, 3, 12), 8
 
         it 'keeps arity', ->
-            eql arity(f), 3
+            eql arityof(f), 3
 
         it 'is commutative', ->
             eql flip(f), f1
@@ -461,7 +461,7 @@ describe 'compose', ->
             eql f(6,4), 5
 
         it 'maintains arity for f1', ->
-            eql arity(f), 2
+            eql arityof(f), 2
 
     describe '(f3,f2,f1)', ->
 
@@ -474,7 +474,7 @@ describe 'compose', ->
             eql f(7,5), 2
 
         it 'maintains arity for f1', ->
-            eql arity(f), 2
+            eql arityof(f), 2
 
 describe 'sequence', ->
 
@@ -488,7 +488,7 @@ describe 'sequence', ->
             eql f(6,4), 5
 
         it 'maintains arity for f1', ->
-            eql arity(f), 2
+            eql arityof(f), 2
 
     describe '(f1,f2,f3)', ->
 
@@ -501,7 +501,7 @@ describe 'sequence', ->
             eql f(7,5), 2
 
         it 'maintains arity for f1', ->
-            eql arity(f), 2
+            eql arityof(f), 2
 
 describe 'I/ident', ->
 
@@ -509,7 +509,7 @@ describe 'I/ident', ->
         eql I(42), 42
 
     it 'is of arity 1', ->
-        eql arity(I), 1
+        eql arityof(I), 1
 
     it 'ignores additional args', ->
         eql I(42,2), 42
@@ -672,7 +672,7 @@ describe 'and', ->
         lt102 = spy lt(102)
 
     it 'is of arity(2)', ->
-        eql arity(aand), 2
+        eql arityof(aand), 2
 
     it 'wraps two functions f, g and invokes both with &&', ->
         f = aand(gt10, even)
@@ -716,7 +716,7 @@ describe 'or', ->
         lt102 = spy lt(102)
 
     it 'is of arity(2)', ->
-        eql arity(oor), 2
+        eql arityof(oor), 2
 
     it 'wraps two functions f, g and invokes both with ||', ->
         f = oor(gt10, even)
@@ -753,7 +753,7 @@ describe 'not', ->
         gt10  = spy gt(10)
 
     it 'is of arity(2)', ->
-        eql arity(nnot), 2
+        eql arityof(nnot), 2
 
     it 'wraps a function and nots the output', ->
         f = nnot(gt10)
@@ -807,7 +807,7 @@ describe 'eql', ->
 describe 'groupby', ->
 
     it 'is is arity 2', ->
-        eql arity(groupby), 2
+        eql arityof(groupby), 2
 
     it 'groups objects according to key function', ->
         as = [{n:'apa'},{n:'banan'},{n:'ananas'}]
@@ -840,7 +840,7 @@ describe 'tuple', ->
         eql jst(t), '{"0":22,"1":23,"2":24}'
 
     it 'is arity 2', ->
-        eql arity(tuple), 2
+        eql arityof(tuple), 2
 
     it 'is curried', ->
         f = tuple 23
@@ -888,7 +888,7 @@ describe 'tuple', ->
             eql (unpack t, (as...) -> as), [1,2,3]
 
         it 'is arity 2', ->
-            eql arity(unpack), 2
+            eql arityof(unpack), 2
 
         it 'is curried', ->
             t = tuple 1, 2, 3
@@ -900,7 +900,7 @@ describe 'zip', ->
     describe 'based on generic zipwith', ->
 
         it 'is arity 3', ->
-            eql arity(zipwith), 3
+            eql arityof(zipwith), 3
 
         it 'is curried', ->
             f = zipwith(add)
@@ -925,7 +925,7 @@ describe 'zip', ->
             eql r.toString(), '[tuple {"0":1,"1":3}],[tuple {"0":2,"1":4}]'
 
         it 'is arity 2', ->
-            eql arity(zip), 2
+            eql arityof(zip), 2
 
         it 'is curried', ->
             z = zip [3,4]
@@ -945,7 +945,7 @@ describe 'zip', ->
         describe 'unzips with unzip', ->
 
             it 'is arity 1', ->
-                eql arity(unzip), 1
+                eql arityof(unzip), 1
 
             it 'goes backwards to tuple', ->
                 r = zip [1,2], [3,4]
