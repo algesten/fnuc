@@ -7,6 +7,9 @@
     "test": "mocha",
     "compile": "coffee -m -c -o lib src && coffee -m -c -o lib test && uglifyjs -c -m -- lib/fnuc.js >lib/fnuc.min.js"
   },
+  "files": [
+    "lib/fnuc.js"
+  ],
   "repository": {
     "type": "git",
     "url": "git@github.com:algesten/fnuc.git"
