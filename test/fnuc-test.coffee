@@ -3,11 +3,13 @@ if browsertest?
     `chai = window.chai`
     `expect = window.chai.expect`
     `F = window.F`
+    `Q = window.Q`
 else
     chai   = require 'chai'
     chai.use(require 'sinon-chai')
     sinon = require 'sinon'
     F = require('../src/fnuc')
+    Q = require 'q'
     delete global.__fnuc
     F.expose(global)
 
@@ -875,3 +877,113 @@ describe 'zip', ->
         it 'handles strings', ->
             r = zip 'ab', 'de'
             eql JSON.stringify(r), '[["a","d"],["b","e"]]'
+
+describe 'plift', ->
+
+    PTYPES = [
+        {v:null,      t:'null' }
+        {v:42,        t:'number'}
+    ]
+
+
+    later = (f) -> Q.Promise((rs) -> setTimeout rs, 1).then f
+
+    types = (f, check) ->
+
+        PTYPES.forEach (t) ->
+
+            describe "plain(#{t.t})", ->
+
+                check -> f(t.v,t.v)
+
+            describe "promise(#{t.t})", ->
+
+                check -> f(later(->t.v), t.v)
+
+    describe 'with no arg', ->
+        it 'calls fun', ->
+            f = plift (g = spy ->)
+            f()
+            eql g.args[0].length, 0
+
+    describe 'with one arg', ->
+
+        lifted = plift (a, av) -> [a, av]
+
+        types lifted, (f) ->
+            check = (arr) ->
+                eql arr[0], arr[1]
+            it 'works', ->
+                ret = f()
+                if ret.then
+                    ret.then check
+                else
+                    check ret
+
+    describe 'with two args,', ->
+
+        lifted = curry plift (a, av, b, bv) -> [a, av, b, bv]
+
+        types lifted, (f) -> describe 'and', -> types f(), (f) ->
+            check = (arr) ->
+                eql arr[0], arr[1]
+                eql arr[2], arr[3]
+            it 'works', ->
+                ret = f()
+                if ret.then
+                    ret.then check
+                else
+                    check ret
+
+    describe 'with varags', ->
+
+        lifted = plift (as...) -> [as[0], as[1]]
+        types lifted, (f) ->
+            check = (arr) ->
+                eql arr[0], arr[1]
+            it 'works', ->
+                ret = f()
+                if ret.then
+                    ret.then check
+                else
+                    check ret
+
+    describe 'preserves arg order', ->
+
+        describe 'with two args', ->
+
+            lifted = plift (a, b) -> a / b
+
+            it 'works for two plain', ->
+                eql lifted(10,5), 2
+
+            it 'works for first promise', ->
+                lifted(Q(10), 5).then (r) ->
+                    eql r, 2
+
+            it 'works for second promise', ->
+                lifted(10, Q(5)).then (r) ->
+                    eql r, 2
+
+        describe 'with three args', ->
+
+            lifted = plift (a, b, c) -> a / (b * c)
+
+            it 'works for two plain', ->
+                eql lifted(12,3,2), 2
+
+            it 'works for first promise', ->
+                lifted(Q(12),3,2).then (r) ->
+                    eql r, 2
+
+            it 'works for second promise', ->
+                lifted(12,Q(3),2).then (r) ->
+                    eql r, 2
+
+            it 'works for third promise', ->
+                lifted(12,3,Q(2)).then (r) ->
+                    eql r, 2
+
+            it 'works for first and third promise', ->
+                lifted(Q(12),3,Q(2)).then (r) ->
+                    eql r, 2

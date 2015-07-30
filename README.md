@@ -209,6 +209,7 @@ API
 [`partial`](api.md#partial)
 [`partialr`](api.md#partialr)
 [`pick`](api.md#pick)
+[`plift`](api.md#plift)
 [`replace`](api.md#replace)
 [`reverse`](api.md#reverse)
 [`search`](api.md#search)

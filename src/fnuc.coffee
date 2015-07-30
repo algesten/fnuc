@@ -171,6 +171,33 @@ uniqfn   = curry (as, fn) ->                        # [a] -> [a]
     as.filter (v, i) -> index(fned, fned[i]) == i
 uniq     = (as) -> return as unless as; as.filter (v, i) -> index(as, v) == i # [a] -> [a]
 
+# promise ---------------------------
+
+# tests if p has .then
+_isthenable = (p) ->
+    return false unless p
+    return false unless typeof p in ['object', 'function']
+    return typeof p.then == 'function'
+
+# first thenable (if any), bound to its promise
+_firstthenable = sequence firstfn(_isthenable), (p) -> p?.then.bind(p)
+
+# :: Promise (a -> b), (a or Promise a) -> Promise b
+_promapply = (pfn, parg) ->
+    fn = null
+    pfn.then (_fn) ->
+        fn = _fn
+        parg
+    .then (arg) ->
+        fn(arg)
+plift = (f) ->
+    arity(arityof(f)) (as...) ->
+        t0 = _firstthenable as # first is false or a thenable-function
+        if t0
+            foldr as, _promapply, t0 -> ncurry(as.length, false, f)
+        else
+            f as...
+
 
 # moar object
 has     = curry (o, k) -> o.hasOwnProperty(k)
@@ -303,6 +330,9 @@ exports = {
     # maths
     add, sub, mul, div, mod, min, max, gt, gte, lt, lte, eq, aand,
     oor, nnot
+
+    # promises
+    plift
 
 }
 

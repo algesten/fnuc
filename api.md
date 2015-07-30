@@ -60,6 +60,7 @@ API
 [`partial`](api.md#partial)
 [`partialr`](api.md#partialr)
 [`pick`](api.md#pick)
+[`plift`](api.md#plift)
 [`replace`](api.md#replace)
 [`reverse`](api.md#reverse)
 [`search`](api.md#search)
@@ -404,6 +405,35 @@ l     = [1,2,3,...]
 even  = (a) -> a % 2 == 0         # even number filter
 fr    = partial filter even       # applies even filter to any list
 le    = fr l                      # keeps only even
+```
+
+#### plift
+
+Lifts a function to be promise (.then-able) aware. When any argument
+to the function is a promise, the function returns a promise for the
+function evaluation that resolves when the arguments are resolved.
+
+In case all arguments are non-promises, the function evaluates without
+returning a promise.
+
+`plift(f)`  `:: ((a, b, ..., z) -> a0) -> (a, b, ..., z) -> a0)`
+
+args | desc
+:--- | :---
+`f`  | Function to lift
+
+##### plift example
+
+```coffee
+# helper function that resolves a promise to a value after 1 second.
+later = (a) -> (Q.Promise (rs) -> setTimeout rs, 1000).then -> a
+
+f = plift (a, b) -> a + b
+f(1,2)                       # 3
+f(later(1), 2)               # promise that resolves to 3 after 1 second
+
+# to see it in action
+f(1, later(2)).then (v) -> console.log v
 ```
 
 #### sequence
