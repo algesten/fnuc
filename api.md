@@ -1546,7 +1546,7 @@ Functions for math.
 #### and
 
 Returns a function that wraps two (or more) functions and performs
-logical and on the result. For coffeescript this function is aliased
+*logical and* on the result. For coffeescript this function is aliased
 as `aand`.
 
 `aand(f1,f2)`   `:: (a... -> Boolean), (a... -> Boolean) -> Boolean`  
@@ -1557,7 +1557,7 @@ as `aand`.
 args | desc
 :--- | :---
 `f1`  | First function to wrap.
-`f1`  | Second function to wrap.
+`f2`  | Second function to wrap.
 *Variadic*|
 `fs` | Variable number of functions to wrap.
 
@@ -1760,7 +1760,7 @@ odd(11)            # true
 #### or
 
 Returns a function that wraps two (or more) functions and performs
-logical or on the result. For coffeescript this function is aliased
+*logical or* on the result. For coffeescript this function is aliased
 as `oor`.
 
 `oor(f1,f2)`   `:: (a... -> Boolean), (a... -> Boolean) -> Boolean`  
@@ -1771,7 +1771,7 @@ as `oor`.
 args | desc
 :--- | :---
 `f1`  | First function to wrap.
-`f1`  | Second function to wrap.
+`f2`  | Second function to wrap.
 *Variadic*|
 `fs` | Variable number of functions to wrap.
 
@@ -1784,7 +1784,7 @@ lt100 = lt(100)
 f     = oor(gt10, even)
 f(102)                        # true
 g     = oor(gt10, even, lt100)
-g(102)                        # false
+g(102)                        # true
 ```
 
 #### sub
