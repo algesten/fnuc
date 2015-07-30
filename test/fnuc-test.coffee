@@ -84,7 +84,7 @@ describe 'merge', ->
         it 'handles three objects', -> eql merge({a:1},{b:2},{c:3}), {a:1,b:2,c:3}
         it 'overwrites existing keys', -> eql merge({a:1},{a:2}), a:2
         it 'overwrites with precedence', -> eql merge({a:1},{a:2},{a:3}), a:3
-        it 'ignores undefined values', -> eql merge({a:1},{a:undefined}), a:1
+        it 'overwrites undefined values', -> eql merge({a:1},{a:undefined}), a:undefined
         it 'leaves undefined in first be', ->
             eql merge({a:undefined},{b:2}), {a:undefined,b:2}
 
@@ -108,11 +108,11 @@ describe 'mixin', ->
         it 'overwrites with precedence', ->
             eql mixin(a = {a:1},{a:2},{a:3}), a:3
             eql a, a:1
-        it 'ignores undefined values', ->
-            eql mixin(a = {a:1},{a:undefined}), a:1
+        it 'overwrites undefined values', ->
+            eql mixin(a = {a:1},{a:undefined}), a:undefined
             eql a, a:1
         it 'leaves undefined in first be', ->
-            eql mixin(a = {a:undefined},{b:2}), b:2
+            eql mixin(a = {a:undefined},{b:2}), {a:undefined, b:2}
             eql a, a:undefined
 
 describe 'shallow', ->

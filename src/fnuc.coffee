@@ -51,7 +51,7 @@ isplain = (o) -> !!o && typeof o == 'object' && o.constructor == Object
 type    = (a) -> _toString(a)[8...-1].toLowerCase()
 
 # object ----------------------------
-merge   = (t, os...) -> t[k] = v for k,v of o when v != undefined for o in os; t
+merge   = (t, os...) -> t[k] = v for k,v of o for o in os; t
 mixin   = (os...)    -> merge {}, os...
 
 # array 1
