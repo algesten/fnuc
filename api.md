@@ -21,6 +21,7 @@ API
 [`eql`](api.md#eql)
 [`evolve`](api.md#evolve)
 [`filter`](api.md#filter)
+[`firstfn`](api.md#firstfn)
 [`flip`](api.md#flip)
 [`fold1`](api.md#fold1)
 [`fold`](api.md#fold)
@@ -38,6 +39,7 @@ API
 [`join`](api.md#join)
 [`keys`](api.md#keys)
 [`last`](api.md#last)
+[`lastfn`](api.md#lastfn)
 [`lcase`](api.md#lcase)
 [`len`](api.md#len)
 [`lt`](api.md#lt)
@@ -944,6 +946,24 @@ fo = filter odd         # partial
 fo [1,2,3]              # [1,3]
 ```
 
+#### firstfn
+
+Returns the first element in a list that returns truthy for a test
+function.
+
+`firstfn(as,f)`  `:: [a], (a -> Boolean) -> a`  
+`firstfn(f)(as)` `:: (a -> Boolean) -> [a] -> a`  
+`chainable`
+
+args | desc
+:--- | :---
+`as` | List to work over.
+`f`  | Test function that is truthy for first element to return.
+
+```coffee
+firstfn [1,2,3,4,5], (a) -> a % 2 == 0      # 2
+```
+
 #### fold
 
 Performs a [fold][fold] operation from the left with a seed
@@ -1117,6 +1137,24 @@ args | desc
 ```coffee
 last [1,2,3]     # 3
 last []          # undefined
+```
+
+#### lastfn
+
+Returns the last element in a list that returns truthy for a test
+function.
+
+`lastfn(as,f)`  `:: [a], (a -> Boolean) -> a`  
+`lastfn(f)(as)` `:: (a -> Boolean) -> [a] -> a`  
+`chainable`
+
+args | desc
+:--- | :---
+`as` | List to work over.
+`f`  | Test function that is truthy for last element to return.
+
+```coffee
+lastfn [1,2,3,4,5], (a) -> a % 2 == 0   # 4
 ```
 
 #### map

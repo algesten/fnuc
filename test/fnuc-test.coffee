@@ -534,6 +534,7 @@ FN_TEST = [
     {n:'tail',   s:'[a] -> [a]',     f:tail,   ar:1, as:[[1,2,3]],           eq:[2,3]}
     {n:'last',   s:'[] -> undef',    f:last,   ar:1, as:[[]],                eq:undefined}
     {n:'last',   s:'[a] -> a',       f:last,   ar:1, as:[[1,2,3]],           eq:3}
+    {n:'lastfn', s:'[a], fn -> a',   f:lastfn, ar:2, as:[[1,2,3,4],((a)->a%2)], eq:3}
     {n:'concat', s:'a, a -> [a]',    f:concat, ar:0, as:[0,1,2,3],           eq:[0,1,2,3]}
     {n:'concat', s:'[a], a -> [a]',  f:concat, ar:0, as:[[0,1],2],           eq:[0,1,2]}
     {n:'concat', s:'a, [a] -> [a]',  f:concat, ar:0, as:[0,1,[2,3]],         eq:[0,1,2,3]}
@@ -542,6 +543,7 @@ FN_TEST = [
     {n:'each',   s:'[a], fn -> undef',f:each,  ar:2, as:[[0,1,2],((a) -> a + 1)],  eq:undefined}
     {n:'map',    s:'[a], fn -> [a]', f:map,    ar:2, as:[[0,1,2],((a) -> a + 1)],  eq:[1,2,3]}
     {n:'filter', s:'[a], fn -> [a]', f:filter, ar:2, as:[[0,1,2],((a) -> a % 2)],  eq:[1]}
+    {n:'firstfn',s:'[a], fn -> a',   f:firstfn,ar:2, as:[[0,1,2,3],((a)->a%2)], eq:1}
     {n:'fold',   s:'[a], fn, v -> *',f:fold,   ar:3, as:[[24,28],foldfn,12], eq:16}
     {n:'fold1',  s:'[a], fn -> *',   f:fold1,  ar:2, as:[[12,24,28],foldfn], eq:16}
     {n:'foldr',  s:'[a], fn, v -> *',f:foldr,  ar:3, as:[[28,24],foldfn,12], eq:16}

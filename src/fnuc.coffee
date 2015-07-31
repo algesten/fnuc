@@ -138,18 +138,26 @@ fold     = curry (as, f, v) -> _fold  as, f, v,    false # [a], fn, v -> *
 fold1    = curry (as, f)    -> _fold  as, f, null, true  # [a], fn -> *
 foldr    = curry (as, f, v) -> _foldr as, f, v,    false # [a], fn, v -> *
 foldr1   = curry (as, f)    -> _foldr as, f, null, true  # [a], fn -> *
-index    = curry binary (as, v, fr) ->                   # [a], a -> n
-    len = as?.length || 0
-    return -1 unless len
-    i = fr || 0
-    `for (;i < len; ++i) { if (as[i] == v) return i }`
-    -1
-indexfn = curry binary (as, fn, fr) ->
+index    = curry binary (as, v, fr) -> indexfn as, eq(v), fr # [a], a -> n
+indexfn  = curry binary (as, fn, fr) ->                      # [a], (a->bool) -> n
     len = as?.length || 0
     return -1 unless len
     i = fr || 0
     `for (;i < len; ++i) { if (fn(as[i])) return i }`
     -1
+firstfn = curry binary (as, fn, fr) ->                       # [a], (a -> b) -> b
+    r = null
+    len = as?.length || 0
+    return null unless len
+    i = fr || 0
+    `for (;i < len; ++i) { if (fn(r = as[i])) return r }`
+    null
+lastfn = curry binary (as, fn, fr) ->                        # [a], (a -> b) -> b
+    r = null
+    i = fr || (as?.length - 1)
+    return null unless i < as?.length
+    `for (;i >= 0; --i) { if (fn(r = as[i])) return r }`
+    null
 join     = curry binary  builtin Array::join        # [a], s -> s
 map      = curry (as, f) ->                         # [a], fn -> [a]
     r = Array(as.length); len = as.length; i = 0
@@ -286,7 +294,7 @@ exports = {
     # array
     concat, head, tail, last, fold, fold1, foldr, foldr1, each, map,
     filter, all, any, join, reverse, sort, index, indexfn, contains,
-    uniq, uniqfn, zip, zipwith, len
+    uniq, uniqfn, zip, zipwith, len, firstfn, lastfn
 
     # string
     split, match, replace, search, trim, ucase, lcase, slice, drop,
@@ -304,10 +312,11 @@ exports.or  = exports.oor
 exports.not = exports.nnot
 
 CHAINABLE = split 'clone shallow flip tap has get set keys values
-    concat head tail last fold fold1 foldr foldr1 each map filter all
-    any join reverse sort index indexfn contains uniq uniqfn split match replace
-    search slice, drop, take, trim ucase lcase add sub mul div mod min
-    max gt gte lt lte eq and or not eql groupby', ' '
+    concat head tail last lastfn firstfn fold fold1 foldr foldr1 each
+    map filter all any join reverse sort index indexfn contains uniq
+    uniqfn split match replace search slice, drop, take, trim ucase
+    lcase add sub mul div mod min max gt gte lt lte eq and or not eql
+    groupby', ' '
 
 # function to install all chainables on Function::
 exports.installChainable = ->
