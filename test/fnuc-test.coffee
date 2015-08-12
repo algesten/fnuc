@@ -638,8 +638,8 @@ FN_TEST.forEach (spec) ->
                         eql spec.f(spec.as[1])(spec.as[0]), spec.eq
                     else if spec.ar == 3
                         eql spec.f(spec.as[2])(spec.as[1])(spec.as[0]), spec.eq
-            it "is of arity(#{spec.ar})", ->
-                eql spec.f.length, spec.ar
+        it "is of arity(#{spec.ar})", ->
+            eql spec.f.length, spec.ar
 
 describe 'map', ->
 
