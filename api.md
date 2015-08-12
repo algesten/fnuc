@@ -930,6 +930,11 @@ is true. Same as `[...].filter`.
 `filter(f)(as)` `:: (a -> Boolean) -> [a] -> [a]`  
 `chainable`
 
+args | desc
+:--- | :---
+`as` | Array to filter.
+`f`  | Function used to filter array. Truthy to keep element.
+
 ##### filter example
 
 ```coffee
