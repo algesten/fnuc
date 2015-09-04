@@ -987,3 +987,33 @@ describe 'plift', ->
             it 'works for first and third promise', ->
                 lifted(Q(12),3,Q(2)).then (r) ->
                     eql r, 2
+
+describe 'converge', ->
+
+    add = (a, b) -> a + b
+    add3 = (a, b, c) -> a + b + c
+    mul2 = mul 2
+    mul3 = mul 3
+    mul4 = mul 4
+
+    it 'is of arity 3', ->
+        eql arityof(converge), 3
+
+    describe 'accepts a function that is invoked with the results', ->
+
+        it 'of two functions', ->
+            fn = converge add, mul2, mul3
+            eql fn(2), 10 # add (2*2), (3*2)
+
+        it 'of three functions', ->
+            fn = converge add3, mul2, mul3, mul4
+            eql fn(2), 18
+
+    it 'is a curry', ->
+        fn = converge(mul3)(mul2)(add)
+        eql fn(2), 10
+
+    it 'curries the resulting function', ->
+        fn = converge add, ((a,b) -> a + b), ((a,b,c) -> a + b + c)
+        eql arityof(fn), 3
+        eql fn(2)(3)(4), 16  # add (4+3), (4+3+2)

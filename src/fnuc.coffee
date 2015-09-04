@@ -113,6 +113,11 @@ tap      = curry (a, f) -> f(a); a                  # a, fn -> a
 
 typeis   = curry (a,s) -> type(a) == s
 
+converge = ncurry 3, true, (after, fns...) ->
+    ncurry Math.max(fns.map(arityof)...), true, (args...) ->
+        context = this
+        after.apply context, map fns, (fn) -> fn.apply context, args
+
 # array ----------------------------
 all      = curry binary  builtin Array::every       # [a], fn -> Boolean
 any      = curry binary  builtin Array::some        # [a], fn -> Boolean
@@ -312,7 +317,7 @@ exports = {
 
     # fn
     arity, arityof, unary, binary, ternary, curry, flip, compose,
-    sequence, I, ident, partial, partialr, tap, chainable
+    sequence, I, ident, partial, partialr, tap, chainable, converge
 
     # object
     merge, mixin, has, get, set, keys, values, pick, evolve, omap,
