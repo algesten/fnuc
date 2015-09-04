@@ -14,6 +14,7 @@ API
 [`concat`](api.md#concat)
 [`contains`](api.md#contains)
 [`curry`](api.md#curry)
+[`converge`](api.md#converge)
 [`div`](api.md#div)
 [`drop`](api.md#drop)
 [`each`](api.md#each)
@@ -326,6 +327,35 @@ f = curry ternary concat
 f(1,2,3,4)       # [1,2,3,4] SURPRISE! (or not)
 f(3)(2)(1)       # [1,2,3]
 f(4)(3)(2)(1)    # TypeError: object is not a function
+```
+
+#### converge
+
+`converge(after, fn1, fn2, ..., fnn)(a1, a2, ..., an)`
+
+Creates a function whose arguments (a1-an) are passed to fn1-fnn whose
+result are in arguents to the first function (after).
+
+`:: ((x1, ..., xn) -> r), ((a1, ... an) -> x1), ... ((a1, ... an) -> xn) -> (a1, ... an) -> r`  
+`chainable`
+
+args     | desc
+:---     | :---
+`after`  | Function that willl be invoked with results of fn1-fnn.
+`fn1`    | Function for first argument to after.
+`fn2`    | Function for second argument to after.
+*Variadic*|
+`ret`    | A function accepting arguments to fn1-fnn
+
+
+##### converge example
+
+```coffee
+add  = (a, b) -> a + b
+mul2 = (c) -> c * 2
+mul3 = (c) -> c * 3
+fn = converge add, mul2, mul3
+fn(4)                          # add (4*2), (4*3) == 20
 ```
 
 #### flip

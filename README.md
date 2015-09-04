@@ -164,6 +164,7 @@ API
 [`concat`](api.md#concat)
 [`contains`](api.md#contains)
 [`curry`](api.md#curry)
+[`converge`](api.md#converge)
 [`div`](api.md#div)
 [`drop`](api.md#drop)
 [`each`](api.md#each)
