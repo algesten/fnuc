@@ -1017,3 +1017,8 @@ describe 'converge', ->
         fn = converge add, ((a,b) -> a + b), ((a,b,c) -> a + b + c)
         eql arityof(fn), 3
         eql fn(2)(3)(4), 16  # add (4+3), (4+3+2)
+
+describe 'apply', ->
+
+    it 'applies a function', ->
+        eql apply(Math.max)([2,4,3]), 4

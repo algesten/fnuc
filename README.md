@@ -156,6 +156,7 @@ API
 [`all`](api.md#all)
 [`and`](api.md#and)
 [`any`](api.md#any)
+[`apply`](api.md#apply)
 [`arity`](api.md#arity)
 [`arityof`](api.md#arityof)
 [`chainable`](api.md#chainable)

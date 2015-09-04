@@ -6,6 +6,7 @@ API
 [`all`](api.md#all)
 [`and`](api.md#and)
 [`any`](api.md#any)
+[`apply`](api.md#apply)
 [`arity`](api.md#arity)
 [`arityof`](api.md#arityof)
 [`chainable`](api.md#chainable)
@@ -161,6 +162,29 @@ isnum 42                   # true
 ### Function functions
 
 Functions operating on functions.
+
+#### apply
+
+Applies the function with the given arguments. This is equivalent to
+`fn.apply(this,args)` and is mostly here due to being curried.
+
+*Deliberate strange order due to curry*
+
+`apply(as,fn)`  `:: [a], (a, ..., z -> r1) -> r1`  
+`any(fn)(as)`   `:: (a, ..., z -> r1) -> [a] -> r1`  
+`chainable`
+
+args | desc
+:--- | :---
+`as` | Arguments array
+`fn` | Function to apply
+
+##### apply example
+
+```coffee
+fn = apply Math.max
+fn [2,4,3]           # 4
+```
 
 #### arity
 

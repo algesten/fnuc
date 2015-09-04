@@ -113,6 +113,8 @@ tap      = curry (a, f) -> f(a); a                  # a, fn -> a
 
 typeis   = curry (a,s) -> type(a) == s
 
+apply    = curry (args, fn) -> fn.apply this, args
+
 converge = ncurry 3, true, (after, fns...) ->
     ncurry Math.max(fns.map(arityof)...), true, (args...) ->
         context = this
@@ -317,7 +319,8 @@ exports = {
 
     # fn
     arity, arityof, unary, binary, ternary, curry, flip, compose,
-    sequence, I, ident, partial, partialr, tap, chainable, converge
+    sequence, I, ident, partial, partialr, tap, chainable, converge,
+    apply
 
     # object
     merge, mixin, has, get, set, keys, values, pick, evolve, omap,
@@ -346,12 +349,12 @@ exports.and = exports.aand
 exports.or  = exports.oor
 exports.not = exports.nnot
 
-CHAINABLE = split 'clone shallow flip tap has get set keys values
+CHAINABLE = split(' ') 'clone shallow flip tap has get set keys values
     concat head tail last lastfn firstfn fold fold1 foldr foldr1 each
     map filter all any join reverse sort index indexfn contains uniq
     uniqfn split match replace search slice, drop, take, trim ucase
     lcase add sub mul div mod min max gt gte lt lte eq and or not eql
-    groupby', ' '
+    groupby converge apply'
 
 # function to install all chainables on Function::
 exports.installChainable = ->
