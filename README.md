@@ -82,7 +82,7 @@ a `div` b    # infix haskell style
 a.div b      # infix coffeescript style
 ```
 
-### Chainable sequencing
+### Chainable
 
 To install builtins on `Function.prototype` do:
 
@@ -91,7 +91,7 @@ require('./src/fnuc').installChainable()
 ```
 
 Most functions in fnuc are [chainable](api.md#chainable). This means
-as an alternative to [`sequence`](api.md#sequence) and
+as an alternative to [`pipe`](api.md#pipe) and
 [`compose`](api.md#compose), we can simply chain them together.
 
 ```coffee
@@ -102,7 +102,7 @@ f(20)                         # 42
 This is equivalent to
 
 ```coffee
-f = sequence add(10), div(4), mul(5.6)
+f = pipe add(10), div(4), mul(5.6)
 ```
 
 In words: For a number, add 10 to it, divide the result by 4 and
@@ -164,8 +164,8 @@ API
 [`compose`](api.md#compose)
 [`concat`](api.md#concat)
 [`contains`](api.md#contains)
-[`curry`](api.md#curry)
 [`converge`](api.md#converge)
+[`curry`](api.md#curry)
 [`div`](api.md#div)
 [`drop`](api.md#drop)
 [`each`](api.md#each)
@@ -211,11 +211,11 @@ API
 [`partial`](api.md#partial)
 [`partialr`](api.md#partialr)
 [`pick`](api.md#pick)
+[`pipe`](api.md#pipe)
 [`plift`](api.md#plift)
 [`replace`](api.md#replace)
 [`reverse`](api.md#reverse)
 [`search`](api.md#search)
-[`sequence`](api.md#sequence)
 [`set`](api.md#set)
 [`shallow`](api.md#shallow)
 [`slice`](api.md#slice)

@@ -476,13 +476,13 @@ describe 'compose', ->
         it 'maintains arity for f1', ->
             eql arityof(f), 2
 
-describe 'sequence', ->
+describe 'pipe', ->
 
     describe '(f1,f2)', ->
 
         f1 = (a,b) -> a + b
         f2 = (c) -> c / 2
-        f = sequence f1, f2
+        f = pipe f1, f2
 
         it 'is turned to f2(f1)', ->
             eql f(6,4), 5
@@ -495,7 +495,7 @@ describe 'sequence', ->
         f1 = (a,b) -> a + b
         f2 = (c) -> c / 2
         f3 = (d) -> d / 3
-        f = sequence f1, f2, f3
+        f = pipe f1, f2, f3
 
         it 'is turned to f3(f2(f1))', ->
             eql f(7,5), 2

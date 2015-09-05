@@ -108,7 +108,8 @@ flip = (f) ->
     return g
 
 compose  = (fs...) -> ncurry arityof(last(fs)), false, fold1 fs, (f, g) -> (as...) -> f g as...
-sequence = flip compose
+pipe     = (fs...) -> ncurry arityof(head(fs)), false, foldr1 fs, (f, g) -> (as...) -> f g as...
+
 tap      = curry (a, f) -> f(a); a                  # a, fn -> a
 
 typeis   = curry (a,s) -> type(a) == s
@@ -199,7 +200,7 @@ _isthenable = (p) ->
     return typeof p.then == 'function'
 
 # first thenable (if any), bound to its promise
-_firstthenable = sequence firstfn(_isthenable), (p) -> p?.then.bind(p)
+_firstthenable = pipe firstfn(_isthenable), (p) -> p?.then.bind(p)
 
 # :: Promise (a -> b), (a or Promise a) -> Promise b
 _promapply = (pfn, parg) ->
@@ -313,9 +314,9 @@ chainable = (name, f) ->
     Object.defineProperty Function::, name, {configurable: true, get: ->
         p = this
         if n == 1
-            sequence(p, g)
+            pipe(p, g)
         else
-            curry arity(n - 1) (as...) -> sequence(p, g(as...))
+            curry arity(n - 1) (as...) -> pipe(p, g(as...))
     }
     null
 
@@ -331,7 +332,7 @@ exports = {
 
     # fn
     arity, arityof, unary, binary, ternary, curry, flip, compose,
-    sequence, I, ident, partial, partialr, tap, chainable, converge,
+    pipe, I, ident, partial, partialr, tap, chainable, converge,
     apply
 
     # object

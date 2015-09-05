@@ -14,8 +14,8 @@ API
 [`compose`](api.md#compose)
 [`concat`](api.md#concat)
 [`contains`](api.md#contains)
-[`curry`](api.md#curry)
 [`converge`](api.md#converge)
+[`curry`](api.md#curry)
 [`div`](api.md#div)
 [`drop`](api.md#drop)
 [`each`](api.md#each)
@@ -62,11 +62,11 @@ API
 [`partial`](api.md#partial)
 [`partialr`](api.md#partialr)
 [`pick`](api.md#pick)
+[`pipe`](api.md#pipe)
 [`plift`](api.md#plift)
 [`replace`](api.md#replace)
 [`reverse`](api.md#reverse)
 [`search`](api.md#search)
-[`sequence`](api.md#sequence)
 [`set`](api.md#set)
 [`shallow`](api.md#shallow)
 [`slice`](api.md#slice)
@@ -276,7 +276,7 @@ g(84)                         # 17
 
 Makes a composition function out of a variable number of functions
 `compose(f3,f2,f1)` becomes `f3(f2(f1)))` with the rightmost function
-being invoked first (the opposite is [sequence](#sequence)).
+being invoked first (the opposite is [pipe](#pipe)).
 
 The result is curried if the rightmost function is of arity > 1.
 
@@ -490,15 +490,15 @@ f(later(1), 2)               # promise that resolves to 3 after 1 second
 f(1, later(2)).then (v) -> console.log v
 ```
 
-#### sequence
+#### pipe
 
-Makes a sequence function out of a variable number of functions
-`sequence(f1,f2,f3)` becomes `f3(f2(f1)))` with the leftmost function
+Makes a sequence of function out of a variable number of functions
+`pipe(f1,f2,f3)` becomes `f3(f2(f1)))` with the leftmost function
 invoked first (the opposite is [compose](#compose)).
 
 The result is curried if the leftmost function is of arity > 1.
 
-    h = sequence(f,g)
+    h = pipe(f,g)
     z = h(1,2)
     z = h(2)(1)
 
@@ -507,19 +507,19 @@ is equivalent to:
     y = f(1,2)
     z = g(y)
 
-`sequence(as...)` `:: ((y -> z), (x -> y), ..., (b -> c), (a... -> b)) -> (a... -> z)`
+`pipe(as...)` `:: ((y -> z), (x -> y), ..., (b -> c), (a... -> b)) -> (a... -> z)`
 
 args | desc
 :--- | :---
-`as...` | Variable number of functions to sequence.
+`as...` | Variable number of functions to pipe.
 
-##### sequence example
+##### pipe example
 
 ```coffee
 div10 = div(10)
 add50 = add(50)
 pow   = (a,b) -> Math.pow(a,b)
-calc  = sequence pow, add50, div10
+calc  = pipe pow, add50, div10
 calc(10,2)  # 15 or (10 ^ 2 + 50) / 10
 calc(2)(10) # 15
 ```
@@ -545,7 +545,7 @@ args | desc
 ```coffee
 log   = (as...) -> console.log as...      # console.log returns undefined
 dolog = tap(log)                          # dolog returns same value
-calc  = sequence add(3), dolog, div(10)   # log the value between the operations
+calc  = pipe add(3), dolog, div(10)   # log the value between the operations
 calc [1,2,3]                              # logs 4...5...6
 ```
 
@@ -837,7 +837,7 @@ o = {a:1,b:3}
 set(o,'a',2)          # {a:2,b:3}
 seta3 = set(3)('a')   # partial
 setb4 = set(4)('b')   # partial
-f = sequence seta3, setb4
+f = pipe seta3, setb4
 f(o)                  # {a:3,b:4}
 ```
 
