@@ -5,7 +5,7 @@
   "main": "lib/fnuc.js",
   "scripts": {
     "test": "mocha",
-    "compile": "coffee -m -c -o lib src && coffee -m -c -o lib test && uglifyjs -c -m -- lib/fnuc.js >lib/fnuc.min.js"
+    "prepublish": "coffee -m -c -o lib src && coffee -m -c -o lib test && uglifyjs -c -m -- lib/fnuc.js >lib/fnuc.min.js"
   },
   "files": [
     "lib/fnuc.js"
