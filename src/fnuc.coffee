@@ -150,12 +150,15 @@ fold     = curry (as, f, v) -> _fold  as, f, v,    false # [a], fn, v -> *
 fold1    = curry (as, f)    -> _fold  as, f, null, true  # [a], fn -> *
 foldr    = curry (as, f, v) -> _foldr as, f, v,    false # [a], fn, v -> *
 foldr1   = curry (as, f)    -> _foldr as, f, null, true  # [a], fn -> *
-index    = curry binary (as, v, fr) -> indexfn as, eq(v), fr # [a], a -> n
+index    = curry binary (as, v, fr) ->                   # [a], a -> n
+    len = as.length
+    i = if fr then fr - 1 else -1
+    `while (++i < len) { if (as[i] === v) return i }`
+    -1
 indexfn  = curry binary (as, fn, fr) ->                      # [a], (a->bool) -> n
-    len = as?.length || 0
-    return -1 unless len
-    i = fr || 0
-    `for (;i < len; ++i) { if (fn(as[i])) return i }`
+    len = as.length
+    i = if fr then fr - 1 else -1
+    `while (++i < len) { if (fn(as[i])) return i }`
     -1
 firstfn = curry binary (as, fn, fr) ->                       # [a], (a -> b) -> b
     r = null
