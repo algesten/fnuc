@@ -131,6 +131,11 @@ filter   = curry binary  (as, f) ->                 # [a], fn -> [a]|undef
     ri = -1
     (r[++ri] = v if f(v)) for v in as
     r
+_filter = (as, f) -> # internal filter with v, i
+    r = []
+    ri = -1
+    (r[++ri] = v if f(v, i)) for v, i in as
+    r
 _fold = (as, f, acc, arrInit) ->
     i = 0; len = as.length;
     acc = as[i++] if arrInit
@@ -175,8 +180,8 @@ sort     = curry binary  builtin Array::sort        # [a] -> [a]
 uniqfn   = curry (as, fn) ->                        # [a] -> [a]
     return as unless as
     fned = map as, fn
-    as.filter (v, i) -> index(fned, fned[i]) == i
-uniq     = (as) -> return as unless as; as.filter (v, i) -> index(as, v) == i # [a] -> [a]
+    _filter as, (v, i) -> index(fned, fned[i]) == i
+uniq     = (as) -> return as unless as; _filter as, (v, i) -> index(as, v) == i # [a] -> [a]
 
 # promise ---------------------------
 
