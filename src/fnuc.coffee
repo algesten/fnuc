@@ -126,6 +126,7 @@ any      = curry binary  builtin Array::some        # [a], fn -> Boolean
 contains = curry (as, a) -> index(as, a) >= 0       # [a], a -> b
 concat   = (as...) -> [].concat as...
 each     = curry binary  builtin Array::forEach     # [a], fn    -> undef
+# 2015-09-05. Array.prototype.filter is significantly slower than this.
 filter   = curry binary  (as, f) ->                 # [a], fn -> [a]|undef
     r = []
     ri = -1
@@ -146,10 +147,12 @@ _foldr = (as, f, acc, arrInit) ->
     acc = as[--i] if arrInit
     `while (i--) { acc = f(acc,as[i]) }`
     acc
+# 2015-09-05. Array.prototype.reduce/reduceRight is significantly slower than this.
 fold     = curry (as, f, v) -> _fold  as, f, v,    false # [a], fn, v -> *
 fold1    = curry (as, f)    -> _fold  as, f, null, true  # [a], fn -> *
 foldr    = curry (as, f, v) -> _foldr as, f, v,    false # [a], fn, v -> *
 foldr1   = curry (as, f)    -> _foldr as, f, null, true  # [a], fn -> *
+# 2015-09-05. Array.prototype.indexOf is slightly faster than this.
 index    = curry binary (as, v, fr) ->                   # [a], a -> n
     len = as.length
     i = if fr then fr - 1 else -1
@@ -174,6 +177,7 @@ lastfn = curry binary (as, fn, fr) ->                        # [a], (a -> b) -> 
     `for (;i >= 0; --i) { if (fn(r = as[i])) return r }`
     null
 join     = curry binary  builtin Array::join        # [a], s -> s
+# 2015-09-05. Array.prototype.map is significantly slower than this.
 map      = curry (as, f) ->                         # [a], fn -> [a]
     r = Array(as.length); len = as.length; i = 0
     `for (;i < len; ++i) { r[i] = f(as[i]) }`
@@ -183,8 +187,8 @@ sort     = curry binary  builtin Array::sort        # [a] -> [a]
 uniqfn   = curry (as, fn) ->                        # [a] -> [a]
     return as unless as
     fned = map as, fn
-    _filter as, (v, i) -> index(fned, fned[i]) == i
-uniq     = (as) -> return as unless as; _filter as, (v, i) -> index(as, v) == i # [a] -> [a]
+    _filter as, (v, i) -> fned.indexOf(fned[i]) == i
+uniq     = (as) -> return as unless as; _filter as, (v, i) -> as.indexOf(v) == i # [a] -> [a]
 
 # promise ---------------------------
 
