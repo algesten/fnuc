@@ -213,6 +213,7 @@ API
 [`pick`](api.md#pick)
 [`pipe`](api.md#pipe)
 [`plift`](api.md#plift)
+[`ppipe`](api.md#ppipe)
 [`replace`](api.md#replace)
 [`reverse`](api.md#reverse)
 [`search`](api.md#search)

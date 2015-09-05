@@ -218,6 +218,9 @@ plift = (f) ->
         else
             f as...
 
+# pipe of plifted functions
+ppipe = (fns...) -> pipe (map fns, plift)...
+
 
 # moar object
 has     = curry (o, k) -> o.hasOwnProperty(k)
@@ -353,7 +356,7 @@ exports = {
     oor, nnot
 
     # promises
-    plift
+    plift, ppipe
 
 }
 

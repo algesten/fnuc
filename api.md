@@ -64,6 +64,7 @@ API
 [`pick`](api.md#pick)
 [`pipe`](api.md#pipe)
 [`plift`](api.md#plift)
+[`ppipe`](api.md#ppipe)
 [`replace`](api.md#replace)
 [`reverse`](api.md#reverse)
 [`search`](api.md#search)
@@ -461,35 +462,6 @@ fr    = partial filter even       # applies even filter to any list
 le    = fr l                      # keeps only even
 ```
 
-#### plift
-
-Lifts a function to be promise (.then-able) aware. When any argument
-to the function is a promise, the function returns a promise for the
-function evaluation that resolves when the arguments are resolved.
-
-In case all arguments are non-promises, the function evaluates without
-returning a promise.
-
-`plift(f)`  `:: ((a, b, ..., z) -> a0) -> (a, b, ..., z) -> a0)`
-
-args | desc
-:--- | :---
-`f`  | Function to lift
-
-##### plift example
-
-```coffee
-# helper function that resolves a promise to a value after 1 second.
-later = (a) -> (Q.Promise (rs) -> setTimeout rs, 1000).then -> a
-
-f = plift (a, b) -> a + b
-f(1,2)                       # 3
-f(later(1), 2)               # promise that resolves to 3 after 1 second
-
-# to see it in action
-f(1, later(2)).then (v) -> console.log v
-```
-
 #### pipe
 
 Makes a sequence of function out of a variable number of functions
@@ -522,6 +494,67 @@ pow   = (a,b) -> Math.pow(a,b)
 calc  = pipe pow, add50, div10
 calc(10,2)  # 15 or (10 ^ 2 + 50) / 10
 calc(2)(10) # 15
+```
+
+#### plift
+
+Lifts a function to be promise (.then-able) aware. When any argument
+to the function is a promise, the function returns a promise for the
+function evaluation that resolves when the arguments are resolved.
+
+In case all arguments are non-promises, the function evaluates without
+returning a promise.
+
+`plift(f)`  `:: ((a, b, ..., z) -> a0) -> (a, b, ..., z) -> a0)`
+
+args | desc
+:--- | :---
+`f`  | Function to lift
+
+##### plift example
+
+```coffee
+# helper function that resolves a promise to a value after 1 second.
+later = (a) -> (Q.Promise (rs) -> setTimeout rs, 1000).then -> a
+
+f = plift (a, b) -> a + b
+f(1,2)                       # 3
+f(later(1), 2)               # promise that resolves to 3 after 1 second
+
+# to see it in action
+f(1, later(2)).then (v) -> console.log v
+```
+
+#### ppipe
+
+Same as [`pipe`](#pipe) but wraps each individual function in the pipe
+with a [`plift`](#plift). This effectively creates a chain of functions
+that can either work on future (promised) values or immediate.
+
+This enables us to work/test "normal" functions and run them through a
+ppipe to accept promises.
+
+`ppipe(as...)` `:: ((y -> z), (x -> y), ..., (b -> c), (a... -> b)) -> (a... -> z)`
+
+args | desc
+:--- | :---
+`as...` | Variable number of functions that can accept promises as input.
+
+##### ppipe example
+
+```coffee
+# helper function that resolves a promise to a value after 1 second.
+later = (a) -> (Q.Promise (rs) -> setTimeout rs, 1000).then -> a
+
+div10 = div(10)
+add50 = add(50)
+pow   = (a,b) -> Math.pow(a,b)
+calc  = ppipe pow, add50, div10
+
+calc(10,2)                        # 15 immediate
+
+calc(later(10), 2).then (v) ->    # promise for 15
+    console.log v
 ```
 
 #### tap

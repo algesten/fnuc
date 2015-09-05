@@ -988,6 +988,28 @@ describe 'plift', ->
                 lifted(Q(12),3,Q(2)).then (r) ->
                     eql r, 2
 
+describe 'ppipe', ->
+
+    later = (f) -> Q.Promise((rs) -> setTimeout rs, 1).then f
+
+    it 'does immediate application', ->
+        add = (a, b) -> a + b
+        div10 = div(10)
+        calc = ppipe add, div10
+        eql calc(10,20), 3
+
+    it 'allows promises as arg', ->
+        add = (a, b) -> a + b
+        div10 = div(10)
+        calc = ppipe add, div10
+        calc(later(->10),20).then (v) -> eql v, 3
+
+    it 'can take promises as result of pipe steps', ->
+        add = (a, b) -> later -> a + b # return promise
+        div10 = div(10)
+        calc = ppipe add, div10
+        calc(10,20).then (v) -> eql v, 3
+
 describe 'converge', ->
 
     add = (a, b) -> a + b
