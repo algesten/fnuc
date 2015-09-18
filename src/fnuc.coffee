@@ -283,7 +283,10 @@ nnot     = curry binary (as..., f) -> !f(as...)
 zipwith = ncurry 3, true, (as..., f) ->
     ml = min (a.length for a in as)...
     f (as[n][i] for n in [0...as.length] by 1)... for i in [0...ml] by 1
-zip   = zipwith (as...) -> as
+zip    = zipwith (as...) -> as
+zipobj = do ->
+    fn = (obj) -> zipwith (k, v) -> set obj, k, v
+    (ks, vs) -> fn(ret = {})(ks, vs); ret
 
 # Deep equals
 eql = do ->
@@ -348,7 +351,7 @@ exports = {
     # array
     concat, head, tail, last, fold, fold1, foldr, foldr1, each, map,
     filter, all, any, join, reverse, sort, index, indexfn, contains,
-    uniq, uniqfn, zip, zipwith, len, firstfn, lastfn
+    uniq, uniqfn, zip, zipwith, len, firstfn, lastfn, zipobj
 
     # string
     split, match, replace, search, trim, ucase, lcase, slice, drop,

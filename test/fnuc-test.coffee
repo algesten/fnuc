@@ -878,6 +878,18 @@ describe 'zip', ->
             r = zip 'ab', 'de'
             eql JSON.stringify(r), '[["a","d"],["b","e"]]'
 
+describe 'zipobj', ->
+
+    it 'is of arity 2', ->
+        eql arityof(zipobj), 2
+
+    it 'makes an object out of keys/values', ->
+        eql zipobj(['a','b'], [1,2]), {a:1, b:2}
+
+    it 'wants equal length arrays', ->
+        eql zipobj(['a','b'], [1]), {a:1}
+        eql zipobj(['a'], [1,2]), {a:1}
+
 describe 'plift', ->
 
     PTYPES = [

@@ -234,6 +234,7 @@ API
 [`uniqfn`](api.md#uniqfn)
 [`values`](api.md#values)
 [`zip`](api.md#zip)
+[`zipobj`](api.md#zipobj)
 [`zipwith`](api.md#zipwith)
 
 License

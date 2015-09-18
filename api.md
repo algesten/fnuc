@@ -85,6 +85,7 @@ API
 [`uniqfn`](api.md#uniqfn)
 [`values`](api.md#values)
 [`zip`](api.md#zip)
+[`zipobj`](api.md#zipobj)
 [`zipwith`](api.md#zipwith)
 
 
@@ -1442,6 +1443,25 @@ args | desc
 ```coffee
 zip [1,2,3], ['a','b','c']   # [(1,a),(2,b),(3,c)]
 ```
+
+#### zipobj
+
+Takes two arrays, one with keys and one with values, to
+make an object with those keys/values.
+
+`zipobj(as,bs)`   `:: [a], [b] -> {a0:k0, a1:k2, ..., az:kz}`
+
+args | desc
+:--- | :---
+`ks` | Array of keys
+`vs` | Array of values. Must be same length as `ks`.
+
+##### zipobj example
+
+```coffee
+zipobj ['a','b','c'], [1,2,3]   # {a:1, b:2, c:3}
+```
+
 
 #### zipwith
 
