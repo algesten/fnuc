@@ -193,25 +193,27 @@ uniq     = (as) -> return as unless as; _filter as, (v, i) -> as.indexOf(v) == i
 
 # promise ---------------------------
 
-# tests if p has .then
-_isthenable = (p) ->
-    return false unless p
-    return false unless typeof p in ['object', 'function']
-    return typeof p.then == 'function'
+plift = do ->
 
-# first thenable (if any), bound to its promise
-_firstthenable = pipe firstfn(_isthenable), (p) -> p?.then.bind(p)
+    # tests if p has .then
+    _isthenable = (p) ->
+        return false unless p
+        return false unless typeof p in ['object', 'function']
+        return typeof p.then == 'function'
 
-# :: Promise (a -> b), (a or Promise a) -> Promise b
-_promapply = (pfn, parg) ->
-    fn = null
-    pfn.then (_fn) ->
-        fn = _fn
-        parg
-    .then (arg) ->
-        fn(arg)
-plift = (f) ->
-    arity(arityof(f)) (as...) ->
+    # first thenable (if any), bound to its promise
+    _firstthenable = pipe firstfn(_isthenable), (p) -> p?.then.bind(p)
+
+    # :: Promise (a -> b), (a or Promise a) -> Promise b
+    _promapply = (pfn, parg) ->
+        fn = null
+        pfn.then (_fn) ->
+            fn = _fn
+            parg
+        .then (arg) ->
+            fn(arg)
+
+    (f) -> arity(arityof(f)) (as...) ->
         t0 = _firstthenable as # first is false or a thenable-function
         if t0
             foldr as, _promapply, t0 -> ncurry(as.length, false, f)
@@ -264,8 +266,9 @@ gt       = curry (a,b) -> a > b
 gte      = curry (a,b) -> a >= b
 lt       = curry (a,b) -> a < b
 lte      = curry (a,b) -> a <= b
-_ = {} # internal placeholder
-eq       = curry binary (as...) -> fold1(as, (a,b) -> if a == b then a else _) != _
+eq       = do ->
+    _ = {} # placeholder obj
+    curry binary (as...) -> fold1(as, (a,b) -> if a == b then a else _) != _
 aand     = curry binary (as...) -> (bs...) ->
     len = as.length; i = 0
     `for (;i < len; ++i) { if (!as[i].apply(null,bs)) { return false } }`
