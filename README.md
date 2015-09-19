@@ -28,6 +28,12 @@ Or use it library style with a prefix:
 F = require `fnuc`  # all functions under F
 ```
 
+Use destructuring assignment to pick things you want.
+
+```coffee
+{split, map} = require 'fnuc'
+```
+
 ### Installing with Bower
 
 ```bash

@@ -356,16 +356,25 @@ exports.and = exports.aand
 exports.or  = exports.oor
 exports.not = exports.nnot
 
-# helper to expose selected functions
-expose = (exp, guard) -> (obj, funs...) ->
-    if funs?.length
-        obj[k] = exp[k] for k in funs
-    else unless obj[guard]
-        obj[k] = v for k, v of exp when k.indexOf("_") != 0
-        obj[guard] = true
-    exp
+asprop = (fn) ->
+    value: fn
+    enumerable: true
+    configurable: false
+    writable: false
 
-exports.expose = expose(exports, '__fnuc')
+expose = do ->
+    guard = '__fnuc'
+    (exp) -> (obj) ->
+        return if obj[guard]
+        ofexp = (flip get) exp
+        ks = keys exp
+        fns = map(ofexp) ks
+        props = zipobj ks, map(asprop) fns
+        Object.defineProperties obj, props
+        Object.defineProperty obj, guard, asprop(I)
+        exp
+
+exports.expose = expose(exports)
 
 if typeof module == 'object'
     module.exports = exports
