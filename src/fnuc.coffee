@@ -78,18 +78,18 @@ ncurry = (n, v, f, as=[]) ->
     nf = arity(l) (bs...) ->
         cs = (if bs.length <= l then bs else (if v then bs else bs[0...l])).concat as
         if cs.length < n then ncurry n, v, f, cs else f cs...
-    Object.defineProperty nf, '_curry', value: -> partialr f, as...
+    Object.defineProperty nf, '__fnuc_curry', value: -> partialr f, as...
     return nf
 
 curry = (f) ->
     n = arityof(f)
     return f if (n < 2)
     nf = arity(n) (as...) -> if as.length < n then ncurry n, false, f, as else f as...
-    Object.defineProperty nf, '_curry', value: -> f
+    Object.defineProperty nf, '__fnuc_curry', value: -> f
     return nf
 
 # not a mathematical uncurry, it just unwraps our own curry
-uncurry = (f) -> if f._curry then f._curry() else f
+uncurry = (f) -> if f.__fnuc_curry then f.__fnuc_curry() else f
 
 partial = (f, as...) ->
     return f as... if (n = (arityof(f) - as.length)) <= 0
@@ -99,10 +99,10 @@ partialr = (f, as...) ->
     arity(n) (bs...) -> f bs[0...n].concat(as)...
 
 flip = (f) ->
-    return f._flip if f._flip
-    rewrap = if f._curry then curry else I
+    return f.__fnuc_flip if f.__fnuc_flip
+    rewrap = if f.__fnuc_curry then curry else I
     g = (rewrap arity(arityof(f)) (as...) -> uncurry(f) as.reverse()...)
-    Object.defineProperty g, '_flip', value:f
+    Object.defineProperty g, '__fnuc_flip', value:f
     return g
 
 compose  = (fs...) -> ncurry arityof(last(fs)), false, fold1 fs, (f, g) -> (as...) -> f g as...
@@ -126,7 +126,7 @@ contains = curry (as, a) -> index(as, a) >= 0       # [a], a -> b
 concat   = (as...) -> [].concat as...
 each     = curry binary  builtin Array::forEach     # [a], fn    -> undef
 # 2015-09-05. Array.prototype.filter is significantly slower than this.
-filter   = curry binary  (as, f) ->                 # [a], fn -> [a]|undef
+filter   = curry binary  (as, f) ->                 # [a], fn -> [a]
     r = []
     ri = -1
     (r[++ri] = v if f(v)) for v in as
