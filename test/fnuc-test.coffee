@@ -536,6 +536,12 @@ FN_TEST = [
     {n:'tail',   s:'[a] -> [a]',     f:tail,   ar:1, as:[[1,2,3]],           eq:[2,3]}
     {n:'last',   s:'[] -> undef',    f:last,   ar:1, as:[[]],                eq:undefined}
     {n:'last',   s:'[a] -> a',       f:last,   ar:1, as:[[1,2,3]],           eq:3}
+    {n:'head',   s:'"" -> undef',    f:head,   ar:1, as:[""],                eq:undefined}
+    {n:'head',   s:'s -> s',         f:head,   ar:1, as:["123"],             eq:"1"}
+    {n:'tail',   s:'"" -> ""',       f:tail,   ar:1, as:[""],                eq:""}
+    {n:'tail',   s:'s -> s',         f:tail,   ar:1, as:["123"],             eq:"23"}
+    {n:'last',   s:'"" -> undef',    f:last,   ar:1, as:[""],                eq:undefined}
+    {n:'last',   s:'s -> a',         f:last,   ar:1, as:["123"],             eq:"3"}
     {n:'lastfn', s:'[a], fn -> a',   f:lastfn, ar:2, as:[[1,2,3,4],((a)->a%2)], eq:3}
     {n:'concat', s:'a, a -> [a]',    f:concat, ar:0, as:[0,1,2,3],           eq:[0,1,2,3]}
     {n:'concat', s:'[a], a -> [a]',  f:concat, ar:0, as:[[0,1],2],           eq:[0,1,2]}

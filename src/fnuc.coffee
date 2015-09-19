@@ -37,7 +37,7 @@ type    = (a) -> _toString(a)[8...-1].toLowerCase()
 merge   = (t, os...) -> t[k] = v for k,v of o for o in os; t
 mixin   = (os...)    -> merge {}, os...
 
-# array 1
+# array/string 1
 head    = (a) -> a[0]
 tail    = (a) -> a[1..]
 last    = (a) -> a[a.length-1]
