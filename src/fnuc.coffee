@@ -315,21 +315,6 @@ groupby = curry (as, fn) -> fold as,
     , {}
 
 
-# Make a function chainable off Function::
-chainable = (name, f) ->
-    n = arityof(f)
-    throw new Error("No chainable for arity 0") if n < 1
-    g = if f._curry then f else curry(f)
-    Object.defineProperty Function::, name, {configurable: true, get: ->
-        p = this
-        if n == 1
-            pipe(p, g)
-        else
-            curry arity(n - 1) (as...) -> pipe(p, g(as...))
-    }
-    null
-
-
 ################################
 exports = {
 
@@ -341,7 +326,7 @@ exports = {
 
     # fn
     arity, arityof, unary, binary, ternary, curry, flip, compose,
-    pipe, I, ident, partial, partialr, tap, chainable, converge,
+    pipe, I, ident, partial, partialr, tap, converge,
     apply
 
     # object
@@ -370,18 +355,6 @@ exports = {
 exports.and = exports.aand
 exports.or  = exports.oor
 exports.not = exports.nnot
-
-CHAINABLE = split(' ') 'clone shallow flip tap has get set keys values
-    concat head tail last lastfn firstfn fold fold1 foldr foldr1 each
-    map filter all any join reverse sort index indexfn contains uniq
-    uniqfn split match replace search slice, drop, take, trim ucase
-    lcase add sub mul div mod min max gt gte lt lte eq and or not eql
-    groupby converge apply'
-
-# function to install all chainables on Function::
-exports.installChainable = ->
-    each CHAINABLE, (name) -> chainable name, exports[name]
-    exports
 
 # helper to expose selected functions
 expose = (exp, guard) -> (obj, funs...) ->

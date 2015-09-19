@@ -22,12 +22,6 @@ Inject into global
 require('fnuc').expose(global)
 ```
 
-Enable chainables (modifies `Function.prototype`)
-
-```coffee
-require('./src/fnuc').expose(global).installChainable()
-```
-
 Or use it library style with a prefix:
 
 ```coffee
@@ -82,72 +76,6 @@ a `div` b    # infix haskell style
 a.div b      # infix coffeescript style
 ```
 
-### Chainable
-
-To install builtins on `Function.prototype` do:
-
-```coffee
-require('./src/fnuc').installChainable()
-```
-
-Most functions in fnuc are [chainable](api.md#chainable). This means
-as an alternative to [`pipe`](api.md#pipe) and
-[`compose`](api.md#compose), we can simply chain them together.
-
-```coffee
-f = add(10).div(4).mul(5.6)
-f(20)                         # 42
-```
-
-This is equivalent to
-
-```coffee
-f = pipe add(10), div(4), mul(5.6)
-```
-
-In words: For a number, add 10 to it, divide the result by 4 and
-finally multiply the *that* result with 5.6
-
-```coffee
-((x + 10) / 4) * 5.6
-```
-
-#### Arity `any -> 1 -> 1 -> 1`
-
-The first function can take *any* number of arguments, so can the
-sequenced result. However subsequent functions operate on the result
-of the previous, which can only be *1*. This means there's a risk of
-slipping up by not providing enough parameters when chaining.
-
-```coffee
-f = add(10).mul      # Warning! mul needs 2 arguments.
-```
-
-This chain produces a function, but I struggle to find any sane use
-for it.
-
-As a rule of thumb, try to ensure each function in a chain only
-expects one more argument.
-
-```coffee
-f = split('').join('_').replace(/a/g,'b')
-f('aaacc')                                  # 'b_b_b_c_c'
-```
-
-#### Making your own chainable
-
-The API provides an easy way to define your own
-[chainable](api.md#chainable) function: `chainable(name,f)`.
-
-```coffee
-even = (n) -> n % 2 == 0
-chainable 'even', even
-
-f = mul(3).even
-f(10)            # true
-f(11)            # false
-```
-
 API
 ---
 
@@ -159,7 +87,6 @@ API
 [`apply`](api.md#apply)
 [`arity`](api.md#arity)
 [`arityof`](api.md#arityof)
-[`chainable`](api.md#chainable)
 [`clone`](api.md#clone)
 [`compose`](api.md#compose)
 [`concat`](api.md#concat)

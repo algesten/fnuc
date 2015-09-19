@@ -769,34 +769,6 @@ describe 'not', ->
     it 'is aliased', ->
         assert.ok F.not == F.nnot
 
-describe 'chainable', ->
-
-    it 'makes chainable functions for arity == 1', ->
-
-        f = (a) -> a + 14
-        chainable 'f', f
-        g = div(2).f
-        eql g(100), 64
-
-    it 'makes chainable functions for arity >= 2', ->
-
-        f = (a,b) -> if a == 42 then b else 0
-        chainable 'guard42', f
-        g = div(2).guard42(17)
-        eql g(100), 0
-        eql g(84), 17
-
-    it 'wants arity >= 1', ->
-        assert.throw (->chainable('fail',->)), 'No chainable for arity 0'
-
-    it 'can redefine a chainable', ->
-        f1 = (a) -> 0
-        chainable 'f', f1
-        f2 = (b) -> 1
-        chainable 'f', f2
-        g = add(3).f
-        eql g(4), 1
-
 describe 'eql', ->
 
     TYPES.forEach (v1, i1) -> TYPES.forEach (v2, i2) ->
