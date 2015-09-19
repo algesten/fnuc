@@ -31,12 +31,12 @@
   },
   "homepage": "https://github.com/algesten/fnuc",
   "devDependencies": {
-    "browserstack-runner": "^0.2.2",
-    "chai": "^1.10.0",
-    "coffee-script": "^1.9",
-    "mocha": "^2.1.0",
+    "browserstack-runner": "^0.3.7",
+    "chai": "^3.2.0",
+    "coffee-script": "^1.10.0",
+    "mocha": "^2.3.2",
     "q": "^1.4.1",
-    "sinon": "^1.12.2",
+    "sinon": "^1.16.1",
     "sinon-chai": "^2.6.0",
     "uglify-js": "^2.4.16"
   }
