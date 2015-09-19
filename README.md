@@ -49,18 +49,21 @@ About
 
 Design philosophy:
 
-1. fnuc tries to follow the
+*  fnuc tries to follow the
    [principle of least astonishment][princ]. This shows in function
    argument order which is clearly spelled out in this
    [stack overflow answer][stack].
-2. Less is more. fnuc provides the most used basics, not every
+
+*  Less is more. fnuc provides the most used basics, not every
    conceivable utility function. Please
    [suggest](https://github.com/algesten/fnuc/issues) functions to add
    if anything important is missing.
-3. I don't mind OOP. fnuc focuses on functions that are somewhat
-   interesting for [function composition][compo], not a functional
-   purist approach where everything must be functions.
 
+*  Javascript is liberating. Functional programming purists may argue
+   the virtues of [immutability][immut] and typing whilst I would
+   argue the opposite; the lack of rigour has made programming fun
+   again. fnuc embraces all of javascript and will mutate where
+   appropriate.
 
 ### Argument order
 
@@ -202,3 +205,4 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 [stack]: http://stackoverflow.com/questions/25674596/#25720884
 [curry]: https://en.wikipedia.org/wiki/Currying
 [compo]: https://en.wikipedia.org/wiki/Function_composition_%28computer_science%29
+[immut]: https://en.wikipedia.org/wiki/Immutable_object
