@@ -621,8 +621,6 @@ FN_TEST = [
     {n:'eq',     s:'a... -> b',      f:eq,     ar:2, as:[1,1,2],             eq:false}
     {n:'eq',     s:'a... -> b',      f:eq,     ar:2, as:[false,false,false], eq:true}
     {n:'eq',     s:'a... -> b',      f:eq,     ar:2, as:[0,0,1],             eq:false}
-    {n:'not',    s:'a..., a -> b',   f:nnot,   ar:2, as:[false, I],            eq:true}
-    {n:'not',    s:'a..., a -> b',   f:nnot,   ar:2, as:[0,1,(a,b) -> b == 1], eq:false}
     {n:'pick',s:'{k:v}, [k] -> {k:v}',f:pick,  ar:2, as:[{a:1,b:2,c:3},['b','c']], eq:{b:2,c:3}}
     {n:'pick',s:'{k:v}, k -> {k:v}',  f:pick,  ar:2, as:[{a:1,b:2,c:3},'b','c'],   eq:{b:2,c:3}}
     {n:'pick',s:'{k:v}, k -> {k:v}',  f:pick,  ar:2, as:[{a:1,b:2,c:3},'b'],       eq:{b:2}}
@@ -763,14 +761,19 @@ describe 'not', ->
     beforeEach ->
         gt10  = spy gt(10)
 
-    it 'is of arity(2)', ->
-        eql arityof(nnot), 2
+    it 'is of arity(1)', ->
+        eql arityof(nnot), 1
 
     it 'wraps a function and nots the output', ->
         f = nnot(gt10)
         eql f(12), false
         eql gt10.callCount, 1
         eql gt10.args[0], [12]
+
+    it 'accepts variadic', ->
+        f = nnot (g = spy I)
+        eql f(1,2), false
+        eql g.args[0], [1,2]
 
     it 'is aliased', ->
         assert.ok F.not == F.nnot

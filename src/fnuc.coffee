@@ -276,7 +276,7 @@ oor      = curry binary (fs...) -> (as...) ->
     len = fs.length; i = 0
     `for (;i < len; ++i) { if (fs[i].apply(null,as)) { return true } }`
     false
-nnot     = curry binary (as..., f) -> !f(as...)
+nnot     = (f) -> unary (as...) -> !f(as...)
 
 # zipping
 zipwith = ncurry 3, true, (as..., f) ->
