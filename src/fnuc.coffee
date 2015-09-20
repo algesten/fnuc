@@ -195,16 +195,17 @@ uniq     = (as) -> return as unless as; _filter as, (v, i) -> as.indexOf(v) == i
 plift = do ->
 
     # tests if p has .then
-    _isthenable = (p) ->
+    isthenable = (p) ->
         return false unless p
         return false unless typeof p in ['object', 'function']
         return typeof p.then == 'function'
 
     # first thenable (if any), bound to its promise
-    _firstthenable = pipe firstfn(_isthenable), (p) -> p?.then.bind(p)
+    thenbind = (p) -> p.then.bind(p)
+    firstthen = pipe firstfn(isthenable), maybe(thenbind)
 
     # :: Promise (a -> b), (a or Promise a) -> Promise b
-    _promapply = (pfn, parg) ->
+    promapply = (pfn, parg) ->
         fn = null
         pfn.then (_fn) ->
             fn = _fn
@@ -213,9 +214,9 @@ plift = do ->
             fn(arg)
 
     (f) -> arity(arityof(f)) (as...) ->
-        t0 = _firstthenable as # first is false or a thenable-function
+        t0 = firstthen as # false or a bound then-function
         if t0
-            foldr as, _promapply, t0 -> ncurry(as.length, false, f)
+            foldr as, promapply, t0 -> ncurry(as.length, false, f)
         else
             f as...
 
