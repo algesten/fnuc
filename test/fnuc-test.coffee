@@ -1034,3 +1034,48 @@ describe 'apply', ->
 
     it 'applies a function', ->
         eql apply(Math.max)([2,4,3]), 4
+
+describe 'iif', ->
+
+    it 'is arity 3', ->
+        eql arityof(iif), 3
+
+    it 'is curried', ->
+        fn1 = spy -> 42
+        fn2 = spy -> 43
+        eql iif(fn2)(fn1)(I)(1), 42
+
+    it 'applies first branch if truthy', ->
+        fn1 = spy -> 42
+        fn2 = spy -> 43
+        fn = iif I, fn1, fn2
+        eql fn(1), 42
+        eql fn1.args[0], [1]
+
+    it 'applies second branch if falsey', ->
+        fn1 = spy -> 42
+        fn2 = spy -> 43
+        fn = iif I, fn1, fn2
+        eql fn(0), 43
+        eql fn2.args[0], [0]
+
+    it 'accepts null first branch', ->
+        fn2 = spy -> 43
+        fn = iif I, null, fn2
+        eql fn(1), undefined
+
+    it 'accepts null second branch', ->
+        fn1 = spy -> 42
+        fn = iif I, fn1, null
+        eql fn(0), undefined
+
+    it 'works for variadic', ->
+        tst = spy I
+        fn1 = spy -> 42
+        fn2 = spy -> 43
+        fn = iif tst, fn1, fn2
+        eql fn(1,2,3), 42
+        eql fn(0,2,3), 43
+        eql tst.args[0], [1,2,3]
+        eql fn1.args[0], [1,2,3]
+        eql fn2.args[0], [0,2,3]

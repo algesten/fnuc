@@ -121,6 +121,7 @@ API
 [`gte`](api.md#gte)
 [`has`](api.md#has)
 [`head`](api.md#head)
+[`iif`](api.md#iif)
 [`index`](api.md#index)
 [`indexfn`](api.md#indexfn)
 [`isplain`](api.md#isplain)

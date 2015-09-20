@@ -119,6 +119,11 @@ converge = ncurry 3, true, (after, fns...) ->
         context = this
         after.apply context, map fns, (fn) -> fn.apply context, args
 
+typeis   = curry (a,s) -> type(a) == s
+tap      = curry (a, f) -> f(a); a                  # a, fn -> a
+apply    = curry (args, fn) -> fn.apply this, args  # [a], fn -> fn(a0, a1, ..., az)
+iif      = curry (c, t, f) -> (as...) -> if c(as...) then t?(as...) else f?(as...)
+
 # array ----------------------------
 all      = curry binary  builtin Array::every       # [a], fn -> Boolean
 any      = curry binary  builtin Array::some        # [a], fn -> Boolean
@@ -325,7 +330,7 @@ exports = {
     # fn
     arity, arityof, unary, binary, ternary, curry, flip, compose,
     pipe, I, ident, partial, partialr, tap, converge,
-    apply
+    apply, iif
 
     # object
     merge, mixin, has, get, set, keys, values, pick, evolve, omap,

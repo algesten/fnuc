@@ -34,6 +34,7 @@ API
 [`gte`](api.md#gte)
 [`has`](api.md#has)
 [`head`](api.md#head)
+[`iif`](api.md#iif)
 [`index`](api.md#index)
 [`indexfn`](api.md#indexfn)
 [`isplain`](api.md#isplain)
@@ -386,6 +387,33 @@ f3 = f(3)
 g3 = flip f3  # flipping partially applied
 f3(2)(1)      # [3,2,1]
 g3(2)(1)      # [3,1,2]
+```
+
+#### iif
+
+[Inline if](https://en.wikipedia.org/wiki/IIf) accepts three
+functions, a test function, one for true and one for false.
+
+The returned function will pass any arguments to the test function and
+then either to true/false depending on the test.
+
+`iif(c,t,f) :: (a -> bool), (a -> b), (a -> c) -> a -> b|c`
+
+args | desc
+:--- | :---
+`c`  | Condition function that evaluates to truthy/falsey.
+`t`  | Function to invoke if `fc` is truthy.
+`f`  | Function to invoke if `fc` is falsey.
+
+##### iif example
+
+```coffee
+iseven = (a) -> a % 2 == 0
+evens  = (a) -> a / 2
+odds   = (a) -> a * 2
+fn = iif iseven, evens, odds
+fn(3)                          # 6  (3 is odd, 3*2)
+fn(4)                          # 2  (4 is even, 4/2)
 ```
 
 #### partial
