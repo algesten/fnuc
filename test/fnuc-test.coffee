@@ -1079,3 +1079,19 @@ describe 'iif', ->
         eql tst.args[0], [1,2,3]
         eql fn1.args[0], [1,2,3]
         eql fn2.args[0], [0,2,3]
+
+describe 'maybe', ->
+
+    it 'wraps a function and only invokes it if input is non-falsey', ->
+        fn = maybe -> 42
+        eql fn(null), undefined
+        eql fn(undefined), undefined
+        eql fn(0), 42
+        eql fn(1), 42
+
+    it 'works for variadic input', ->
+        fn = maybe -> 42
+        eql fn(1,null), undefined
+        eql fn(1,undefined), undefined
+        eql fn(1,0), 42
+        eql fn(1,1), 42

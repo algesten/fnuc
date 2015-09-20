@@ -31,6 +31,7 @@ clone = (a) ->
 
 # type -----------------------------
 isplain = (o) -> !!o && typeof o == 'object' && o.constructor == Object
+isdef   = (o) -> `o != null`
 type    = (a) -> _toString(a)[8...-1].toLowerCase()
 
 # object ----------------------------
@@ -117,6 +118,7 @@ typeis   = curry (a,s) -> type(a) == s
 tap      = curry (a, f) -> f(a); a                  # a, fn -> a
 apply    = curry (args, fn) -> fn.apply this, args  # [a], fn -> fn(a0, a1, ..., az)
 iif      = curry (c, t, f) -> (as...) -> if c(as...) then t?(as...) else f?(as...)
+maybe    = (fn) -> unary (as...) -> fn as... if as.every isdef # (a -> b) -> a|null -> b|null
 
 # array ----------------------------
 all      = curry binary  builtin Array::every       # [a], fn -> Boolean
@@ -319,12 +321,12 @@ exports = {
     shallow, clone
 
     # type
-    type, typeis, isplain
+    type, typeis, isplain, isdef
 
     # fn
     arity, arityof, unary, binary, ternary, curry, flip, compose,
     pipe, I, ident, partial, partialr, tap, converge,
-    apply, iif
+    apply, iif, maybe
 
     # object
     merge, mixin, has, get, set, keys, values, pick, evolve, omap,

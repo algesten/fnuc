@@ -37,6 +37,7 @@ API
 [`iif`](api.md#iif)
 [`index`](api.md#index)
 [`indexfn`](api.md#indexfn)
+[`isdef`](api.md#isdef)
 [`isplain`](api.md#isplain)
 [`join`](api.md#join)
 [`keys`](api.md#keys)
@@ -49,6 +50,7 @@ API
 [`map`](api.md#map)
 [`match`](api.md#match)
 [`max`](api.md#max)
+[`maybe`](api.md#maybe)
 [`merge`](api.md#merge)
 [`min`](api.md#min)
 [`mixin`](api.md#mixin)
@@ -97,6 +99,23 @@ Functions operating on types.
 The identity function `(x) -> x`.
 
 `:: (a) -> a`
+
+#### isdef
+
+Checks whether argument is defined, i.e. not `null` and not `undefined`.
+
+`isdef(a)` `:: a -> Boolean`
+
+args | desc
+:--- | :---
+`a`  | Anything to check for `null`/`undefined`.
+
+##### isdef example
+
+    isdef null          # false
+    isdef undefined     # false
+    isdef ''            # true
+    isdef 0             # true
 
 #### isplain
 
@@ -413,6 +432,29 @@ odds   = (a) -> a * 2
 fn = iif iseven, evens, odds
 fn(3)                          # 6  (3 is odd, 3*2)
 fn(4)                          # 2  (4 is even, 4/2)
+```
+
+#### maybe
+
+Wraps a function and maybe invokes it, if the applied parameter(s) are
+non-`null`/non-`undefined`.
+
+Can be thought of as a "guard" against `null`/`undefined`.
+
+`maybe(fn)`  `:: (a -> b) -> a|null -> b|null`
+
+args | desc
+:--- | :---
+`fn` | Function to wrap.
+
+##### maybe example
+
+```coffee
+just42 = -> 42
+fn = maybe just42
+fn 0                 # 42
+fn 1                 # 42
+fn null              # undefined, and just42 was not invoked
 ```
 
 #### partial
