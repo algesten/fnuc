@@ -108,12 +108,6 @@ flip = (f) ->
 compose  = (fs...) -> ncurry arityof(last(fs)), false, fold1 fs, (f, g) -> (as...) -> f g as...
 pipe     = (fs...) -> ncurry arityof(head(fs)), false, foldr1 fs, (f, g) -> (as...) -> f g as...
 
-tap      = curry (a, f) -> f(a); a                  # a, fn -> a
-
-typeis   = curry (a,s) -> type(a) == s
-
-apply    = curry (args, fn) -> fn.apply this, args
-
 converge = ncurry 3, true, (after, fns...) ->
     ncurry Math.max(fns.map(arityof)...), true, (args...) ->
         context = this
@@ -272,13 +266,13 @@ lte      = curry (a,b) -> a <= b
 eq       = do ->
     _ = {} # placeholder obj
     curry binary (as...) -> fold1(as, (a,b) -> if a == b then a else _) != _
-aand     = curry binary (as...) -> (bs...) ->
-    len = as.length; i = 0
-    `for (;i < len; ++i) { if (!as[i].apply(null,bs)) { return false } }`
+aand     = curry binary (fs...) -> (as...) ->
+    len = fs.length; i = 0
+    `for (;i < len; ++i) { if (!fs[i].apply(null,as)) { return false } }`
     true
-oor      = curry binary (as...) -> (bs...) ->
-    len = as.length; i = 0
-    `for (;i < len; ++i) { if (as[i].apply(null,bs)) { return true } }`
+oor      = curry binary (fs...) -> (as...) ->
+    len = fs.length; i = 0
+    `for (;i < len; ++i) { if (fs[i].apply(null,as)) { return true } }`
     false
 nnot     = curry binary (as..., f) -> !f(as...)
 
