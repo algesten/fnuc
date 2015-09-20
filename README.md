@@ -25,7 +25,7 @@ require('fnuc').expose(global);
 Or use it library style with a prefix:
 
 ```javascript
-F = require(`fnuc`);  // all functions under F
+F = require('fnuc');  // all functions under F
 ```
 
 Use destructuring assignment to pick things you want.
