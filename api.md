@@ -55,7 +55,6 @@ API
 [`mod`](api.md#mod)
 [`mul`](api.md#mul)
 [`not`](api.md#not)
-[`nth`](api.md#nth)
 [`ofilter`](api.md#ofilter)
 [`omap`](api.md#omap)
 [`or`](api.md#or)
@@ -335,8 +334,8 @@ f(4)(3)(2)(1)    # TypeError: object is not a function
 
 `converge(after, fn1, fn2, ..., fnn)(a1, a2, ..., an)`
 
-Creates a function whose arguments (a1-an) are passed to fn1-fnn whose
-result are in arguents to the first function (after).
+Creates a function that passes its arguments (a1-an) to fn1-fnn whose
+result are in arguments to the first function (after).
 
 `:: ((x1, ..., xn) -> r), ((a1, ... an) -> x1), ... ((a1, ... an) -> xn) -> (a1, ... an) -> r`  
 
@@ -664,7 +663,7 @@ args | desc
 
 ```coffee
 as = [{n:'apa'},{n:'banan'},{n:'ananas'}]
-fn = compose strto(1), get('n')
+fn = compose take(1), get('n')
 gs = groupby as, fn              # {a:[{n:'apa'},{n:'ananas'}], b:[{n:'banan'}]}
 ```
 
@@ -1142,6 +1141,8 @@ args | desc
 
 Gets the head value of an array.
 
+Also applicable for string.
+
 `head(as)` `:: [a] -> a|undefined`  
 
 args | desc
@@ -1218,6 +1219,8 @@ join [1,2,3], '-'    # '1-2-3'
 #### last
 
 Gets the last value of an array. `undefined` for empty list.
+
+Also applicable for string.
 
 `last(as)`  `:: [a] -> a|undefined`  
 
@@ -1333,6 +1336,8 @@ s [4,1,5,2]             # [5,4,2,1]
 
 The tail of a list, that is, every element apart from the first. The
 tail of `[]` is `[]`.
+
+Also applicable for string.
 
 `tail(as)`  `:: [a] -> [a]`  
 

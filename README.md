@@ -18,20 +18,28 @@ npm install -S fnuc
 
 Inject into global
 
-```coffee
-require('fnuc').expose(global)
+```javascript
+require('fnuc').expose(global);
 ```
 
 Or use it library style with a prefix:
 
-```coffee
-F = require `fnuc`  # all functions under F
+```javascript
+F = require(`fnuc`);  // all functions under F
 ```
 
 Use destructuring assignment to pick things you want.
 
+Coffeescript
+
 ```coffee
 {split, map} = require 'fnuc'
+```
+
+Javascript
+
+```javascript
+let {split, map} = require('fnuc');
 ```
 
 ### Installing with Bower
@@ -64,6 +72,7 @@ Design philosophy:
    argue the opposite; the lack of rigour has made programming fun
    again. fnuc embraces all of javascript and will mutate where
    appropriate.
+
 
 ### Argument order
 
