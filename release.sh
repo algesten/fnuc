@@ -1,6 +1,6 @@
 #!/bin/sh
 
-step="minor"
+step="patch"
 
 npm version "${step}"
 npm publish
