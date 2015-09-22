@@ -106,8 +106,8 @@ flip = (f) ->
     Object.defineProperty g, '__fnuc_flip', value:f
     return g
 
-compose  = (fs...) -> ncurry arityof(last(fs)), false, fold1 fs, (f, g) -> (as...) -> f g as...
-pipe     = (fs...) -> ncurry arityof(head(fs)), false, foldr1 fs, (f, g) -> (as...) -> f g as...
+compose  = (fs...) -> ncurry arityof(last fs), false, fold1 fs, (f, g) -> (as...) -> f g as...
+pipe     = (fs...) -> ncurry arityof(head fs), false, foldr1 fs, (f, g) -> (as...) -> f g as...
 
 converge = ncurry 3, true, (after, fns...) ->
     ncurry Math.max(fns.map(arityof)...), true, (args...) ->
@@ -117,7 +117,8 @@ converge = ncurry 3, true, (after, fns...) ->
 typeis   = curry (a,s) -> type(a) == s
 tap      = curry (a, f) -> f(a); a                  # a, fn -> a
 apply    = curry (args, fn) -> fn.apply this, args  # [a], fn -> fn(a0, a1, ..., az)
-iif      = curry (c, t, f) -> (as...) -> if c(as...) then t?(as...) else f?(as...)
+iif      = curry (c, t, f) ->
+    arity(arityof(c)) (as...) -> if c(as...) then t?(as...) else f?(as...)
 maybe    = (fn) -> unary (as...) -> fn as... if as.every isdef # (a -> b) -> a|null -> b|null
 
 # array ----------------------------

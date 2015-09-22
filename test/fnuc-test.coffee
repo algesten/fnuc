@@ -503,6 +503,11 @@ describe 'pipe', ->
         it 'maintains arity for f1', ->
             eql arityof(f), 2
 
+        it 'maintains arity 0 for f1, even though it hurts', ->
+            f0 = ->
+            eql arityof(f0), 0
+            eql arityof(pipe(f0)), 0
+
 describe 'I/ident', ->
 
     it 'returns the arg in', ->
@@ -1042,6 +1047,12 @@ describe 'iif', ->
 
     it 'is arity 3', ->
         eql arityof(iif), 3
+
+    it 'returns a function which arity is that of c', ->
+        c = (a, b) ->
+        t = (a) ->
+        f = (a, b, c, d) ->
+        eql arityof(iif c,t,f), 2
 
     it 'is curried', ->
         fn1 = spy -> 42
