@@ -365,10 +365,11 @@ asprop = (fn) ->
 
 expose = do ->
     guard = '__fnuc'
-    (exp) -> (obj) ->
+    (exp) -> (obj, as...) ->
         return if obj[guard]
-        ofexp = (flip get) exp
-        ks = keys exp
+        ofexp = partial get, exp
+        valid = (as) -> map as, (a) -> if ofexp(a) then a else throw "Not found: #{a}"
+        ks = if as.length then valid(as) else keys(exp)
         fns = map(ofexp) ks
         props = zipobj ks, map(asprop) fns
         Object.defineProperties obj, props
