@@ -70,6 +70,8 @@ unary   = arity 1
 binary  = arity 2
 ternary = arity 3
 
+_defprop = (t, n, v) -> Object.defineProperty t, n, value: v; t
+
 # n  - arity
 # v  - true if we allow varargs. false to chop.
 # f  - function to curry
@@ -79,15 +81,13 @@ ncurry = (n, v, f, as=[]) ->
     nf = arity(l) (bs...) ->
         cs = (if bs.length <= l then bs else (if v then bs else bs[0...l])).concat as
         if cs.length < n then ncurry n, v, f, cs else f cs...
-    Object.defineProperty nf, '__fnuc_curry', value: -> partialr f, as...
-    return nf
+    _defprop nf, '__fnuc_curry', -> partialr f, as...
 
 curry = (f) ->
     n = arityof(f)
     return f if (n < 2)
     nf = arity(n) (as...) -> if as.length < n then ncurry n, false, f, as else f as...
-    Object.defineProperty nf, '__fnuc_curry', value: -> f
-    return nf
+    _defprop nf, '__fnuc_curry', -> f
 
 # not a mathematical uncurry, it just unwraps our own curry
 uncurry = (f) -> if f.__fnuc_curry then f.__fnuc_curry() else f
@@ -103,24 +103,30 @@ flip = (f) ->
     return f.__fnuc_flip if f.__fnuc_flip
     rewrap = if f.__fnuc_curry then curry else I
     g = (rewrap arity(arityof(f)) (as...) -> uncurry(f) as.reverse()...)
-    Object.defineProperty g, '__fnuc_flip', value:f
-    return g
+    _defprop g, '__fnuc_flip', f
 
-compose  = (fs...) -> ncurry arityof(last fs), false, fold1 fs, (f, g) -> (as...) -> f g as...
-pipe     = (fs...) -> ncurry arityof(head fs), false, foldr1 fs, (f, g) -> (as...) -> f g as...
+compose  = (fs...) ->
+    fs = _pliftall(fs)
+    ncurry arityof(last fs), false, fold1 fs, (f, g) -> (as...) -> f g as...
+pipe     = (fs...) ->
+    fs = _pliftall(fs)
+    ncurry arityof(head fs), false, foldr1 fs, (f, g) -> (as...) -> f g as...
 
-converge = ncurry 3, true, (fns..., after) ->
-    ncurry apply(Math.max)(map fns, arityof), true, (args...) ->
+converge = ncurry 3, true, (fs..., after) ->
+    fs = _pliftall fs
+    after = plift after
+    ncurry apply(Math.max)(map fs, arityof), true, (args...) ->
         context = this
-        after.apply context, map fns, (fn) -> fn.apply context, args
+        after.apply context, map fs, (fn) -> fn.apply context, args
 
 typeis   = curry (a,s) -> type(a) == s
 tap      = curry (a, f) -> f(a); a                  # a, fn -> a
 apply    = curry (args, fn) -> fn.apply this, args  # [a], fn -> fn(a0, a1, ..., az)
 iif      = curry (c, t, f) ->
-    arity(arityof(c)) (as...) -> if c(as...) then t?(as...) else f?(as...)
-maybe    = (fn) -> unary (as...) -> fn as... if as.every isdef # (a -> b) -> a|null -> b|null
-always   = (v) -> -> v
+    arity(arityof(c)) plift (as...) -> if c(as...) then t?(as...) else f?(as...)
+maybe    = (fn) ->
+    unary plift (as...) -> fn as... if as.every isdef # (a -> b) -> a|null -> b|null
+always   = (v) -> plift -> v
 nth      = (n) -> (as...) -> as[n]
 once = (fn) -> ran = ret = null; (as...) -> if ran then ret else (ran = true; ret = fn as...)
 
@@ -207,27 +213,39 @@ plift = do ->
 
     # first thenable (if any), bound to its promise
     thenbind = (p) -> p.then.bind(p)
-    firstthen = pipe firstfn(isthenable), maybe(thenbind)
+    firstthen = (as) ->
+        t = firstfn(isthenable) as
+        if t then thenbind(t) else null
 
-    # :: Promise (a -> b), (a or Promise a) -> Promise b
-    promapply = (pfn, parg) ->
+    # :: (onrej) -> Promise (a -> b), (a or Promise a) -> Promise b
+    promapply = (errfn) -> (pfn, parg) ->
         fn = null
-        pfn.then (_fn) ->
-            fn = _fn
-            parg
-        .then (arg) ->
-            fn(arg)
+        onacc = (arg) -> if errfn then arg else fn(arg)
+        onrej = (err) -> if errfn then errfn(err) else throw err
+        pfn.then (_fn) -> fn = _fn; parg
+        .then onacc, onrej
 
-    (f) -> arity(arityof(f)) (as...) ->
-        t0 = firstthen as # false or a bound then-function
-        if t0
-            foldr as, promapply, t0 -> ncurry(as.length, false, f)
-        else
-            f as...
+    (f) ->
+        return f if f.__fnuc_plift # already lifted?
+        nf = arity(arityof(f)) (as...) ->
+            t0 = firstthen as # false or a bound then-function
+            if t0
+                # curry function so we can do promapply per argument.
+                currfn = ncurry(as.length, false, f)
+                # always return curried function
+                alws = -> currfn
+                # rejected promises shortcuts the evaluation to
+                # invoke fail handler with first failure
+                failfn = if _ispfail(f) then once(f) else null
+                foldr as, promapply(failfn), t0(alws, alws)
+            else
+                if _ispfail(f) then as?[0] else f as...
+        _defprop nf, '__fnuc_plift', true
 
-# pipe of plifted functions
-ppipe = (fns...) -> pipe (map fns, plift)...
+_pliftall = map(plift)
 
+pfail = (f) -> plift _defprop(f, '__fnuc_fail', true)
+_ispfail   = (fn) -> !!fn?.__fnuc_fail
 
 # moar object
 has     = curry (o, k) -> o.hasOwnProperty(k)
@@ -345,7 +363,7 @@ exports = {
     oor, nnot
 
     # promises
-    plift, ppipe
+    plift, pfail
 
 }
 

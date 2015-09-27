@@ -483,14 +483,22 @@ describe 'pipe', ->
     describe '(f1,f2)', ->
 
         f1 = (a,b) -> a + b
-        f2 = (c) -> c / 2
-        f = pipe f1, f2
+        f2 = div(10)
+        calc = pipe f1, f2
 
         it 'is turned to f2(f1)', ->
-            eql f(6,4), 5
+            eql calc(6,4), 1
 
         it 'maintains arity for f1', ->
-            eql arityof(f), 2
+            eql arityof(calc), 2
+
+        it 'allows promises as arg', ->
+            calc(later(->10),20).then (v) -> eql v, 3
+
+        it 'can take promises as result of pipe steps', ->
+            addl = (a, b) -> later -> a + b # return promise
+            calcl = pipe addl, f2
+            calcl(10,20).then (v) -> eql v, 3
 
     describe '(f1,f2,f3)', ->
 
@@ -509,6 +517,25 @@ describe 'pipe', ->
             f0 = ->
             eql arityof(f0), 0
             eql arityof(pipe(f0)), 0
+
+    describe '(f1,f2,pfail,f3)', ->
+
+        f1 = (a,b) -> a + b
+        f2 = (a) -> a / 2
+        f3 = (a) -> "f3 " + a
+        pf = pfail (err) -> "did #{err}"
+        f = pipe f1, f2, pf, f3
+
+        it 'ignores pfail when no rejected promise', ->
+            f(Q(7),3).then (r) -> eql r, 'f3 5'
+
+        it 'invokes pfail if invoked with rejected promise', ->
+            f(Q.reject('reject'),3).then (r) -> eql r, 'f3 did reject'
+
+        it 'invokes pfail if any function introduces a rejected promise', ->
+            f2e = (a) -> Q.reject('reject')
+            fe = pipe f1, f2e, pf, f3
+            fe(7,3).then (r) -> eql r, 'f3 did reject'
 
 describe 'I', ->
 
@@ -960,26 +987,6 @@ describe 'plift', ->
                 lifted(Q(12),3,Q(2)).then (r) ->
                     eql r, 2
 
-describe 'ppipe', ->
-
-    it 'does immediate application', ->
-        add = (a, b) -> a + b
-        div10 = div(10)
-        calc = ppipe add, div10
-        eql calc(10,20), 3
-
-    it 'allows promises as arg', ->
-        add = (a, b) -> a + b
-        div10 = div(10)
-        calc = ppipe add, div10
-        calc(later(->10),20).then (v) -> eql v, 3
-
-    it 'can take promises as result of pipe steps', ->
-        add = (a, b) -> later -> a + b # return promise
-        div10 = div(10)
-        calc = ppipe add, div10
-        calc(10,20).then (v) -> eql v, 3
-
 describe 'converge', ->
 
     add = (a, b) -> a + b
@@ -987,6 +994,8 @@ describe 'converge', ->
     mul2 = mul 2
     mul3 = mul 3
     mul4 = mul 4
+    div10 = div(10)
+    calc = (add, div) -> "#{add}|#{div}"
 
     it 'is of arity 3', ->
         eql arityof(converge), 3
@@ -1010,14 +1019,18 @@ describe 'converge', ->
         eql arityof(fn), 3
         eql fn(2)(3)(4), 16  # add (4+3), (4+3+2)
 
-    it 'converges plifted functions', ->
-        padd  = plift add
-        pmul2 = plift mul2
-        pmul3 = plift mul3
-        fn = converge pmul2, pmul3, padd
-        r = fn later -> 2
-        assert.isTrue Q.isPromiseAlike r
-        r.then (v) -> eql 10, v
+    it 'allows promises as arg', ->
+        fn = converge add, div10, calc
+        fn(later(->10),2).then (v) -> eql v, "12|1"
+
+    it 'can take promises as result of func step', ->
+        addl = (a, b) -> later -> a + b # return promise
+        fn = converge addl, div10, calc
+        fn(10,2).then (v) -> eql v, "12|1"
+
+    it 'can pfail as after fn', ->
+        fn = converge mul2, mul3, pfail (err) -> "did #{err}"
+        fn(Q.reject('reject')).then (r) -> eql r, 'did reject'
 
 describe 'apply', ->
 
@@ -1075,6 +1088,14 @@ describe 'iif', ->
         eql fn1.args[0], [1,2,3]
         eql fn2.args[0], [0,2,3]
 
+    it 'accepts a promise arg', ->
+        fn1 = -> 42
+        fn2 = -> 43
+        fn = iif I, fn1, fn2
+        fn(later -> 1).then (r) -> eql r, 42
+
+
+
 describe 'maybe', ->
 
     it 'wraps a function and only invokes it if input is non-falsey', ->
@@ -1091,12 +1112,24 @@ describe 'maybe', ->
         eql fn(1,0), 42
         eql fn(1,1), 42
 
+    it 'accepts promises to maybe fn', ->
+        fn = maybe -> 42
+        fn(later -> 1).then (r) -> eql r, 42
+
+    it 'accepts promises for null', ->
+        fn = maybe -> 42
+        fn(later -> null).then (r) -> eql r, undefined
+
 describe 'always', ->
 
     it 'produces a function that always returns the given value', ->
         fn = always(42)
         eql fn(), 42
         eql fn(12345), 42
+
+    it 'waits for a promise', ->
+        fn = always(42)
+        fn(later ->1).then (r) -> eql r, 42
 
 describe 'keyval', ->
 
@@ -1123,6 +1156,38 @@ describe 'nth', ->
     it 'is ok with n outside', ->
         eql nth(5)(1,2,3), undefined
         eql nth(-1)(1,2,3), undefined
+
+describe 'pfail', ->
+
+    fn = s = null
+    beforeEach ->
+        fn = pfail s = spy (err) -> "failed with " + err
+
+    describe 'with rejected promise argument', ->
+
+        it 'is invoked', ->
+            fn(Q.reject 'reject').then (r) -> eql r, 'failed with reject'
+
+    describe 'with multiple rejected promise argument', ->
+
+        it 'is invoked', ->
+            fn(Q.reject('reject 1'), Q.reject('reject 2')).then (r) ->
+                eql s.args.length, 1 # only invoked once
+                eql r, 'failed with reject 2'
+
+    describe 'with accepted promise argument', ->
+
+        it 'is skipped', ->
+            fn(Q('accept')).then (r) -> eql r, 'accept'
+
+    describe 'with non-promise argument', ->
+
+        it 'is skipped', ->
+            eql fn(42), 42
+
+        it 'is skipped with no arg', ->
+            eql fn(), undefined
+
 describe 'once', ->
 
     it 'invokes function once', ->

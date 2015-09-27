@@ -94,6 +94,14 @@ a `div` b    # infix haskell style
 a.div b      # infix coffeescript style
 ```
 
+### plift
+
+Plifting is a strategy for using *simple functions* (perhaps even
+[pure functions][puref]) when dealing with [promises][proms].
+
+There is a separate [page on plifting](plift.md).
+
+
 API
 ---
 
@@ -160,10 +168,10 @@ API
 [`or`](api.md#or)
 [`partial`](api.md#partial)
 [`partialr`](api.md#partialr)
+[`pfail`](api.md#pfail)
 [`pick`](api.md#pick)
 [`pipe`](api.md#pipe)
 [`plift`](api.md#plift)
-[`ppipe`](api.md#ppipe)
 [`replace`](api.md#replace)
 [`reverse`](api.md#reverse)
 [`search`](api.md#search)
@@ -220,3 +228,5 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 [curry]: https://en.wikipedia.org/wiki/Currying
 [compo]: https://en.wikipedia.org/wiki/Function_composition_%28computer_science%29
 [immut]: https://en.wikipedia.org/wiki/Immutable_object
+[puref]: https://en.wikipedia.org/wiki/Pure_function
+[proms]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
