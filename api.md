@@ -58,6 +58,7 @@ API
 [`mod`](api.md#mod)
 [`mul`](api.md#mul)
 [`not`](api.md#not)
+[`nth`](api.md#nth)
 [`ofilter`](api.md#ofilter)
 [`or`](api.md#or)
 [`partial`](api.md#partial)
@@ -473,6 +474,25 @@ fn = maybe just42
 fn 0                 # 42
 fn 1                 # 42
 fn null              # undefined, and just42 was not invoked
+```
+
+#### nth
+
+Produces a function that returns the nth argument to that function
+(counting from 0).
+
+`nth(n)`  `:: (n) -> (a1, a2, ... az) -> an`
+
+args | desc
+:--- | :---
+`n`  | the argument number
+
+##### nth example
+
+```coffee
+fn = nth(1)
+fn('a', 'b')         # 'b'
+fn(5,4,3,2,1)        # 4
 ```
 
 #### partial

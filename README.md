@@ -154,6 +154,7 @@ API
 [`mod`](api.md#mod)
 [`mul`](api.md#mul)
 [`not`](api.md#not)
+[`nth`](api.md#nth)
 [`ofilter`](api.md#ofilter)
 [`or`](api.md#or)
 [`partial`](api.md#partial)

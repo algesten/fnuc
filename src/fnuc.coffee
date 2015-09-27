@@ -121,6 +121,7 @@ iif      = curry (c, t, f) ->
     arity(arityof(c)) (as...) -> if c(as...) then t?(as...) else f?(as...)
 maybe    = (fn) -> unary (as...) -> fn as... if as.every isdef # (a -> b) -> a|null -> b|null
 always   = (v) -> -> v
+nth      = (n) -> (as...) -> as[n]
 
 # array ----------------------------
 all      = curry binary  builtin Array::every       # [a], fn -> Boolean
@@ -322,7 +323,7 @@ exports = {
     # fn
     arity, arityof, unary, binary, ternary, curry, flip, compose,
     pipe, I, partial, partialr, tap, converge,
-    apply, iif, maybe, always
+    apply, iif, maybe, always, nth
 
     # object
     merge, mixin, has, get, set, keys, values, pick, evolve, ofilter,
