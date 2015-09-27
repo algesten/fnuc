@@ -1119,3 +1119,14 @@ describe 'nth', ->
     it 'is ok with n outside', ->
         eql nth(5)(1,2,3), undefined
         eql nth(-1)(1,2,3), undefined
+describe 'once', ->
+
+    it 'invokes function once', ->
+        fn = once s = spy -> 42
+        fn(); fn()
+        eql s.args.length, 1
+
+    it 'keeps returning same value', ->
+        fn = once (a) -> a + 41
+        eql fn(1), 42
+        eql fn(2), 42
