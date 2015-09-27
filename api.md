@@ -4,6 +4,7 @@ API
 [`I`](api.md#i)
 [`add`](api.md#add)
 [`all`](api.md#all)
+[`always`](api.md#always)
 [`and`](api.md#and)
 [`any`](api.md#any)
 [`apply`](api.md#apply)
@@ -182,6 +183,24 @@ isnum 42                   # true
 ### Function functions
 
 Functions operating on functions.
+
+#### always
+
+Creates a function that always returns the initial parameter.
+
+`always(a)`  `:: a -> * -> a`  
+
+args | desc
+:--- | :---
+`a`  | value to always return
+
+##### always example
+
+```coffee
+fn = always 42
+fn()               # 42
+fn(12345)          # 42
+```
 
 #### apply
 

@@ -100,6 +100,7 @@ API
 [`I`](api.md#i)
 [`add`](api.md#add)
 [`all`](api.md#all)
+[`always`](api.md#always)
 [`and`](api.md#and)
 [`any`](api.md#any)
 [`apply`](api.md#apply)

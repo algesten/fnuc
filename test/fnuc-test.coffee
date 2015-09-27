@@ -1115,3 +1115,10 @@ describe 'maybe', ->
         eql fn(1,undefined), undefined
         eql fn(1,0), 42
         eql fn(1,1), 42
+
+describe 'always', ->
+
+    it 'produces a function that always returns the given value', ->
+        fn = always(42)
+        eql fn(), 42
+        eql fn(12345), 42
