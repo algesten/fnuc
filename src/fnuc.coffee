@@ -109,8 +109,8 @@ flip = (f) ->
 compose  = (fs...) -> ncurry arityof(last fs), false, fold1 fs, (f, g) -> (as...) -> f g as...
 pipe     = (fs...) -> ncurry arityof(head fs), false, foldr1 fs, (f, g) -> (as...) -> f g as...
 
-converge = ncurry 3, true, (after, fns...) ->
-    ncurry Math.max(fns.map(arityof)...), true, (args...) ->
+converge = ncurry 3, true, (fns..., after) ->
+    ncurry apply(Math.max)(map fns, arityof), true, (args...) ->
         context = this
         after.apply context, map fns, (fn) -> fn.apply context, args
 

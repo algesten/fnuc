@@ -351,18 +351,18 @@ f(4)(3)(2)(1)    # TypeError: object is not a function
 
 #### converge
 
-`converge(after, fn1, fn2, ..., fnn)(a1, a2, ..., an)`
+`converge(fn1, fn2, ..., fnn, after)(a1, a2, ..., an)`
 
 Creates a function that passes its arguments (a1-an) to fn1-fnn whose
 result are in arguments to the first function (after).
 
-`:: ((x1, ..., xn) -> r), ((a1, ... an) -> x1), ... ((a1, ... an) -> xn) -> (a1, ... an) -> r`  
+`:: (((a1, ... an) -> x1), ... ((a1, ... an) -> xn), (x1, ..., xn) -> r)) -> (a1, ... an) -> r`  
 
 args     | desc
 :---     | :---
-`after`  | Function that willl be invoked with results of fn1-fnn.
 `fn1`    | Function for first argument to after.
 `fn2`    | Function for second argument to after.
+`after`  | Function that willl be invoked with results of fn1-fnn.
 *Variadic*|
 `ret`    | A function accepting arguments to fn1-fnn
 
@@ -370,10 +370,10 @@ args     | desc
 ##### converge example
 
 ```coffee
-add  = (a, b) -> a + b
 mul2 = (c) -> c * 2
 mul3 = (c) -> c * 3
-fn = converge add, mul2, mul3
+add  = (a, b) -> a + b
+fn = converge mul2, mul3, add
 fn(4)                          # add (4*2), (4*3) == 20
 ```
 

@@ -16,6 +16,8 @@ else
 assert = chai.assert
 eql = assert.deepEqual
 
+later = (f) -> Q.Promise((rs) -> setTimeout rs, 1).then f
+
 { spy, mock, stub, sandbox } = sinon
 
 # String
@@ -883,9 +885,6 @@ describe 'plift', ->
         {v:42,        t:'number'}
     ]
 
-
-    later = (f) -> Q.Promise((rs) -> setTimeout rs, 1).then f
-
     types = (f, check) ->
 
         PTYPES.forEach (t) ->
@@ -988,8 +987,6 @@ describe 'plift', ->
 
 describe 'ppipe', ->
 
-    later = (f) -> Q.Promise((rs) -> setTimeout rs, 1).then f
-
     it 'does immediate application', ->
         add = (a, b) -> a + b
         div10 = div(10)
@@ -1022,21 +1019,30 @@ describe 'converge', ->
     describe 'accepts a function that is invoked with the results', ->
 
         it 'of two functions', ->
-            fn = converge add, mul2, mul3
+            fn = converge mul2, mul3, add
             eql fn(2), 10 # add (2*2), (3*2)
 
         it 'of three functions', ->
-            fn = converge add3, mul2, mul3, mul4
+            fn = converge mul2, mul3, mul4, add3
             eql fn(2), 18
 
     it 'is a curry', ->
-        fn = converge(mul3)(mul2)(add)
+        fn = converge(add)(mul3)(mul2)
         eql fn(2), 10
 
     it 'curries the resulting function', ->
-        fn = converge add, ((a,b) -> a + b), ((a,b,c) -> a + b + c)
+        fn = converge ((a,b) -> a + b), ((a,b,c) -> a + b + c), add
         eql arityof(fn), 3
         eql fn(2)(3)(4), 16  # add (4+3), (4+3+2)
+
+    it 'converges plifted functions', ->
+        padd  = plift add
+        pmul2 = plift mul2
+        pmul3 = plift mul3
+        fn = converge pmul2, pmul3, padd
+        r = fn later -> 2
+        assert.isTrue Q.isPromiseAlike r
+        r.then (v) -> eql 10, v
 
 describe 'apply', ->
 
