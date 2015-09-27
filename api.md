@@ -60,6 +60,7 @@ API
 [`not`](api.md#not)
 [`nth`](api.md#nth)
 [`ofilter`](api.md#ofilter)
+[`once`](api.md#once)
 [`or`](api.md#or)
 [`partial`](api.md#partial)
 [`partialr`](api.md#partialr)
@@ -493,6 +494,26 @@ args | desc
 fn = nth(1)
 fn('a', 'b')         # 'b'
 fn(5,4,3,2,1)        # 4
+```
+
+#### once
+
+Wraps a function and guarantees it is invoked only once. The result is
+cached and subsequent invokations the result is returned without
+invoking the original function.
+
+`once(fn)`  `:: (a -> b) -> (a -> b)`
+
+args | desc
+:--- | :---
+`fn` | the function to wrap
+
+##### ince example
+
+```coffee
+fn = once add(10)
+fn(2)             # 12
+fn(4)             # 12
 ```
 
 #### partial
