@@ -1110,3 +1110,12 @@ describe 'keyval', ->
 
     it 'is curried', ->
         eql keyval(42)('a'), {a:42}
+
+describe 'nth', ->
+
+    it 'produces a function that returns the nth argument', ->
+        eql nth(1)(1,2,3), 2
+
+    it 'is ok with n outside', ->
+        eql nth(5)(1,2,3), undefined
+        eql nth(-1)(1,2,3), undefined
