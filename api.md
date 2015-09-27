@@ -42,6 +42,7 @@ API
 [`isplain`](api.md#isplain)
 [`join`](api.md#join)
 [`keys`](api.md#keys)
+[`keyval`](api.md#keyval)
 [`last`](api.md#last)
 [`lastfn`](api.md#lastfn)
 [`lcase`](api.md#lcase)
@@ -785,6 +786,23 @@ args | desc
 ```coffee
 keys {a:1,b:2}          # ['a','b']
 keys {}                 # []
+```
+
+#### keyval
+
+Produces a key-value pair as an object.
+
+`keyval(k,v)` `:: (k,v) -> {k:v}`  
+
+args | desc
+:--- | :---
+`k`  | Key value. Preferably a string.
+`v`  | Value.
+
+##### keyval example
+
+```coffee
+keyval 'a', 42     # {a:42}
 ```
 
 #### merge

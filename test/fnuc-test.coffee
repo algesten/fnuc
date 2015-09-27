@@ -1122,3 +1122,20 @@ describe 'always', ->
         fn = always(42)
         eql fn(), 42
         eql fn(12345), 42
+
+describe 'keyval', ->
+
+    it 'makes a key-value pair as an object', ->
+        o = keyval 'a', 42
+        eql o, a:42
+
+    it 'handles null keys', ->
+        o = keyval null, 42
+        eql o, {null:42}
+
+    it 'handles undefined keys', ->
+        o = keyval undefined, 42
+        eql o, {undefined:42}
+
+    it 'is curried', ->
+        eql keyval(42)('a'), {a:42}
