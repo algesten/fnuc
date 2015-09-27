@@ -63,10 +63,10 @@ API
 [`or`](api.md#or)
 [`partial`](api.md#partial)
 [`partialr`](api.md#partialr)
+[`pfail`](api.md#pfail)
 [`pick`](api.md#pick)
 [`pipe`](api.md#pipe)
 [`plift`](api.md#plift)
-[`ppipe`](api.md#ppipe)
 [`replace`](api.md#replace)
 [`reverse`](api.md#reverse)
 [`search`](api.md#search)
@@ -190,6 +190,8 @@ Creates a function that always returns the initial parameter.
 
 `always(a)`  `:: a -> * -> a`  
 
+*The resulting function is [plifted](#plift).*
+
 args | desc
 :--- | :---
 `a`  | value to always return
@@ -310,6 +312,8 @@ z = f(y)
 
 `compose(as...)` `:: ((y -> z), (x -> y), ..., (b -> c), (a... -> b)) -> (a... -> z)`
 
+*All arguments are [plifted](#plift).*
+
 args | desc
 :--- | :---
 `as...` | Variable number of functions to compose.
@@ -377,6 +381,8 @@ result are in arguments to the first function (after).
 
 `:: (((a1, ... an) -> x1), ... ((a1, ... an) -> xn), (x1, ..., xn) -> r)) -> (a1, ... an) -> r`  
 
+*All arguments are [plifted](#plift).*
+
 args     | desc
 :---     | :---
 `fn1`    | Function for first argument to after.
@@ -436,6 +442,8 @@ then either to true/false depending on the test.
 
 `iif(c,t,f) :: (a -> bool), (a -> b), (a -> c) -> a -> b|c`
 
+*The resulting function is [plifted](#plift).*
+
 args | desc
 :--- | :---
 `c`  | Condition function that evaluates to truthy/falsey.
@@ -461,6 +469,8 @@ non-`null`/non-`undefined`.
 Can be thought of as a "guard" against `null`/`undefined`.
 
 `maybe(fn)`  `:: (a -> b) -> a|null -> b|null`
+
+*The resulting function is [plifted](#plift).*
 
 args | desc
 :--- | :---
@@ -563,6 +573,29 @@ fr    = partial filter even       # applies even filter to any list
 le    = fr l                      # keeps only even
 ```
 
+#### pfail
+
+Same as [`plift`](#plift) only, the function is only invoked if any
+promise arguments are rejected. Furthermore the plift is shortcut, so
+the first rejection (if multiple) is the only one invoking the
+function.
+
+`pfail(f)`  `:: ((a, b, ..., z) -> a0) -> (a, b, ..., z) -> a0)`
+
+args | desc
+:--- | :---
+`f`  | Function to plift and only invoke if any promise arguments fail.
+
+##### pfail example
+
+```coffee
+fn = pfail (err) -> "failed with #{err}"
+fn(42)           # 42, wrapped function not invoked
+fn(Q(42))        # 42, wrapped function not invoked
+fn(Q.reject(42)) # "failed with 42"
+```
+
+
 #### pipe
 
 Makes a sequence of function out of a variable number of functions
@@ -581,6 +614,8 @@ is equivalent to:
     z = g(y)
 
 `pipe(as...)` `:: ((y -> z), (x -> y), ..., (b -> c), (a... -> b)) -> (a... -> z)`
+
+*All arguments are [plifted](#plift).*
 
 args | desc
 :--- | :---
@@ -624,38 +659,6 @@ f(later(1), 2)               # promise that resolves to 3 after 1 second
 
 # to see it in action
 f(1, later(2)).then (v) -> console.log v
-```
-
-#### ppipe
-
-Same as [`pipe`](#pipe) but wraps each individual function in the pipe
-with a [`plift`](#plift). This effectively creates a chain of functions
-that can either work on future (promised) values or immediate.
-
-This enables us to work/test "normal" functions and run them through a
-ppipe to accept promises.
-
-`ppipe(as...)` `:: ((y -> z), (x -> y), ..., (b -> c), (a... -> b)) -> (a... -> z)`
-
-args | desc
-:--- | :---
-`as...` | Variable number of functions that can accept promises as input.
-
-##### ppipe example
-
-```coffee
-# helper function that resolves a promise to a value after 1 second.
-later = (a) -> (Q.Promise (rs) -> setTimeout rs, 1000).then -> a
-
-div10 = div(10)
-add50 = add(50)
-pow   = (a,b) -> Math.pow(a,b)
-calc  = ppipe pow, add50, div10
-
-calc(10,2)                        # 15 immediate
-
-calc(later(10), 2).then (v) ->    # promise for 15
-    console.log v
 ```
 
 #### tap
