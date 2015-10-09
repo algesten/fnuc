@@ -1,5 +1,5 @@
 # core
-I = ident = (a) -> a
+I = (a) -> a
 builtin   = I.bind.bind I.call
 _toString = builtin Object::toString
 
@@ -232,7 +232,6 @@ get     = curry (o, k) -> o[k]
 set     = curry (o, k, v) -> o[k] = v; o
 keys    = (o) -> Object.keys(o)
 values  = (o) -> map (keys o), (k) -> o[k]
-omap    = curry (o, f) -> r = {}; r[k] = f(k,v) for k, v of o; return r
 ofilter = curry (o, f) -> r = {}; r[k] = v for k, v of o when f(k,v); return r
 evolve  = curry (o, t) -> omap o, (k, v) -> if has(t,k) then t[k](v) else v
 pick    = curry binary (o, as...) ->
@@ -309,13 +308,6 @@ eql = do ->
             when 'array'  then eqarr
             else -> false)(a,b)
 
-groupby = curry (as, fn) -> fold as,
-    (acc, a) ->
-        k = fn a
-        (acc[k] || (acc[k] = [])).push a
-        acc
-    , {}
-
 
 ################################
 exports = {
@@ -328,7 +320,7 @@ exports = {
 
     # fn
     arity, arityof, unary, binary, ternary, curry, flip, compose,
-    pipe, I, ident, partial, partialr, tap, converge,
+    pipe, I, partial, partialr, tap, converge,
     apply, iif, maybe, always
 
     # object

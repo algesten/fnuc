@@ -30,7 +30,6 @@ API
 [`foldr1`](api.md#foldr1)
 [`foldr`](api.md#foldr)
 [`get`](api.md#get)
-[`groupby`](api.md#groupby)
 [`gt`](api.md#gt)
 [`gte`](api.md#gte)
 [`has`](api.md#has)
@@ -59,7 +58,6 @@ API
 [`mul`](api.md#mul)
 [`not`](api.md#not)
 [`ofilter`](api.md#ofilter)
-[`omap`](api.md#omap)
 [`or`](api.md#or)
 [`partial`](api.md#partial)
 [`partialr`](api.md#partialr)
@@ -707,27 +705,6 @@ args | desc
 `a`  | Argument 1.
 `b`  | Argument 2.
 
-#### groupby
-
-Groups objects in array `os` by a string value extracted from each
-element using `f`.
-
-`groupby(os,f)`  `:: [{k1:v}], (k1 -> k2) -> {k2:[{k1:v}]}`  
-`groupby(f)(os)` `:: (k1 -> k2) -> [{k1:v}] -> {k2:[{k1:v}]}`  
-
-args | desc
-:--- | :---
-`os` | Array of objects to invoke group by key function on.
-`f`  | Function that transforms each object in `os` to a string.
-
-##### groupby example
-
-```coffee
-as = [{n:'apa'},{n:'banan'},{n:'ananas'}]
-fn = compose take(1), get('n')
-gs = groupby as, fn              # {a:[{n:'apa'},{n:'ananas'}], b:[{n:'banan'}]}
-```
-
 #### get
 
 Gets the property value from an object, `get o, 'bar'` gives the value
@@ -849,26 +826,6 @@ ofilter o, f                # {a:0, b:1}
 aOrOdd = ofilter f          # partial
 aOrOdd o                    # {a:0, b:1}
 ```
-
-#### omap
-
-Like `map` but for objects. The mapping function is invoked with key,
-value `(k,v)`.
-
-`omap(o,f)`  `:: {k:v}, ((k, v) -> v) -> {k:v}`  
-`omap(f)(o)` `:: ((k, v) -> v) -> {k:v} -> {k:v}`
-
-args | desc
-:--- | :---
-`o` | The object to invoke mapping function on.
-`f` | Mapping function with signature `(k, v) -> v`.
-
-#### omap example
-
-    f = (k, v) -> if k == 'b' then v + 40 else v
-    omap {a:1,b:2,c:3}, f                         # {a:1,b:42,c:3}
-    bAdd40 = omap(f)                              # partial
-    bAdd40 {d:3,b:2}                              # {d:3,b:42}
 
 #### pick
 

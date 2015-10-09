@@ -510,7 +510,7 @@ describe 'pipe', ->
             eql arityof(f0), 0
             eql arityof(pipe(f0)), 0
 
-describe 'I/ident', ->
+describe 'I', ->
 
     it 'returns the arg in', ->
         eql I(42), 42
@@ -635,8 +635,6 @@ FN_TEST = [
     as:[{a:1,b:2},{}], eq:{a:1,b:2}}
     {n:'evolve', s:'{k:v}, {k:(v->v)} -> {k:v}', f:evolve, ar:2,
     as:[{a:1,b:2},{a:(v) -> v+1}], eq:{a:2,b:2}}
-    {n:'omap',s:'{k:v}, ((k,v) -> v) -> {k:v}', f:omap, ar:2,
-    as:[{a:1,b:2,c:3},(k,v) -> if k == 'b' then v + 40 else v], eq:{a:1,b:42,c:3}}
     {n:'ofilter',s:'{k:v}, ((k,v) -> Boolean) -> {k:v}', f:ofilter, ar:2,
     as:[{a:1,b:2,c:3},(k,v) -> k == 'b'], eq:{b:2}}
 
@@ -796,29 +794,6 @@ describe 'eql', ->
         else
             it "not equals for #{s1}, #{s2}", ->
                 eql F.eql(v1.v, v2.v), false
-
-describe 'groupby', ->
-
-    it 'is is arity 2', ->
-        eql arityof(groupby), 2
-
-    it 'groups objects according to key function', ->
-        as = [{n:'apa'},{n:'banan'},{n:'ananas'}]
-        fn = compose take(1), get('n')
-        gs = groupby as, fn
-        eql gs, {
-            a: [{n:'apa'},{n:'ananas'}]
-            b: [{n:'banan'}]
-        }
-
-    it 'handles empty', ->
-        eql groupby([], ->), {}
-
-    it 'is curried', ->
-        as = [{n:'apa'}]
-        fn = compose take(1), get('n')
-        gs = groupby(fn)(as)
-        eql gs, a:[{n:'apa'}]
 
 describe 'zip', ->
 
