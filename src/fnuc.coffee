@@ -254,7 +254,9 @@ set     = curry (o, k, v) -> o[k] = v; o
 keys    = (o) -> Object.keys(o)
 values  = (o) -> map (keys o), (k) -> o[k]
 ofilter = curry (o, f) -> r = {}; r[k] = v for k, v of o when f(k,v); return r
-evolve  = curry (o, t) -> omap o, (k, v) -> if has(t,k) then t[k](v) else v
+evolve  = do ->
+    omap    = curry (o, f) -> r = {}; r[k] = f(k,v) for k, v of o; return r
+    curry (o, t) -> omap o, (k, v) -> if has(t,k) then t[k](v) else v
 pick    = curry binary (o, as...) ->
     as = as[0] if typeis(as[0],'array'); r = {}; r[k] = o[k] for k in as; return r
 keyval  = curry (k, v) -> set o={}, k, v; o
