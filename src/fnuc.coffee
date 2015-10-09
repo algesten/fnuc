@@ -236,6 +236,7 @@ ofilter = curry (o, f) -> r = {}; r[k] = v for k, v of o when f(k,v); return r
 evolve  = curry (o, t) -> omap o, (k, v) -> if has(t,k) then t[k](v) else v
 pick    = curry binary (o, as...) ->
     as = as[0] if typeis(as[0],'array'); r = {}; r[k] = o[k] for k in as; return r
+keyval  = curry (k, v) -> set o={}, k, v; o
 
 
 # string -----------------------------
@@ -324,8 +325,8 @@ exports = {
     apply, iif, maybe, always
 
     # object
-    merge, mixin, has, get, set, keys, values, pick, evolve, omap,
-    ofilter, eql, groupby
+    merge, mixin, has, get, set, keys, values, pick, evolve, ofilter,
+    eql, keyval
 
     # array
     concat, head, tail, last, fold, fold1, foldr, foldr1, each, map,

@@ -137,6 +137,7 @@ API
 [`isplain`](api.md#isplain)
 [`join`](api.md#join)
 [`keys`](api.md#keys)
+[`keyval`](api.md#keyval)
 [`last`](api.md#last)
 [`lastfn`](api.md#lastfn)
 [`lcase`](api.md#lcase)
