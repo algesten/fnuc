@@ -1153,6 +1153,11 @@ describe 'nth', ->
     it 'produces a function that returns the nth argument', ->
         eql nth(1)(1,2,3), 2
 
+
+    it 'it produces an arity that of the arg + 1', ->
+        arityof nth(1), 2
+        arityof nth(4), 5
+
     it 'is ok with n outside', ->
         eql nth(5)(1,2,3), undefined
         eql nth(-1)(1,2,3), undefined

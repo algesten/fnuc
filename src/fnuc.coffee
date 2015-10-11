@@ -127,7 +127,7 @@ iif      = curry (c, t, f) ->
 maybe    = (fn) ->
     unary plift (as...) -> fn as... if as.every isdef # (a -> b) -> a|null -> b|null
 always   = (v) -> plift -> v
-nth      = (n) -> (as...) -> as[n]
+nth      = (n) -> arity(n + 1) (as...) -> as[n]
 once = (fn) -> ran = ret = null; (as...) -> if ran then ret else (ran = true; ret = fn as...)
 
 
