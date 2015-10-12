@@ -478,6 +478,12 @@ describe 'compose', ->
         it 'maintains arity for f1', ->
             eql arityof(f), 2
 
+        it 'composes vararg funs', (done) ->
+            fn = compose (as...) ->
+                eql as, [1,2,3]
+                done()
+            fn 1, 2, 3
+
 describe 'pipe', ->
 
     describe '(f1,f2)', ->
@@ -499,6 +505,12 @@ describe 'pipe', ->
             addl = (a, b) -> later -> a + b # return promise
             calcl = pipe addl, f2
             calcl(10,20).then (v) -> eql v, 3
+
+        it 'pipes vararg funs', (done) ->
+            fn = pipe (as...) ->
+                eql as, [1,2,3]
+                done()
+            fn 1, 2, 3
 
     describe '(f1,f2,f3)', ->
 
@@ -1031,6 +1043,15 @@ describe 'converge', ->
     it 'can pfail as after fn', ->
         fn = converge mul2, mul3, pfail (err) -> "did #{err}"
         fn(Q.reject('reject')).then (r) -> eql r, 'did reject'
+
+    it 'converges vararg funs', (done) ->
+        a = (as...) -> as[1]
+        b = (as...) -> as[2]
+        fn = converge a, b, (a, b) ->
+            eql a, 2
+            eql b, 3
+            done()
+        fn 1, 2, 3
 
 describe 'apply', ->
 
