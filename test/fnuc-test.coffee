@@ -589,11 +589,10 @@ FN_TEST = [
     {n:'last',   s:'"" -> undef',    f:last,   ar:1, as:[""],                eq:undefined}
     {n:'last',   s:'s -> a',         f:last,   ar:1, as:["123"],             eq:"3"}
     {n:'lastfn', s:'[a], fn -> a',   f:lastfn, ar:2, as:[[1,2,3,4],((a)->a%2)], eq:3}
-    {n:'concat', s:'a, a -> [a]',    f:concat, ar:0, as:[0,1,2,3],           eq:[0,1,2,3]}
-    {n:'concat', s:'[a], a -> [a]',  f:concat, ar:0, as:[[0,1],2],           eq:[0,1,2]}
-    {n:'concat', s:'a, [a] -> [a]',  f:concat, ar:0, as:[0,1,[2,3]],         eq:[0,1,2,3]}
-    {n:'concat', s:'[a], [a] -> [a]',f:concat, ar:0, as:[[0,1],[2,3]],       eq:[0,1,2,3]}
-    {n:'concat', s:'[] -> []',       f:concat, ar:0, as:[],                  eq:[]}
+    {n:'concat', s:'a, a -> [a]',    f:concat, ar:2, as:[0,1,2,3],           eq:[0,1,2,3]}
+    {n:'concat', s:'[a], a -> [a]',  f:concat, ar:2, as:[[0,1],2],           eq:[0,1,2]}
+    {n:'concat', s:'a, [a] -> [a]',  f:concat, ar:2, as:[0,1,[2,3]],         eq:[0,1,2,3]}
+    {n:'concat', s:'[a], [a] -> [a]',f:concat, ar:2, as:[[0,1],[2,3]],       eq:[0,1,2,3]}
     {n:'each',   s:'[a], fn -> undef',f:each,  ar:2, as:[[0,1,2],((a) -> a + 1)],  eq:undefined}
     {n:'map',    s:'[a], fn -> [a]', f:map,    ar:2, as:[[0,1,2],((a) -> a + 1)],  eq:[1,2,3]}
     {n:'filter', s:'[a], fn -> [a]', f:filter, ar:2, as:[[0,1,2],((a) -> a % 2)],  eq:[1]}
@@ -1033,12 +1032,12 @@ describe 'converge', ->
 
     it 'allows promises as arg', ->
         fn = converge add, div10, calc
-        fn(later(->10),2).then (v) -> eql v, "12|1"
+        fn(later(->10),2).then (v) -> eql v, "12|0.5"
 
     it 'can take promises as result of func step', ->
         addl = (a, b) -> later -> a + b # return promise
         fn = converge addl, div10, calc
-        fn(10,2).then (v) -> eql v, "12|1"
+        fn(10,2).then (v) -> eql v, "12|0.5"
 
     it 'can pfail as after fn', ->
         fn = converge mul2, mul3, pfail (err) -> "did #{err}"

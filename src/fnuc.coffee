@@ -83,11 +83,70 @@ ncurry = (n, v, f, as=[]) ->
         if cs.length < n then ncurry n, v, f, cs else f cs...
     _defprop nf, '__fnuc_curry', -> partialr f, as...
 
+curry2 = (f) ->
+    _defprop f2 = (a, b) ->
+        n = arguments.length
+        if n == 0
+            f2
+        else if n == 1
+            b = a
+            (a) -> f(a, b)
+        else
+            f(a, b)
+    , '__fnuc_curry', -> f
+
+curry2var = (f) ->
+    _defprop f2 = (a, b) ->
+        n = arguments.length
+        if n == 0
+            f2
+        else if n == 1
+            b = a
+            (a) -> f(arguments..., b)
+        else
+            f arguments...
+    , '__fnuc_curry', -> f
+
+curry3 = (f) ->
+    _defprop f2 = (a, b, c) ->
+        n = arguments.length
+        if n == 0
+            f2
+        else if n == 1
+            c = a
+            curry2 (a, b) -> f(a, b, c)
+        else if n == 2
+            c = b; b = a
+            (a) -> f(a, b, c)
+        else
+            f(a, b, c)
+    , '__fnuc_curry', -> f
+
+curry3var = (f) ->
+    _defprop f2 = (a, b, c) ->
+        n = arguments.length
+        if n == 0
+            f2
+        else if n == 1
+            c = a
+            curry2var (a, b) -> f(arguments..., c)
+        else if n == 2
+            c = b; b = a
+            (a) -> f(arguments..., b, c)
+        else
+            f arguments...
+    , '__fnuc_curry', -> f
+
 curry = (f) ->
     n = arityof(f)
-    return f if (n < 2)
-    nf = arity(n) (as...) -> if as.length < n then ncurry n, false, f, as else f as...
-    _defprop nf, '__fnuc_curry', -> f
+    if n < 2
+        f
+    else if n == 2
+        curry2 f
+    else if n == 3
+        curry3 f
+    else
+        ncurry n, false, f
 
 # not a mathematical uncurry, it just unwraps our own curry
 uncurry = (f) -> if f.__fnuc_curry then f.__fnuc_curry() else f
@@ -112,17 +171,17 @@ pipe     = (fs...) ->
     fs = _pliftall(fs)
     ncurry arityof(head fs), true, foldr1 fs, (f, g) -> (as...) -> f g as...
 
-converge = ncurry 3, true, (fs..., after) ->
+converge = curry3var (fs..., after) ->
     fs = _pliftall fs
     after = plift after
     ncurry apply(Math.max)(map fs, arityof), true, (args...) ->
         context = this
         after.apply context, map fs, (fn) -> fn.apply context, args
 
-typeis   = curry (a,s) -> type(a) == s
-tap      = curry (a, f) -> f(a); a                  # a, fn -> a
-apply    = curry (args, fn) -> fn.apply this, args  # [a], fn -> fn(a0, a1, ..., az)
-iif      = curry (c, t, f) ->
+typeis   = curry2 (a,s) -> type(a) == s
+tap      = curry2 (a, f) -> f(a); a                  # a, fn -> a
+apply    = curry2 (args, fn) -> fn.apply this, args  # [a], fn -> fn(a0, a1, ..., az)
+iif      = curry3 (c, t, f) ->
     arity(arityof(c)) plift (as...) -> if c(as...) then t?(as...) else f?(as...)
 maybe    = (fn) ->
     unary plift (as...) -> fn as... if as.every isdef # (a -> b) -> a|null -> b|null
@@ -132,13 +191,13 @@ once = (fn) -> ran = ret = null; (as...) -> if ran then ret else (ran = true; re
 
 
 # array ----------------------------
-all      = curry binary  builtin Array::every       # [a], fn -> Boolean
-any      = curry binary  builtin Array::some        # [a], fn -> Boolean
-contains = curry (as, a) -> index(as, a) >= 0       # [a], a -> b
-concat   = (as...) -> [].concat as...
-each     = curry binary  builtin Array::forEach     # [a], fn    -> undef
+all      = curry2var builtin Array::every       # [a], fn -> Boolean
+any      = curry2var builtin Array::some        # [a], fn -> Boolean
+contains = curry2 (as, a) -> index(as, a) >= 0  # [a], a -> b
+concat   = curry2var (as...) -> [].concat as...
+each     = curry2var builtin Array::forEach     # [a], fn    -> undef
 # 2015-09-05. Array.prototype.filter is significantly slower than this.
-filter   = curry binary  (as, f) ->                 # [a], fn -> [a]
+filter   = curry2 (as, f) ->                    # [a], fn -> [a]
     r = []
     ri = -1
     (r[++ri] = v if f(v)) for v in as
@@ -149,9 +208,9 @@ _filter = (as, f) -> # internal filter with v, i
     (r[++ri] = v if f(v, i)) for v, i in as
     r
 _fold = (as, f, acc, arrInit) ->
-    i = 0; len = as.length;
+    i = 0; l = as.length;
     acc = as[i++] if arrInit
-    `for (;i < len; ++i) { acc = f(acc,as[i]) }`
+    `for (;i < l; ++i) { acc = f(acc,as[i]) }`
     acc
 _foldr = (as, f, acc, arrInit) ->
     i = as.length;
@@ -159,43 +218,40 @@ _foldr = (as, f, acc, arrInit) ->
     `while (i--) { acc = f(acc,as[i]) }`
     acc
 # 2015-09-05. Array.prototype.reduce/reduceRight is significantly slower than this.
-fold     = curry (as, f, v) -> _fold  as, f, v,    false # [a], fn, v -> *
-fold1    = curry (as, f)    -> _fold  as, f, null, true  # [a], fn -> *
-foldr    = curry (as, f, v) -> _foldr as, f, v,    false # [a], fn, v -> *
-foldr1   = curry (as, f)    -> _foldr as, f, null, true  # [a], fn -> *
+fold     = curry3 (as, f, v) -> _fold  as, f, v,    false # [a], fn, v -> *
+fold1    = curry2 (as, f)    -> _fold  as, f, null, true  # [a], fn -> *
+foldr    = curry3 (as, f, v) -> _foldr as, f, v,    false # [a], fn, v -> *
+foldr1   = curry2 (as, f)    -> _foldr as, f, null, true  # [a], fn -> *
 # 2015-09-05. Array.prototype.indexOf is slightly faster than this.
-index    = curry binary (as, v, fr) ->                   # [a], a -> n
-    len = as.length
-    i = if fr then fr - 1 else -1
-    `while (++i < len) { if (as[i] === v) return i }`
+index    = curry2 (as, v) ->                              # [a], a -> n
+    l = as.length; i = -1
+    `while (++i < l) { if (as[i] === v) return i }`
     -1
-indexfn  = curry binary (as, fn, fr) ->                      # [a], (a->bool) -> n
-    len = as.length
-    i = if fr then fr - 1 else -1
-    `while (++i < len) { if (fn(as[i])) return i }`
+indexfn  = curry2 (as, fn) ->                             # [a], (a->bool) -> n
+    l = as.length; i = -1
+    `while (++i < l) { if (fn(as[i])) return i }`
     -1
-firstfn = curry binary (as, fn, fr) ->                       # [a], (a -> b) -> b
+firstfn = curry2 (as, fn) ->                              # [a], (a -> b) -> b
     r = null
-    len = as?.length || 0
-    return null unless len
-    i = fr || 0
-    `for (;i < len; ++i) { if (fn(r = as[i])) return r }`
+    l = as?.length || 0
+    return null unless l
+    i = 0
+    `for (;i < l; ++i) { if (fn(r = as[i])) return r }`
     null
-lastfn = curry binary (as, fn, fr) ->                        # [a], (a -> b) -> b
-    r = null
-    i = fr || (as?.length - 1)
+lastfn = curry2 (as, fn) ->                               # [a], (a -> b) -> b
+    r = null; i = as?.length - 1
     return null unless i < as?.length
     `for (;i >= 0; --i) { if (fn(r = as[i])) return r }`
     null
-join     = curry binary  builtin Array::join        # [a], s -> s
+join     = curry2var builtin Array::join        # [a], s -> s
 # 2015-09-05. Array.prototype.map is significantly slower than this.
-map      = curry (as, f) ->                         # [a], fn -> [a]
-    r = Array(as.length); len = as.length; i = 0
-    `for (;i < len; ++i) { r[i] = f(as[i]) }`
+map = curry2 (as, f) ->                              # [a], fn -> [a]
+    r = Array(as.length); l = as.length; i = 0
+    `for (;i < l; ++i) { r[i] = f(as[i]) }`
     r
-reverse  = unary builtin Array::reverse             # [a] -> [a]
-sort     = curry binary  builtin Array::sort        # [a] -> [a]
-uniqfn   = curry (as, fn) ->                        # [a] -> [a]
+reverse  = unary  builtin Array::reverse             # [a] -> [a]
+sort     = curry2 builtin Array::sort                # [a] -> [a]
+uniqfn   = curry2 (as, fn) ->                        # [a] -> [a]
     return as unless as
     fned = map as, fn
     _filter as, (v, i) -> fned.indexOf(fned[i]) == i
@@ -231,7 +287,7 @@ plift = do ->
             t0 = firstthen as # false or a bound then-function
             if t0
                 # curry function so we can do promapply per argument.
-                currfn = ncurry(as.length, false, f)
+                currfn = ncurry as.length, false, f
                 # always return curried function
                 alws = -> currfn
                 # rejected promises shortcuts the evaluation to
@@ -248,66 +304,66 @@ pfail = (f) -> plift _defprop(f, '__fnuc_fail', true)
 _ispfail   = (fn) -> !!fn?.__fnuc_fail
 
 # moar object
-has     = curry (o, k) -> o.hasOwnProperty(k)
-get     = curry (o, k) -> o[k]
-set     = curry (o, k, v) -> o[k] = v; o
+has     = curry2 (o, k) -> o.hasOwnProperty(k)
+get     = curry2 (o, k) -> o[k]
+set     = curry3 (o, k, v) -> o[k] = v; o
 keys    = (o) -> Object.keys(o)
 values  = (o) -> map (keys o), (k) -> o[k]
-ofilter = curry (o, f) -> r = {}; r[k] = v for k, v of o when f(k,v); return r
+ofilter = curry2 (o, f) -> r = {}; r[k] = v for k, v of o when f(k,v); return r
 evolve  = do ->
-    omap    = curry (o, f) -> r = {}; r[k] = f(k,v) for k, v of o; return r
-    curry (o, t) -> omap o, (k, v) -> if has(t,k) then t[k](v) else v
-pick    = curry binary (o, as...) ->
+    omap    = curry2 (o, f) -> r = {}; r[k] = f(k,v) for k, v of o; return r
+    curry2 (o, t) -> omap o, (k, v) -> if has(t,k) then t[k](v) else v
+pick    = curry2var (o, as...) ->
     as = as[0] if typeis(as[0],'array'); r = {}; r[k] = o[k] for k in as; return r
-keyval  = curry (k, v) -> set o={}, k, v; o
+keyval  = curry2 (k, v) -> set o={}, k, v; o
 
 
 # string -----------------------------
-split    = curry binary  builtin String::split    # s, s -> s
-match    = curry binary  builtin String::match    # s, re -> [s]|null
-replace  = curry ternary builtin String::replace  # s, s, s -> s
-search   = curry binary  builtin String::search   # s, s -> Boolean
+split    = curry2 builtin String::split           # s, s -> s
+match    = curry2 builtin String::match           # s, re -> [s]|null
+replace  = curry3 builtin String::replace         # s, s, s -> s
+search   = curry2 builtin String::search          # s, s -> Boolean
 trim     = unary builtin String::trim             # s -> s
 ucase    = unary builtin String::toUpperCase      # s -> s
 lcase    = unary builtin String::toLowerCase      # s -> s
 
 
 # string or array
-slice    = curry (s, m, n) -> s.slice m, n  # s, n, n -> s
-drop     = curry (s, n)    -> s.slice n     # s, n -> s
-take     = curry (s, n)    -> s.slice 0, n  # s, n -> s
+slice    = curry3 (s, m, n) -> s.slice m, n  # s, n, n -> s
+drop     = curry2 (s, n)    -> s.slice n     # s, n -> s
+take     = curry2 (s, n)    -> s.slice 0, n  # s, n -> s
 len      = (t) -> t.length
 
 
 # maths -----------------------------------
-add      = curry binary (as...) -> fold1 as, (a,b) -> a + b
-sub      = curry binary (as...) -> fold1 as, (a,b) -> a - b
-mul      = curry binary (as...) -> fold1 as, (a,b) -> a * b
-div      = curry binary (as...) -> fold1 as, (a,b) -> a / b
-mod      = curry binary (as...) -> fold1 as, (a,b) -> a % b
-min      = curry binary (as...) -> Math.min as...
-max      = curry binary (as...) -> Math.max as...
-gt       = curry (a,b) -> a > b
-gte      = curry (a,b) -> a >= b
-lt       = curry (a,b) -> a < b
-lte      = curry (a,b) -> a <= b
+add      = curry2var (as...) -> fold1 as, (a,b) -> a + b
+sub      = curry2var (as...) -> fold1 as, (a,b) -> a - b
+mul      = curry2var (as...) -> fold1 as, (a,b) -> a * b
+div      = curry2var (as...) -> fold1 as, (a,b) -> a / b
+mod      = curry2var (as...) -> fold1 as, (a,b) -> a % b
+min      = curry2var (as...) -> Math.min as...
+max      = curry2var (as...) -> Math.max as...
+gt       = curry2 (a,b) -> a > b
+gte      = curry2 (a,b) -> a >= b
+lt       = curry2 (a,b) -> a < b
+lte      = curry2 (a,b) -> a <= b
 eq       = do ->
     _ = {} # placeholder obj
-    curry binary (as...) -> fold1(as, (a,b) -> if a == b then a else _) != _
-aand     = curry binary (fs...) -> (as...) ->
-    len = fs.length; i = 0
-    `for (;i < len; ++i) { if (!fs[i].apply(null,as)) { return false } }`
+    curry2var (as...) -> fold1(as, (a,b) -> if a == b then a else _) != _
+aand = curry2var (fs...) -> (as...) ->
+    l = fs.length; i = 0
+    `for (;i < l; ++i) { if (!fs[i].apply(null,as)) { return false } }`
     true
-oor      = curry binary (fs...) -> (as...) ->
-    len = fs.length; i = 0
-    `for (;i < len; ++i) { if (fs[i].apply(null,as)) { return true } }`
+oor = curry2var (fs...) -> (as...) ->
+    l = fs.length; i = 0
+    `for (;i < l; ++i) { if (fs[i].apply(null,as)) { return true } }`
     false
-nnot     = (f) -> unary (as...) -> !f(as...)
+nnot = (f) -> unary (as...) -> !f(as...)
 
 # zipping
-zipwith = ncurry 3, true, (as..., f) ->
-    ml = min (a.length for a in as)...
-    f (as[n][i] for n in [0...as.length] by 1)... for i in [0...ml] by 1
+zipwith = curry3var (as..., f) ->
+    ml = apply(min) map as, len
+    (f (as[n][i] for n in [0...as.length] by 1)...) for i in [0...ml] by 1
 zip    = zipwith (as...) -> as
 zipobj = do ->
     fn = (obj) -> zipwith (k, v) -> set obj, k, v
@@ -325,7 +381,7 @@ eql = do ->
         ka = sortstr keys a
         return false unless eqarr ka, sortstr keys b
         (for k in ka then return false unless eql a[k], b[k]); true
-    curry (a, b) ->
+    curry2 (a, b) ->
         return true if a == b
         (aand eqtype, switch type(a)
             when 'object' then aand eqplain, eqobj
