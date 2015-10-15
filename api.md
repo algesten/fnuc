@@ -60,6 +60,7 @@ API
 [`not`](api.md#not)
 [`nth`](api.md#nth)
 [`ofilter`](api.md#ofilter)
+[`omap`](api.md#omap)
 [`once`](api.md#once)
 [`or`](api.md#or)
 [`partial`](api.md#partial)
@@ -887,6 +888,28 @@ o = {a:0, b:1, c:2}
 ofilter o, f                # {a:0, b:1}
 aOrOdd = ofilter f          # partial
 aOrOdd o                    # {a:0, b:1}
+```
+
+#### omap
+
+Like `map` but for objects. The mapping function is invoked with key,
+value `(k,v)`.
+
+`omap(o,f)`  `:: {k:v}, ((k, v) -> v) -> {k:v}`  
+`omap(f)(o)` `:: ((k, v) -> v) -> {k:v} -> {k:v}`
+
+args | desc
+:--- | :---
+`o` | The object to invoke mapping function on.
+`f` | Mapping function with signature `(k, v) -> v`.
+
+#### omap example
+
+```coffee
+    f = (k, v) -> if k == 'b' then v + 40 else v
+    omap {a:1,b:2,c:3}, f                         # {a:1,b:42,c:3}
+    bAdd40 = omap(f)                              # partial
+    bAdd40 {d:3,b:2}                              # {d:3,b:42}
 ```
 
 #### pick

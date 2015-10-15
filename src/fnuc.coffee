@@ -310,9 +310,8 @@ set     = curry3 (o, k, v) -> o[k] = v; o
 keys    = (o) -> Object.keys(o)
 values  = (o) -> map (keys o), (k) -> o[k]
 ofilter = curry2 (o, f) -> r = {}; r[k] = v for k, v of o when f(k,v); return r
-evolve  = do ->
-    omap    = curry2 (o, f) -> r = {}; r[k] = f(k,v) for k, v of o; return r
-    curry2 (o, t) -> omap o, (k, v) -> if has(t,k) then t[k](v) else v
+omap    = curry2 (o, f) -> r = {}; r[k] = f(k,v) for k, v of o; return r
+evolve  = curry2 (o, t) -> omap o, (k, v) -> if has(t,k) then t[k](v) else v
 pick    = curry2var (o, as...) ->
     as = as[0] if typeis(as[0],'array'); r = {}; r[k] = o[k] for k in as; return r
 keyval  = curry2 (k, v) -> set o={}, k, v; o
@@ -405,7 +404,7 @@ exports = {
 
     # object
     merge, mixin, has, get, set, keys, values, pick, evolve, ofilter,
-    eql, keyval
+    omap, eql, keyval
 
     # array
     concat, head, tail, last, fold, fold1, foldr, foldr1, each, map,

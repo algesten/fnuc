@@ -164,6 +164,7 @@ API
 [`not`](api.md#not)
 [`nth`](api.md#nth)
 [`ofilter`](api.md#ofilter)
+[`omap`](api.md#omap)
 [`once`](api.md#once)
 [`or`](api.md#or)
 [`partial`](api.md#partial)

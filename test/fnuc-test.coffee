@@ -669,6 +669,8 @@ FN_TEST = [
     {n:'pick',s:'{k:v}, [k] -> {k:v}',f:pick,  ar:2, as:[{a:1,b:2,c:3},['b','c']], eq:{b:2,c:3}}
     {n:'pick',s:'{k:v}, k -> {k:v}',  f:pick,  ar:2, as:[{a:1,b:2,c:3},'b','c'],   eq:{b:2,c:3}}
     {n:'pick',s:'{k:v}, k -> {k:v}',  f:pick,  ar:2, as:[{a:1,b:2,c:3},'b'],       eq:{b:2}}
+    {n:'omap',s:'{k:v}, ((k,v) -> v) -> {k:v}', f:omap, ar:2,
+    as:[{a:1,b:2,c:3},(k,v) -> if k == 'b' then v + 40 else v], eq:{a:1,b:42,c:3}}
     {n:'evolve', s:'{k:v}, {k:(v->v)} -> {k:v}', f:evolve, ar:2,
     as:[{a:1,b:2},{}], eq:{a:1,b:2}}
     {n:'evolve', s:'{k:v}, {k:(v->v)} -> {k:v}', f:evolve, ar:2,
