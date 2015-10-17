@@ -10,6 +10,7 @@ API
 [`apply`](api.md#apply)
 [`arity`](api.md#arity)
 [`arityof`](api.md#arityof)
+[`at`](api.md#at)
 [`clone`](api.md#clone)
 [`compose`](api.md#compose)
 [`concat`](api.md#concat)
@@ -85,6 +86,7 @@ API
 [`type`](api.md#type)
 [`typeis`](api.md#typeis)
 [`ucase`](api.md#ucase)
+[`unapply`](api.md#unapply)
 [`uniq`](api.md#uniq)
 [`uniqfn`](api.md#uniqfn)
 [`values`](api.md#values)
@@ -687,6 +689,27 @@ calc  = pipe add(3), dolog, div(10)   # log the value between the operations
 calc [1,2,3]                              # logs 4...5...6
 ```
 
+
+#### unapply
+
+Produces a function that takes positional arguments and applies them
+as an array. The inverse of [apply](#apply)
+
+`unapply(f)(a1,a2,...)` `:: ([a] -> *) -> (a1, a2, ...) -> *`
+
+args | desc
+:--- | :---
+`f` | The function to invoke
+*produced function*
+`as...` | Arguments to turn into array.
+
+##### unapply example
+
+```coffee
+unapply(JSON.stringify)(1,2,3)        # '[1,2,3]'
+```
+
+
 ### Object functions
 
 Functions operating on objects.
@@ -1057,6 +1080,26 @@ any as, (a) -> a > 0      # true
 any as, (a) -> a > 2      # false
 gt0 = any (a) -> a > 0    # partial
 gt0 as                    # false
+```
+
+#### at
+
+Returns the element at index n.
+
+Also works for strings.
+
+`at(as,n)`  `:: [a], n -> a`  
+`at(n)(as)` `:: n -> [a] -> a`  
+
+args | desc
+:--- | :---
+`as` | Array to operate on.
+`n`  | Element index
+
+##### at example
+
+```coffee
+at(1) ['apple', 'pear', 'banana']    # 'pear'
 ```
 
 #### concat

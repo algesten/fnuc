@@ -1059,6 +1059,11 @@ describe 'apply', ->
     it 'applies a function', ->
         eql apply(Math.max)([2,4,3]), 4
 
+describe 'unapply', ->
+
+    it 'turns positional arguments into indexed', ->
+        eql unapply(join(','))(1,2,3), '1,2,3'
+
 describe 'iif', ->
 
     it 'is arity 3', ->
@@ -1183,6 +1188,20 @@ describe 'nth', ->
     it 'is ok with n outside', ->
         eql nth(5)(1,2,3), undefined
         eql nth(-1)(1,2,3), undefined
+
+describe 'at', ->
+
+    it 'is of arity 2', ->
+        eql arityof(at), 2
+
+    it 'produces a function that extracts the nth position', ->
+        eql at([1,2,3],1), 2
+
+    it 'is curried', ->
+        eql at(1)([1,2,3]), 2
+
+    it 'works for strings', ->
+        eql at(1)('123'), '2'
 
 describe 'pfail', ->
 

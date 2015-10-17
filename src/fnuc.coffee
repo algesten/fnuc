@@ -179,15 +179,17 @@ converge = curry3var (fs..., after) ->
         after.apply context, map fs, (fn) -> fn.apply context, args
 
 typeis   = curry2 (a,s) -> type(a) == s
-tap      = curry2 (a, f) -> f(a); a                  # a, fn -> a
-apply    = curry2 (args, fn) -> fn.apply this, args  # [a], fn -> fn(a0, a1, ..., az)
+tap      = curry2 (a, f) -> f(a); a                    # a, fn -> a
+apply    = curry2 (args, fn) -> fn.apply this, args    # [a], fn -> fn(a0, a1, ..., az)
+unapply  = (fn) -> arity(arityof(fn)) (as...) -> fn as # ([a] -> *) -> (a1, a2, ..., an) -> *
 iif      = curry3 (c, t, f) ->
     arity(arityof(c)) plift (as...) -> if c(as...) then t?(as...) else f?(as...)
 maybe    = (fn) ->
-    unary plift (as...) -> fn as... if as.every isdef # (a -> b) -> a|null -> b|null
+    unary plift (as...) -> fn as... if as.every isdef  # (a -> b) -> a|null -> b|null
 always   = (v) -> plift -> v
 nth      = (n) -> arity(n + 1) (as...) -> as[n]
-once = (fn) -> ran = ret = null; (as...) -> if ran then ret else (ran = true; ret = fn as...)
+once     = (fn) -> ran = ret = null; (as...) -> if ran then ret else (ran = true; ret = fn as...)
+at       = curry2 (as, n) -> as[n]
 
 
 # array ----------------------------
@@ -400,7 +402,7 @@ exports = {
     # fn
     arity, arityof, unary, binary, ternary, curry, flip, compose,
     pipe, I, partial, partialr, tap, converge,
-    apply, iif, maybe, always, nth, once
+    apply, iif, maybe, always, nth, once, unapply
 
     # object
     merge, mixin, has, get, set, keys, values, pick, evolve, ofilter,
@@ -409,7 +411,7 @@ exports = {
     # array
     concat, head, tail, last, fold, fold1, foldr, foldr1, each, map,
     filter, all, any, join, reverse, sort, index, indexfn, contains,
-    uniq, uniqfn, zip, zipwith, len, firstfn, lastfn, zipobj
+    uniq, uniqfn, zip, zipwith, len, firstfn, lastfn, zipobj, at
 
     # string
     split, match, replace, search, trim, ucase, lcase, slice, drop,
