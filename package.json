@@ -1,6 +1,6 @@
 {
   "name": "fnuc",
-  "version": "2.0.4",
+  "version": "2.0.5",
   "description": "functional library for coffeescript (and javascript)",
   "main": "lib/fnuc.js",
   "scripts": {
