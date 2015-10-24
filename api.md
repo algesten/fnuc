@@ -11,7 +11,9 @@ API
 [`arity`](api.md#arity)
 [`arityof`](api.md#arityof)
 [`at`](api.md#at)
+[`both`](api.md#both)
 [`clone`](api.md#clone)
+[`comp`](api.md#comp)
 [`compose`](api.md#compose)
 [`concat`](api.md#concat)
 [`contains`](api.md#contains)
@@ -20,6 +22,7 @@ API
 [`div`](api.md#div)
 [`drop`](api.md#drop)
 [`each`](api.md#each)
+[`either`](api.md#either)
 [`eq`](api.md#eq)
 [`eql`](api.md#eql)
 [`evolve`](api.md#evolve)
@@ -1834,31 +1837,26 @@ Functions for math.
 
 #### and
 
-Returns a function that wraps two (or more) functions and performs
-*logical and* on the result. For coffeescript this function is aliased
-as `aand`.
+Returns a function that performs *logical and* on the result. For
+coffeescript this function is aliased as `aand`.
 
-`aand(f1,f2)`   `:: (a... -> Boolean), (a... -> Boolean) -> Boolean`  
-`aand(f2)(f1)`  `:: (a... -> Boolean) -> (a... -> Boolean) -> Boolean`  
-`aand(fs...)`   `:: (a... -> Boolean)... -> Boolean`  
+`aand(a1,a2)`   `:: (*, *) -> Boolean`  
+`aand(a2)(a1)`  `:: * -> * -> Boolean`  
+`aand(as...)`   `:: (*, *, ...) ->  Boolean`  
 
 args | desc
 :--- | :---
-`f1`  | First function to wrap.
-`f2`  | Second function to wrap.
+`a1`  | First argument to and.
+`a2`  | Second argument to and.
 *Variadic*|
-`fs` | Variable number of functions to wrap.
+`as` | Variable number of arguments to and.
 
 ##### and example
 
 ```coffee
-gt10  = gt(10)
-even  = (a) -> a % 2 == 0
-lt100 = lt(100)
-f     = aand(gt10, even)
-f(102)                        # true
-g     = aand(gt10, even, lt100)
-g(102)                        # false
+aand(true, true)      # true
+aand(1,4)             # true
+aand(1)(null)         # false
 ```
 
 #### add
@@ -1876,6 +1874,53 @@ args | desc
 *Variadic*|
 `as` | Variable number of number/strings to add together.
 
+#### both
+
+Returns a function that wraps two (or more) functions and performs
+*logical and* on the result.
+
+`both(f1,f2)`   `:: (a... -> Boolean), (a... -> Boolean) -> Boolean`  
+`both(f2)(f1)`  `:: (a... -> Boolean) -> (a... -> Boolean) -> Boolean`  
+`both(fs...)`   `:: (a... -> Boolean)... -> Boolean`  
+
+args | desc
+:--- | :---
+`f1`  | First function to wrap.
+`f2`  | Second function to wrap.
+*Variadic*|
+`fs` | Variable number of functions to wrap.
+
+##### both example
+
+```coffee
+gt10  = gt(10)
+even  = (a) -> a % 2 == 0
+lt100 = lt(100)
+f     = both(gt10, even)
+f(102)                        # true
+g     = both(gt10, even, lt100)
+g(102)                        # false
+```
+
+#### comp
+
+Returns a function does a logical not on the result of the initial
+function.
+
+`comp(f)`   `:: (a... -> Boolean) -> Boolean`  
+
+args | desc
+:--- | :---
+`f`  | The function to not.
+
+##### comp example
+
+```coffee
+even  = (a) -> a % 2 == 0
+odd   = comp(even)
+odd(11)            # true
+```
+
 #### div
 
 Division. `a` divided by `b`.
@@ -1890,6 +1935,35 @@ args | desc
 `b`  | Divisor.
 *Variadic*|
 `as` | Variable number of arguments. I.e. `div(a,b,c)` is `a / b / c`.
+
+#### either
+
+Returns a function that wraps two (or more) functions and performs
+*logical or* on the result. For coffeescript this function is aliased
+as `either`.
+
+`either(f1,f2)`   `:: (a... -> Boolean), (a... -> Boolean) -> Boolean`  
+`either(f2)(f1)`  `:: (a... -> Boolean) -> (a... -> Boolean) -> Boolean`  
+`either(fs...)`   `:: (a... -> Boolean)... -> Boolean`  
+
+args | desc
+:--- | :---
+`f1`  | First function to wrap.
+`f2`  | Second function to wrap.
+*Variadic*|
+`fs` | Variable number of functions to wrap.
+
+##### either example
+
+```coffee
+gt10  = gt(10)
+even  = (a) -> a % 2 == 0
+lt100 = lt(100)
+f     = either(gt10, even)
+f(102)                        # true
+g     = either(gt10, even, lt100)
+g(102)                        # true
+```
 
 #### eq
 
@@ -2016,50 +2090,45 @@ args | desc
 
 #### not
 
-Returns a function does a logical not on the result of the initial
-function. For coffeescript this function is aliased as `nnot`.
+Function that does a logical not argument. For coffeescript this
+function is aliased as `nnot`.
 
-`nnot(f)`   `:: (a... -> Boolean) -> Boolean`  
+`nnot(a)`   `:: * -> Boolean`  
 
 args | desc
 :--- | :---
-`f`  | The function to not.
+`a`  | The argument to not.
 
 ##### not example
 
 ```coffee
-even  = (a) -> a % 2 == 0
-odd   = nnot(even)
-odd(11)            # true
+not(1)       # false
+not(null)    # true
 ```
 
 #### or
 
-Returns a function that wraps two (or more) functions and performs
-*logical or* on the result. For coffeescript this function is aliased
-as `oor`.
+Function that performs *logical or* on the arguments. For coffeescript
+this function is aliased as `oor`.
 
-`oor(f1,f2)`   `:: (a... -> Boolean), (a... -> Boolean) -> Boolean`  
-`oor(f2)(f1)`  `:: (a... -> Boolean) -> (a... -> Boolean) -> Boolean`  
-`oor(fs...)`   `:: (a... -> Boolean)... -> Boolean`  
+`oor(a1,a2)`   `:: (*, *) -> Boolean`  
+`oor(a2)(a1)`  `:: * -> * -> Boolean`  
+`oor(as...)`   `:: (*, *, ...) -> Boolean`  
 
 args | desc
 :--- | :---
-`f1`  | First function to wrap.
-`f2`  | Second function to wrap.
+`a1`  | First argument to or.
+`a2`  | Second argument to or.
 *Variadic*|
-`fs` | Variable number of functions to wrap.
+`as` | Variable number of arguments to or.
 
 ##### or example
 
 ```coffee
-gt10  = gt(10)
-even  = (a) -> a % 2 == 0
-lt100 = lt(100)
-f     = oor(gt10, even)
-f(102)                        # true
-g     = oor(gt10, even, lt100)
-g(102)                        # true
+oor(1,0)         # true
+oor(0,0)         # false
+oor(0, null)     # false
+oor(null)(1)     # true
 ```
 
 #### sub

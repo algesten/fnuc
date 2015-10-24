@@ -666,6 +666,14 @@ FN_TEST = [
     {n:'eq',     s:'a... -> b',      f:eq,     ar:2, as:[1,1,2],             eq:false}
     {n:'eq',     s:'a... -> b',      f:eq,     ar:2, as:[false,false,false], eq:true}
     {n:'eq',     s:'a... -> b',      f:eq,     ar:2, as:[0,0,1],             eq:false}
+    {n:'and',    s:'a, a -> b',      f:aand,   ar:2, as:[12,2],              eq:true}
+    {n:'and',    s:'a, a -> b',      f:aand,   ar:2, as:[12,null],           eq:false}
+    {n:'and',    s:'a, a, a -> b',   f:aand,   ar:2, as:[12,1,0],            eq:false}
+    {n:'or',     s:'a, a -> b',      f:oor,    ar:2, as:[12,2],              eq:true}
+    {n:'or',     s:'a, a -> b',      f:oor,    ar:2, as:[12,null],           eq:true}
+    {n:'or',     s:'a, a, a -> b',   f:oor,    ar:2, as:[null,null,4],       eq:true}
+    {n:'not',    s:'a -> b',         f:nnot,   ar:1, as:[12],                eq:false}
+    {n:'not',    s:'a -> b',         f:nnot,   ar:1, as:[null],              eq:true}
     {n:'pick',s:'{k:v}, [k] -> {k:v}',f:pick,  ar:2, as:[{a:1,b:2,c:3},['b','c']], eq:{b:2,c:3}}
     {n:'pick',s:'{k:v}, k -> {k:v}',  f:pick,  ar:2, as:[{a:1,b:2,c:3},'b','c'],   eq:{b:2,c:3}}
     {n:'pick',s:'{k:v}, k -> {k:v}',  f:pick,  ar:2, as:[{a:1,b:2,c:3},'b'],       eq:{b:2}}
@@ -716,7 +724,7 @@ describe 'fold/fold1/foldr/foldr1', ->
                 eql as,  undefined
                 p + c), 1
 
-describe 'and', ->
+describe 'both', ->
 
     gt10 = even = lt102 = null
 
@@ -726,10 +734,10 @@ describe 'and', ->
         lt102 = spy lt(102)
 
     it 'is of arity(2)', ->
-        eql arityof(aand), 2
+        eql arityof(both), 2
 
     it 'wraps two functions f, g and invokes both with &&', ->
-        f = aand(gt10, even)
+        f = both(gt10, even)
         eql f(100, 42), true
         eql gt10.callCount, 1
         eql gt10.args[0], [100, 42]
@@ -738,7 +746,7 @@ describe 'and', ->
         eql f(8), false
 
     it 'wraps moar functions f, g, h and invokes both with &&', ->
-        f = aand(gt10, even, lt102)
+        f = both(gt10, even, lt102)
         eql f(100,42), true
         eql gt10.callCount, 1
         eql gt10.args[0], [100, 42]
@@ -751,16 +759,13 @@ describe 'and', ->
     it 'is lazy', ->
         f1 = spy -> false
         f2 = spy -> true
-        f = aand f1, f2
+        f = both f1, f2
         eql f(), false
         eql f1.callCount, 1
         eql f2.callCount, 0
 
 
-    it 'is aliased', ->
-        assert.ok F.and == F.aand
-
-describe 'or', ->
+describe 'either', ->
 
     gt10 = even = lt102 = null
 
@@ -770,10 +775,10 @@ describe 'or', ->
         lt102 = spy lt(102)
 
     it 'is of arity(2)', ->
-        eql arityof(oor), 2
+        eql arityof(either), 2
 
     it 'wraps two functions f, g and invokes both with ||', ->
-        f = oor(gt10, even)
+        f = either(gt10, even)
         eql f(8, 42), true
         eql gt10.callCount, 1
         eql gt10.args[0], [8, 42]
@@ -782,7 +787,7 @@ describe 'or', ->
         eql f(9), false
 
     it 'wraps moar functions f, g, h and invokes both with ||', ->
-        f = oor(gt10, even, lt102)
+        f = either(gt10, even, lt102)
         eql f(9,42), true
         eql gt10.args, [[9,42]]
         eql even.args, [[9, 42]]
@@ -791,15 +796,12 @@ describe 'or', ->
     it 'is lazy', ->
         f1 = spy -> true
         f2 = spy -> false
-        f = oor f1, f2
+        f = either f1, f2
         eql f(), true
         eql f1.callCount, 1
         eql f2.callCount, 0
 
-    it 'is aliased', ->
-        assert.ok F.or == F.oor
-
-describe 'not', ->
+describe 'comp', ->
 
     gt10 = null
 
@@ -807,21 +809,18 @@ describe 'not', ->
         gt10  = spy gt(10)
 
     it 'is of arity(1)', ->
-        eql arityof(nnot), 1
+        eql arityof(comp), 1
 
     it 'wraps a function and nots the output', ->
-        f = nnot(gt10)
+        f = comp(gt10)
         eql f(12), false
         eql gt10.callCount, 1
         eql gt10.args[0], [12]
 
     it 'accepts variadic', ->
-        f = nnot (g = spy I)
+        f = comp (g = spy I)
         eql f(1,2), false
         eql g.args[0], [1,2]
-
-    it 'is aliased', ->
-        assert.ok F.not == F.nnot
 
 describe 'eql', ->
 

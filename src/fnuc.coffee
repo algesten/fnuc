@@ -348,18 +348,24 @@ gt       = curry2 (a,b) -> a > b
 gte      = curry2 (a,b) -> a >= b
 lt       = curry2 (a,b) -> a < b
 lte      = curry2 (a,b) -> a <= b
-eq       = do ->
+
+eq = do ->
     _ = {} # placeholder obj
     curry2var (as...) -> fold1(as, (a,b) -> if a == b then a else _) != _
-aand = curry2var (fs...) -> (as...) ->
-    l = fs.length; i = 0
+
+aand = curry2var (as...) -> fold1 as, (a,b) -> !!a and !!b
+oor  = curry2var (as...) -> fold1 as, (a,b) -> !!a or  !!b
+nnot = (a) -> !a
+
+both = curry2var (fs...) -> l = fs.length; arity(l) (as...) ->
+    i = 0
     `for (;i < l; ++i) { if (!fs[i].apply(null,as)) { return false } }`
     true
-oor = curry2var (fs...) -> (as...) ->
-    l = fs.length; i = 0
+either = curry2var (fs...) -> l = fs.length; arity(l) (as...) ->
+    i = 0
     `for (;i < l; ++i) { if (fs[i].apply(null,as)) { return true } }`
     false
-nnot = (f) -> unary (as...) -> !f(as...)
+comp = (f) -> unary (as...) -> !f(as...)
 
 # zipping
 zipwith = curry3var (as..., f) ->
@@ -384,8 +390,8 @@ eql = do ->
         (for k in ka then return false unless eql a[k], b[k]); true
     curry2 (a, b) ->
         return true if a == b
-        (aand eqtype, switch type(a)
-            when 'object' then aand eqplain, eqobj
+        (both eqtype, switch type(a)
+            when 'object' then both eqplain, eqobj
             when 'array'  then eqarr
             else -> false)(a,b)
 
@@ -401,8 +407,8 @@ exports = {
 
     # fn
     arity, arityof, unary, binary, ternary, curry, flip, compose,
-    pipe, I, partial, partialr, tap, converge,
-    apply, iif, maybe, always, nth, once, unapply
+    pipe, I, partial, partialr, tap, converge, apply, iif, maybe,
+    always, nth, once, unapply
 
     # object
     merge, mixin, has, get, set, keys, values, pick, evolve, ofilter,
@@ -419,7 +425,7 @@ exports = {
 
     # maths
     add, sub, mul, div, mod, min, max, gt, gte, lt, lte, eq, aand,
-    oor, nnot
+    oor, nnot, either, both, comp
 
     # promises
     plift, pfail

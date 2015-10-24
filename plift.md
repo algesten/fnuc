@@ -208,5 +208,7 @@ app.get /^\/([pw])([a-zA-Z0-9]+)$/, do ->
     handle todeliver
 ```
 
+Link collection
+
 [puref]: https://en.wikipedia.org/wiki/Pure_function
 [proms]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
