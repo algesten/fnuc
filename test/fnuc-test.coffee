@@ -736,6 +736,9 @@ describe 'both', ->
     it 'is of arity(2)', ->
         eql arityof(both), 2
 
+    it 'produces a function of arity(1)', ->
+        eql arityof(both I,I,I), 1
+
     it 'wraps two functions f, g and invokes both with &&', ->
         f = both(gt10, even)
         eql f(100, 42), true
@@ -777,6 +780,9 @@ describe 'either', ->
     it 'is of arity(2)', ->
         eql arityof(either), 2
 
+    it 'produces a function of arity(1)', ->
+        eql arityof(either I,I,I), 1
+
     it 'wraps two functions f, g and invokes both with ||', ->
         f = either(gt10, even)
         eql f(8, 42), true
@@ -810,6 +816,9 @@ describe 'comp', ->
 
     it 'is of arity(1)', ->
         eql arityof(comp), 1
+
+    it 'produces a function of arity(1)', ->
+        eql arityof(comp I), 1
 
     it 'wraps a function and nots the output', ->
         f = comp(gt10)

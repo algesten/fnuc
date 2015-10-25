@@ -360,12 +360,12 @@ aand = curry2var (as...) -> fold1 as, (a,b) -> !!a and !!b
 oor  = curry2var (as...) -> fold1 as, (a,b) -> !!a or  !!b
 nnot = (a) -> !a
 
-both = curry2var (fs...) -> l = fs.length; arity(l) (as...) ->
-    i = 0
+both = curry2var (fs...) -> unary (as...) ->
+    i = 0; l = fs.length
     `for (;i < l; ++i) { if (!fs[i].apply(null,as)) { return false } }`
     true
-either = curry2var (fs...) -> l = fs.length; arity(l) (as...) ->
-    i = 0
+either = curry2var (fs...) -> unary (as...) ->
+    i = 0; l = fs.length
     `for (;i < l; ++i) { if (fs[i].apply(null,as)) { return true } }`
     false
 comp = (f) -> unary (as...) -> !f(as...)
