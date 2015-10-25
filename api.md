@@ -16,6 +16,7 @@ API
 [`comp`](api.md#comp)
 [`compose`](api.md#compose)
 [`concat`](api.md#concat)
+[`cond`](api.md#cond)
 [`contains`](api.md#contains)
 [`converge`](api.md#converge)
 [`curry`](api.md#curry)
@@ -334,6 +335,40 @@ pow   = (a,b) -> Math.pow(a,b)
 calc  = compose div10, add50, pow
 calc(10,2)  # 15 or (10 ^ 2 + 50) / 10
 calc(2)(10) # 15
+```
+
+#### cond
+
+Conditional function invokation. Sort of like a switch-case.
+
+```
+[ [condition1, when1],
+  [condition2, when2],
+  ...
+]
+```
+
+The produced function will attempt `condition` 1, 2, etc until one is truthy
+in which case the corresponding `when` is invoked with the same arguments.
+
+`cond(cs)` `:: [[(* -> Boolean), (* -> a)],[(* -> Boolean), (* -> a)],...] -> a `  
+
+args | desc
+:--- | :---
+`cs` | Array of arrays with conditions/when.
+
+##### cond example
+
+```coffee
+fn = cond [
+  [lt(10), always("less than 10")]
+  [lt(50), always("less than 50")]
+  [always(true), always("something else")]
+]
+
+fn 5     # "less than 10"
+fn 49    # "less than 49"
+fn 110   # "something else"
 ```
 
 #### curry

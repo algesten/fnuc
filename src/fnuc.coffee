@@ -194,7 +194,9 @@ always   = (v) -> plift -> v
 nth      = (n) -> curry _nary (n + 1), (as...) -> as[n]
 once     = (fn) -> ran = ret = null; (as...) -> if ran then ret else (ran = true; ret = fn as...)
 at       = curry2 (as, n) -> as[n]
-
+cond     = (cs) -> curry _nary arityof(cs[0][0]), (as...) ->
+    return fn(as...) for [cond,fn] in cs when cond(as...)
+    return undefined
 
 # array ----------------------------
 all      = curry2var builtin Array::every       # [a], fn -> Boolean
@@ -413,7 +415,7 @@ exports = {
     # fn
     arity, arityof, unary, binary, ternary, curry, flip, compose,
     pipe, I, partial, partialr, tap, converge, apply, iif, maybe,
-    always, nth, once, unapply
+    always, nth, once, unapply, cond
 
     # object
     merge, mixin, has, get, set, keys, values, pick, evolve, ofilter,

@@ -1267,3 +1267,28 @@ describe 'once', ->
         fn = once (a) -> a + 41
         eql fn(1), 42
         eql fn(2), 42
+
+describe 'cond', ->
+
+    it 'is arity 1', ->
+        eql arityof(cond), 1
+
+    it 'works for one condition', ->
+        fn = cond [[lt(10), always(42)]]
+        eql fn(8), 42
+
+    it 'returns undefined if no match', ->
+        fn = cond [[lt(10), always(42)]]
+        eql fn(11), undefined
+
+    it 'invokes function with same args as cond', ->
+        fn = cond [[lt(10), (s = spy -> 42)]]
+        eql fn(8,7), 42
+        eql s.args[0], [8,7]
+
+    it 'choses first cond that matches', ->
+        fn = cond [
+            [lt(10), always(42)]
+            [lt(12), always(43)]
+        ]
+        eql fn(11), 43

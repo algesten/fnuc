@@ -120,6 +120,7 @@ API
 [`comp`](api.md#comp)
 [`compose`](api.md#compose)
 [`concat`](api.md#concat)
+[`cond`](api.md#cond)
 [`contains`](api.md#contains)
 [`converge`](api.md#converge)
 [`curry`](api.md#curry)
