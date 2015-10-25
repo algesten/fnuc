@@ -155,16 +155,17 @@ curry = (f) ->
 _uncurry = (f) -> if f.__fnuc_curry then f.__fnuc_curry() else f
 
 partial = (f, as...) ->
+    f = _uncurry(f)
     return f as... if (n = (arityof(f) - as.length)) <= 0
-    _nary n, (bs...) -> f as.concat(bs)...
+    curry _nary n, (bs...) -> f as.concat(bs)...
 partialr = (f, as...) ->
+    f = _uncurry(f)
     return f as... if (n = (arityof(f) - as.length)) <= 0
-    _nary n, (bs...) -> f bs[0...n].concat(as)...
+    curry _nary n, (bs...) -> f bs[0...n].concat(as)...
 
 flip = (f) ->
     return f.__fnuc_flip if f.__fnuc_flip
-    rewrap = if f.__fnuc_curry then curry else I
-    g = (rewrap _nary arityof(f), (as...) -> _uncurry(f) as.reverse()...)
+    g = (curry _nary arityof(f), (as...) -> _uncurry(f) as.reverse()...)
     _defprop g, '__fnuc_flip', f
 
 compose  = (fs...) ->
@@ -183,14 +184,14 @@ converge = curry3var (fs..., after) ->
 
 typeis   = curry2 (a,s) -> type(a) == s
 tap      = curry2 (a, f) -> f(a); a                    # a, fn -> a
-apply    = curry2 (args, fn) -> fn.apply this, args    # [a], fn -> fn(a0, a1, ..., az)
-unapply  = (fn) -> _nary arityof(fn), (as...) -> fn as # ([a] -> *) -> (a1, a2, ..., an) -> *
+apply    = curry2 (args, fn) -> fn.apply null, args    # [a], fn -> fn(a0, a1, ..., az)
+unapply  = (fn) -> (as...) -> fn as                    # ([a] -> *) -> (a1, a2, ..., an) -> *
 iif      = curry3 (c, t, f) ->
-    _nary arityof(c), plift (as...) -> if c(as...) then t?(as...) else f?(as...)
+    curry _nary arityof(c), plift (as...) -> if c(as...) then t?(as...) else f?(as...)
 maybe    = (fn) ->
     unary plift (as...) -> fn as... if as.every isdef  # (a -> b) -> a|null -> b|null
 always   = (v) -> plift -> v
-nth      = (n) -> _nary (n + 1), (as...) -> as[n]
+nth      = (n) -> curry _nary (n + 1), (as...) -> as[n]
 once     = (fn) -> ran = ret = null; (as...) -> if ran then ret else (ran = true; ret = fn as...)
 at       = curry2 (as, n) -> as[n]
 
@@ -288,7 +289,8 @@ plift = do ->
 
     (f) ->
         return f if f.__fnuc_plift # already lifted?
-        nf = _nary arityof(f), (as...) ->
+        f = _uncurry(f)            # unwrap if we have a curry
+        nf = curry _nary arityof(f), (as...) ->
             t0 = firstthen as # false or a bound then-function
             if t0
                 # curry function so we can do promapply per argument.

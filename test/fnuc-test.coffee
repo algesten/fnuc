@@ -254,22 +254,29 @@ describe 'partial', ->
             assert.isNotFunction r
             eql r, 21
 
-        it 'works for arity(3) with one arg', ->
-            r = partial ((a,b,c) -> a / (b / c)), 12
-            assert.isFunction r
-            eql arityof(r), 2
-            eql r(3,2,5), 8
+        describe 'for arity(3)', ->
 
-        it 'works for arity(3) with two arg', ->
-            r = partial ((a,b,c) -> a / (b / c)), 12, 3
-            assert.isFunction r
-            eql arityof(r), 1
-            eql r(2,5), 8
+            it 'works with one arg', ->
+                r = partial ((a,b,c) -> a / (b / c)), 12
+                assert.isFunction r
+                eql arityof(r), 2
+                eql r(3,2,5), 8
 
-        it 'executes arity(3) with arguments', ->
-            r = partial ((a,b,c) -> a / (b / c)), 12, 3, 2, 5
-            assert.isNotFunction r
-            eql r, 8
+            it 'produces a curried function', ->
+                r = partial ((a,b,c) -> a / (b / c)), 12
+                eql r(2)(3), 8
+
+            it 'works with two arg', ->
+                r = partial ((a,b,c) -> a / (b / c)), 12, 3
+                assert.isFunction r
+                eql arityof(r), 1
+                eql r(2,5), 8
+
+            it 'executes with arguments', ->
+                r = partial ((a,b,c) -> a / (b / c)), 12, 3, 2, 5
+                assert.isNotFunction r
+                eql r, 8
+
 
 describe 'partialr', ->
 
@@ -304,22 +311,28 @@ describe 'partialr', ->
             assert.isNotFunction r
             eql r, 21
 
-        it 'works for arity(3) with one arg', ->
-            r = partialr ((a,b,c) -> a / (b / c)), 2
-            assert.isFunction r
-            eql arityof(r), 2
-            eql r(12,3,5), 8
+        describe 'for arity(3)', ->
 
-        it 'works for arity(3) with two arg', ->
-            r = partialr ((a,b,c) -> a / (b / c)), 3, 2
-            assert.isFunction r
-            eql arityof(r), 1
-            eql r(12,5), 8
+            it 'works with one arg', ->
+                r = partialr ((a,b,c) -> a / (b / c)), 2
+                assert.isFunction r
+                eql arityof(r), 2
+                eql r(12,3,5), 8
 
-        it 'executes arity(3) with arguments', ->
-            r = partialr ((a,b,c) -> a / (b / c)), 12, 3, 2, 5
-            assert.isNotFunction r
-            eql r, 8
+            it 'produces a curried function', ->
+                r = partialr ((a,b,c) -> a / (b / c)), 2
+                eql r(3)(12), 8
+
+            it 'works with two arg', ->
+                r = partialr ((a,b,c) -> a / (b / c)), 3, 2
+                assert.isFunction r
+                eql arityof(r), 1
+                eql r(12,5), 8
+
+            it 'executes with arguments', ->
+                r = partialr ((a,b,c) -> a / (b / c)), 12, 3, 2, 5
+                assert.isNotFunction r
+                eql r, 8
 
 describe 'curry', ->
 
@@ -1077,11 +1090,13 @@ describe 'iif', ->
     it 'is arity 3', ->
         eql arityof(iif), 3
 
-    it 'returns a function which arity is that of c', ->
-        c = (a, b) ->
-        t = (a) ->
+    it 'produces a curried function which arity is that of c', ->
+        c = (a, b) -> true
+        t = (a) -> 42
         f = (a, b, c, d) ->
-        eql arityof(iif c,t,f), 2
+        fn = iif c,t,f
+        eql arityof(fn), 2
+        eql fn(2)(1), 42
 
     it 'is curried', ->
         fn1 = spy -> 42
@@ -1188,14 +1203,13 @@ describe 'nth', ->
     it 'produces a function that returns the nth argument', ->
         eql nth(1)(1,2,3), 2
 
-
-    it 'it produces an arity that of the arg + 1', ->
+    it 'produces an arity that of the arg + 1', ->
         arityof nth(1), 2
         arityof nth(4), 5
 
-    it 'is ok with n outside', ->
-        eql nth(5)(1,2,3), undefined
-        eql nth(-1)(1,2,3), undefined
+    it 'produces a curried function', ->
+        fn = nth(2)
+        eql fn(42)(1)(1), 42
 
 describe 'at', ->
 
