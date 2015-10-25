@@ -560,7 +560,7 @@ args | desc
 :--- | :---
 `fn` | the function to wrap
 
-##### ince example
+##### once example
 
 ```coffee
 fn = once add(10)
@@ -585,7 +585,7 @@ args | desc
 
 ```coffee
 # helper function that resolves a promise to a value after 1 second.
-later = (a) -> (Q.Promise (rs) -> setTimeout rs, 1000).then -> a
+later = (a) -> (new Promise (rs) -> setTimeout rs, 1000).then -> a
 
 pall [1,2,3]                          # [1,2,3] - synchronously
 pall([1,later(2),3]).then console.log # [1,2,3] - after one second
@@ -657,9 +657,9 @@ args | desc
 
 ```coffee
 fn = pfail (err) -> "failed with #{err}"
-fn(42)           # 42, wrapped function not invoked
-fn(Q(42))        # 42, wrapped function not invoked
-fn(Q.reject(42)) # "failed with 42"
+fn(42)                  # 42, wrapped function not invoked
+fn(Promise.resolve(42)) # 42, wrapped function not invoked
+fn(Promise.reject(43))  # "failed with 43"
 ```
 
 
@@ -718,7 +718,7 @@ args | desc
 
 ```coffee
 # helper function that resolves a promise to a value after 1 second.
-later = (a) -> (Q.Promise (rs) -> setTimeout rs, 1000).then -> a
+later = (a) -> (new Promise (rs) -> setTimeout rs, 1000).then -> a
 
 f = plift (a, b) -> a + b
 f(1,2)                       # 3
