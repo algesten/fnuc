@@ -44,31 +44,34 @@ tail    = (a) -> a[1..]
 last    = (a) -> a[a.length-1]
 
 # fn --------------------------------
-arity = do ->
-    nary = (n, fn) ->
-        switch n
-            when 0  then () -> fn arguments...
-            when 1  then (a) -> fn arguments...
-            when 2  then (a,b) -> fn arguments...
-            when 3  then (a,b,c) -> fn arguments...
-            when 4  then (a,b,c,d) -> fn arguments...
-            when 5  then (a,b,c,d,e) -> fn arguments...
-            when 6  then (a,b,c,d,e,f) -> fn arguments...
-            when 7  then (a,b,c,d,e,f,g) -> fn arguments...
-            when 8  then (a,b,c,d,e,f,g,h) -> fn arguments...
-            when 9  then (a,b,c,d,e,f,g,h,i) -> fn arguments...
-            when 10 then (a,b,c,d,e,f,g,h,i,j) -> fn arguments...
-    (fn, n) ->
-        if arguments.length == 1
-            n = fn
-            (fn) -> nary n, fn
-        else
-            nary n, fn
+
+# internal arity fun
+_nary = (n, fn) ->
+    switch n
+        when 0  then () -> fn arguments...
+        when 1  then (a) -> fn arguments...
+        when 2  then (a,b) -> fn arguments...
+        when 3  then (a,b,c) -> fn arguments...
+        when 4  then (a,b,c,d) -> fn arguments...
+        when 5  then (a,b,c,d,e) -> fn arguments...
+        when 6  then (a,b,c,d,e,f) -> fn arguments...
+        when 7  then (a,b,c,d,e,f,g) -> fn arguments...
+        when 8  then (a,b,c,d,e,f,g,h) -> fn arguments...
+        when 9  then (a,b,c,d,e,f,g,h,i) -> fn arguments...
+        when 10 then (a,b,c,d,e,f,g,h,i,j) -> fn arguments...
+
+# exposed arity fun
+arity = (fn, n) ->
+    if arguments.length == 1
+        n = fn
+        (fn) -> _nary n, fn
+    else
+        _nary n, fn
 
 arityof = (f) -> return f.length if typeof f == 'function'
-unary   = arity 1
-binary  = arity 2
-ternary = arity 3
+unary   = (fn) -> (a) -> fn arguments...
+binary  = (fn) -> (a, b) -> fn arguments...
+ternary = (fn) -> (a, b, c) -> fn arguments...
 
 _defprop = (t, n, v) -> Object.defineProperty t, n, value: v; t
 
@@ -78,7 +81,7 @@ _defprop = (t, n, v) -> Object.defineProperty t, n, value: v; t
 # as - arguments so far
 ncurry = (n, v, f, as=[]) ->
     l = n - as.length
-    nf = arity(l) (bs...) ->
+    nf = _nary l, (bs...) ->
         cs = (if bs.length <= l then bs else (if v then bs else bs[0...l])).concat as
         if cs.length < n then ncurry n, v, f, cs else f cs...
     _defprop nf, '__fnuc_curry', -> partialr f, as...
@@ -149,19 +152,19 @@ curry = (f) ->
         ncurry n, false, f
 
 # not a mathematical uncurry, it just unwraps our own curry
-uncurry = (f) -> if f.__fnuc_curry then f.__fnuc_curry() else f
+_uncurry = (f) -> if f.__fnuc_curry then f.__fnuc_curry() else f
 
 partial = (f, as...) ->
     return f as... if (n = (arityof(f) - as.length)) <= 0
-    arity(n) (bs...) -> f as.concat(bs)...
+    _nary n, (bs...) -> f as.concat(bs)...
 partialr = (f, as...) ->
     return f as... if (n = (arityof(f) - as.length)) <= 0
-    arity(n) (bs...) -> f bs[0...n].concat(as)...
+    _nary n, (bs...) -> f bs[0...n].concat(as)...
 
 flip = (f) ->
     return f.__fnuc_flip if f.__fnuc_flip
     rewrap = if f.__fnuc_curry then curry else I
-    g = (rewrap arity(arityof(f)) (as...) -> uncurry(f) as.reverse()...)
+    g = (rewrap _nary arityof(f), (as...) -> _uncurry(f) as.reverse()...)
     _defprop g, '__fnuc_flip', f
 
 compose  = (fs...) ->
@@ -181,13 +184,13 @@ converge = curry3var (fs..., after) ->
 typeis   = curry2 (a,s) -> type(a) == s
 tap      = curry2 (a, f) -> f(a); a                    # a, fn -> a
 apply    = curry2 (args, fn) -> fn.apply this, args    # [a], fn -> fn(a0, a1, ..., az)
-unapply  = (fn) -> arity(arityof(fn)) (as...) -> fn as # ([a] -> *) -> (a1, a2, ..., an) -> *
+unapply  = (fn) -> _nary arityof(fn), (as...) -> fn as # ([a] -> *) -> (a1, a2, ..., an) -> *
 iif      = curry3 (c, t, f) ->
-    arity(arityof(c)) plift (as...) -> if c(as...) then t?(as...) else f?(as...)
+    _nary arityof(c), plift (as...) -> if c(as...) then t?(as...) else f?(as...)
 maybe    = (fn) ->
     unary plift (as...) -> fn as... if as.every isdef  # (a -> b) -> a|null -> b|null
 always   = (v) -> plift -> v
-nth      = (n) -> arity(n + 1) (as...) -> as[n]
+nth      = (n) -> _nary (n + 1), (as...) -> as[n]
 once     = (fn) -> ran = ret = null; (as...) -> if ran then ret else (ran = true; ret = fn as...)
 at       = curry2 (as, n) -> as[n]
 
@@ -285,7 +288,7 @@ plift = do ->
 
     (f) ->
         return f if f.__fnuc_plift # already lifted?
-        nf = arity(arityof(f)) (as...) ->
+        nf = _nary arityof(f), (as...) ->
             t0 = firstthen as # false or a bound then-function
             if t0
                 # curry function so we can do promapply per argument.
