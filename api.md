@@ -68,6 +68,7 @@ API
 [`omap`](api.md#omap)
 [`once`](api.md#once)
 [`or`](api.md#or)
+[`pall`](api.md#pall)
 [`partial`](api.md#partial)
 [`partialr`](api.md#partialr)
 [`pfail`](api.md#pfail)
@@ -567,6 +568,30 @@ fn(2)             # 12
 fn(4)             # 12
 ```
 
+#### pall
+
+Given an array of promises, produces a promise that will resolve
+with the values when all promises in the array resolves. If no
+promises in array the function synchronously returns an array
+with the same content.
+
+`pall(as)` `:: [a | Promise a] -> [a] | Promise [a]`
+
+args | desc
+:--- | :---
+`as` | Array of values/promises.
+
+##### pall example
+
+```coffee
+# helper function that resolves a promise to a value after 1 second.
+later = (a) -> (Q.Promise (rs) -> setTimeout rs, 1000).then -> a
+
+pall [1,2,3]                          # [1,2,3] - synchronously
+pall([1,later(2),3]).then console.log # [1,2,3] - after one second
+```
+
+
 #### partial
 
 Creates a function that has the original function partially applied
@@ -700,7 +725,7 @@ f(1,2)                       # 3
 f(later(1), 2)               # promise that resolves to 3 after 1 second
 
 # to see it in action
-f(1, later(2)).then (v) -> console.log v
+f(1, later(2)).then console.log
 ```
 
 #### tap

@@ -16,7 +16,8 @@ else
 assert = chai.assert
 eql = assert.deepEqual
 
-later = (f) -> Q.Promise((rs) -> setTimeout rs, 1).then f
+later = (f) -> (Q.Promise (rs) -> setTimeout rs, 1).then f
+fuze  = (v) -> Q.Promise (rs, rj) -> setTimeout (->rj v), 1
 
 { spy, mock, stub, sandbox } = sinon
 
@@ -555,10 +556,10 @@ describe 'pipe', ->
             f(Q(7),3).then (r) -> eql r, 'f3 5'
 
         it 'invokes pfail if invoked with rejected promise', ->
-            f(Q.reject('reject'),3).then (r) -> eql r, 'f3 did reject'
+            f(fuze('reject'),3).then (r) -> eql r, 'f3 did reject'
 
         it 'invokes pfail if any function introduces a rejected promise', ->
-            f2e = (a) -> Q.reject('reject')
+            f2e = (a) -> fuze 'reject'
             fe = pipe f1, f2e, pf, f3
             fe(7,3).then (r) -> eql r, 'f3 did reject'
 
@@ -1064,7 +1065,7 @@ describe 'converge', ->
 
     it 'can pfail as after fn', ->
         fn = converge mul2, mul3, pfail (err) -> "did #{err}"
-        fn(Q.reject('reject')).then (r) -> eql r, 'did reject'
+        fn(fuze('reject')).then (r) -> eql r, 'did reject'
 
     it 'converges vararg funs', (done) ->
         a = (as...) -> as[1]
@@ -1234,12 +1235,12 @@ describe 'pfail', ->
     describe 'with rejected promise argument', ->
 
         it 'is invoked', ->
-            fn(Q.reject 'reject').then (r) -> eql r, 'failed with reject'
+            fn(fuze 'reject').then (r) -> eql r, 'failed with reject'
 
     describe 'with multiple rejected promise argument', ->
 
         it 'is invoked', ->
-            fn(Q.reject('reject 1'), Q.reject('reject 2')).then (r) ->
+            fn(fuze('reject 1'), fuze('reject 2')).then (r) ->
                 eql s.args.length, 1 # only invoked once
                 eql r, 'failed with reject 2'
 
@@ -1255,6 +1256,24 @@ describe 'pfail', ->
 
         it 'is skipped with no arg', ->
             eql fn(), undefined
+
+describe 'pall', ->
+
+    describe 'with array of plain values', ->
+
+        it 'returns an array', ->
+            eql pall([1,2,3]), [1,2,3]
+
+    describe 'with array of mixed values/promises', ->
+
+        it 'resolves to array of values', ->
+            pall([1,later(->2),later(->3)]).then (as) -> eql as, [1,2,3]
+
+    describe 'with array where some value rejects', ->
+
+        it 'is rejected with same rejection', ->
+            pall([1,fuze(42),later(3)]).fail (err) -> eql err, 42
+
 
 describe 'once', ->
 

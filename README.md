@@ -172,6 +172,7 @@ API
 [`omap`](api.md#omap)
 [`once`](api.md#once)
 [`or`](api.md#or)
+[`pall`](api.md#pall)
 [`partial`](api.md#partial)
 [`partialr`](api.md#partialr)
 [`pfail`](api.md#pfail)

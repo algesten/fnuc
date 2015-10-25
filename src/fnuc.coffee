@@ -312,6 +312,10 @@ _pliftall = map(plift)
 pfail = (f) -> plift _defprop(f, '__fnuc_fail', true)
 _ispfail   = (fn) -> !!fn?.__fnuc_fail
 
+pall = do ->
+    args = plift unapply(I)
+    (as) -> args as...
+
 # moar object
 has     = curry2 (o, k) -> o.hasOwnProperty(k)
 get     = curry2 (o, k) -> o[k]
@@ -435,7 +439,7 @@ exports = {
     oor, nnot, either, both, comp
 
     # promises
-    plift, pfail
+    plift, pfail, pall
 
 }
 
