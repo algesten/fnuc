@@ -226,23 +226,23 @@ describe 'partial', ->
 
     describe 'partially fills in arguments from the left', ->
 
-        it 'executes arity(0)', ->
-            r = partial (->42)
-            eql r, 42
+        it 'function for arity(0)', ->
+            f = partial (->42)
+            eql f(), 42
 
-        it 'executes arity(0) with arguments', ->
-            r = partial (->42), 1, 2, 3
-            eql r, 42
+        it 'function for arity(0) with arguments', ->
+            f = partial (s = spy ->42), 1, 2, 3
+            eql f(4,5), 42
+            eql s.args[0], [1,2,3,4,5]
 
         it 'handles arity(1)', ->
             r = partial ((a) -> a + 42)
             assert.isFunction r
             eql r(1,2,3), 43
 
-        it 'executes arity(1) with arguments', ->
-            r = partial ((a) -> a + 42), 1, 2
-            assert.isNotFunction r
-            eql r, 43
+        it 'function for arity(1) with arguments', ->
+            fn = partial ((a) -> a + 42), 1, 2
+            eql fn(), 43
 
         it 'works for arity(2)', ->
             r = partial ((a,b) -> a / b), 42
@@ -250,10 +250,9 @@ describe 'partial', ->
             eql arityof(r), 1
             eql r(2,3,4), 21
 
-        it 'executes arity(2) with arguments', ->
-            r = partial ((a,b) -> a / b), 42, 2
-            assert.isNotFunction r
-            eql r, 21
+        it 'function for arity(2) with arguments', ->
+            fn = partial ((a,b) -> a / b), 42, 2
+            eql fn(), 21
 
         describe 'for arity(3)', ->
 
@@ -273,33 +272,32 @@ describe 'partial', ->
                 eql arityof(r), 1
                 eql r(2,5), 8
 
-            it 'executes with arguments', ->
-                r = partial ((a,b,c) -> a / (b / c)), 12, 3, 2, 5
-                assert.isNotFunction r
-                eql r, 8
-
+            it 'function with arguments', ->
+                f = partial (s = spy (a,b,c) -> a / (b / c)), 12, 3, 2, 5
+                eql f(4,5), 8
+                eql s.args[0], [12,3,2,5,4,5]
 
 describe 'partialr', ->
 
     describe 'partially fills in arguments from the right', ->
 
-        it 'executes arity(0)', ->
-            r = partialr (->42)
-            eql r, 42
+        it 'function for arity(0)', ->
+            f = partialr (->42)
+            eql f(), 42
 
-        it 'executes arity(0) with arguments', ->
-            r = partialr (->42), 1, 2, 3
-            eql r, 42
+        it 'function for arity(0) with arguments', ->
+            f = partialr (s = spy ->42), 1, 2, 3
+            eql f(4,5), 42
+            eql s.args[0], [1,2,3]
 
         it 'handles arity(1)', ->
             r = partialr ((a) -> a + 42)
             assert.isFunction r
             eql r(1,2,3), 43
 
-        it 'executes arity(1) with arguments', ->
-            r = partialr ((a) -> a + 42), 1, 2
-            assert.isNotFunction r
-            eql r, 43
+        it 'function for arity(1) with arguments', ->
+            f = partialr ((a) -> a + 42), 1, 2
+            eql f(), 43
 
         it 'works for arity(2)', ->
             r = partialr ((a,b) -> a / b), 2
@@ -307,10 +305,10 @@ describe 'partialr', ->
             eql arityof(r), 1
             eql r(42,3,4), 21
 
-        it 'executes arity(2) with arguments', ->
-            r = partialr ((a,b) -> a / b), 42, 2
-            assert.isNotFunction r
-            eql r, 21
+        it 'function for arity(2) with arguments', ->
+            f = partialr (s = spy (a,b) -> a / b), 42, 2
+            eql f(10,5), 21
+            eql s.args[0], [42, 2]
 
         describe 'for arity(3)', ->
 
@@ -330,10 +328,9 @@ describe 'partialr', ->
                 eql arityof(r), 1
                 eql r(12,5), 8
 
-            it 'executes with arguments', ->
-                r = partialr ((a,b,c) -> a / (b / c)), 12, 3, 2, 5
-                assert.isNotFunction r
-                eql r, 8
+            it 'function with arguments', ->
+                f = partialr ((a,b,c) -> a / (b / c)), 12, 3, 2, 5
+                eql f(), 8
 
 describe 'curry', ->
 
@@ -511,6 +508,10 @@ describe 'pipe', ->
 
         it 'maintains arity for f1', ->
             eql arityof(calc), 2
+            eql arityof(pipe (->), I), 0
+            eql arityof(pipe ((a)->), I), 1
+            eql arityof(pipe ((a,b)->), I), 2
+            eql arityof(pipe ((a,b,c)->), I), 3
 
         it 'allows promises as arg', ->
             calc(later(->10),20).then (v) -> eql v, 3
@@ -1082,9 +1083,16 @@ describe 'converge', ->
             done()
         fn 1, 2, 3
 
+    it 'deals with arity 0', (done) ->
+        a = (a) -> 1
+        b = -> 2
+        fn = converge a, b, -> done()
+        fn 1
+
     it 'isnt crazy with pipe', ->
         norun = -> throw new Error("Nooo!")
         converge norun, pipe(norun), norun
+        converge norun, pipe(norun, I), norun
 
 describe 'apply', ->
 

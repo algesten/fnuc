@@ -76,6 +76,7 @@ _defprop = (t, n, v) -> Object.defineProperty t, n, value: v; t
 # f  - function to curry
 # as - arguments so far
 ncurry = (n, v, f, as=[]) ->
+    throw new Error("Bad ncurry") unless typeof n == 'number'
     l = n - as.length
     nf = _nary l, (bs...) ->
         cs = (if bs.length <= l then bs else (if v then bs else bs[0...l])).concat as
@@ -152,12 +153,21 @@ _uncurry = (f) -> if f.__fnuc_curry then f.__fnuc_curry() else f
 
 partial = (f, as...) ->
     f = _uncurry(f)
-    return f as... if (n = (arityof(f) - as.length)) <= 0
-    curry _nary n, (bs...) -> f as.concat(bs)...
+    n = (arityof(f) - as.length)
+    fn = (bs...) -> f as.concat(bs)...
+    if n <= 0
+        fn
+    else
+        curry _nary n, fn
+
 partialr = (f, as...) ->
     f = _uncurry(f)
-    return f as... if (n = (arityof(f) - as.length)) <= 0
-    curry _nary n, (bs...) -> f bs[0...n].concat(as)...
+    n = (arityof(f) - as.length)
+    fn = (bs...) -> f bs[0...n].concat(as)...
+    if n <= 0
+        fn
+    else
+        curry _nary n, fn
 
 flip = (f) ->
     return f.__fnuc_flip if f.__fnuc_flip
@@ -171,15 +181,21 @@ pipe     = (fs...) ->
     fs = _pliftall(fs)
     fn = foldr1 fs, (f, g) -> (as...) -> f g as...
     ar = arityof(head fs)
-    if ar >= 2 then ncurry(ar, true, fn) else fn
+    if ar >= 2 then ncurry(ar, true, fn) else _nary ar, fn
 
 
 converge = curry3var (fs..., after) ->
     fs = _pliftall fs
     after = plift after
-    ncurry apply(Math.max)(map fs, arityof), true, (args...) ->
+    ar = apply(Math.max)(map fs, arityof)
+    fn = (args...) ->
         context = this
         after.apply context, map fs, (fn) -> fn.apply context, args
+    if ar >= 2
+        ncurry ar, true, fn
+    else
+        _nary ar, fn
+
 
 typeis   = curry2 (a,s) -> type(a) == s
 tap      = curry2 (a, f) -> f(a); a                    # a, fn -> a
