@@ -827,10 +827,10 @@ badd40 o                     # {a:1,b:42,c:3}
 #### eql
 
 Deep equals. `a` equal to `b` which will recursively traverse nested
-arrays and objects.
+arrays and objects. See also [eq](#eq).
 
-`eq(a,b)`   `:: a, a -> Boolean`  
-`eq(b)(a)`  `:: a -> a -> Boolean`  
+`eql(a,b)`   `:: a, a -> Boolean`  
+`eql(b)(a)`  `:: a -> a -> Boolean`  
 
 args | desc
 :--- | :---
@@ -2030,7 +2030,8 @@ g(102)                        # true
 
 #### eq
 
-Equality test. `a` equal to `b`, strict (as in `===` in javascript-terms).
+Equality test. `a` equal to `b`, strict (as in `===` in
+javascript-terms). See also [eql](#eql).
 
 `eq(a,b)`   `:: a, a -> a`  
 `eq(b)(a)`  `:: a -> a -> a`  
