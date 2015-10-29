@@ -81,7 +81,8 @@ ncurry = (n, v, f, as=[]) ->
     nf = _nary l, (bs...) ->
         cs = (if bs.length <= l then bs else (if v then bs else bs[0...l])).concat as
         if cs.length < n then ncurry n, v, f, cs else f cs...
-    _defprop nf, '__fnuc_curry', -> partialr f, as...
+    _defprop nf, '__fnuc_curry', ->
+        if as.length == 0 then f else partialr f, as...
 
 curry2 = (f) ->
     _defprop f2 = (a, b) ->
