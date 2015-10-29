@@ -169,7 +169,10 @@ compose  = (fs...) ->
     ncurry arityof(last fs), true, fold1 fs, (f, g) -> (as...) -> f g as...
 pipe     = (fs...) ->
     fs = _pliftall(fs)
-    ncurry arityof(head fs), true, foldr1 fs, (f, g) -> (as...) -> f g as...
+    fn = foldr1 fs, (f, g) -> (as...) -> f g as...
+    ar = arityof(head fs)
+    if ar >= 2 then ncurry(ar, true, fn) else fn
+
 
 converge = curry3var (fs..., after) ->
     fs = _pliftall fs

@@ -526,6 +526,9 @@ describe 'pipe', ->
                 done()
             fn 1, 2, 3
 
+        it 'is curried', ->
+            eql calc(4)(6), 1
+
     describe '(f1,f2,f3)', ->
 
         f1 = (a,b) -> a + b
@@ -538,6 +541,9 @@ describe 'pipe', ->
 
         it 'maintains arity for f1', ->
             eql arityof(f), 2
+
+        it 'is curried', ->
+            eql f(5)(7), 2
 
         it 'maintains arity 0 for f1, even though it hurts', ->
             f0 = ->
@@ -1075,6 +1081,10 @@ describe 'converge', ->
             eql b, 3
             done()
         fn 1, 2, 3
+
+    it 'isnt crazy with pipe', ->
+        norun = -> throw new Error("Nooo!")
+        converge norun, pipe(norun), norun
 
 describe 'apply', ->
 
