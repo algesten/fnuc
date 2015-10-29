@@ -940,7 +940,8 @@ set. Rightmost object takes precende. Omits values that are
 undefined. `mixin {a:1}, {b:2}` is equivalent to `merge {}, {a:1},
 {b:2}`.
 
-`mixin(os...)` `:: {*}... -> {*}`
+`mixin(os...)` `:: {*}... -> {*}`  
+`mixin(o)(o)`  `:: {*} -> {*} -> {*}`
 
 args | desc
 :--- | :---
@@ -951,6 +952,8 @@ args | desc
 ```coffee
 mixin (t={c:4}), {a:1}, {a:2,b:3}    # {a:2,b:3,c:4} t is {c:4}
 mixin {c:4}, {a:1, b:undefined}      # {a:1,c:4}
+fn = mixin {a:1}                     # partial
+fn {b:2}                             # {a:1, b:2}
 ```
 
 #### ofilter

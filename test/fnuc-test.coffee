@@ -97,10 +97,10 @@ describe 'mixin', ->
 
     describe 'returns a new object with all arguments merged and', ->
 
-        it 'handles no object', -> eql mixin(), {}
-        it 'handles one object', ->
-            eql (r = mixin(a = a:1)), a:1
-            assert.ok a != r
+        it 'handles one object with curry', ->
+            f = mixin a:1
+            r = f b:2
+            eql r, {a:1,b:2}
         it 'handles two objects', ->
             eql mixin(a = {a:1},{b:2}), {a:1,b:2}
             eql a, a:1

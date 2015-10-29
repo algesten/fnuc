@@ -34,10 +34,6 @@ isplain = (o) -> !!o && typeof o == 'object' && o.constructor == Object
 isdef   = (o) -> `o != null`
 type    = (a) -> _toString(a)[8...-1].toLowerCase()
 
-# object ----------------------------
-merge   = (t, os...) -> t[k] = v for k,v of o for o in os; t
-mixin   = (os...)    -> merge {}, os...
-
 # array/string 1
 head    = (a) -> a[0]
 tail    = (a) -> a[1..]
@@ -264,6 +260,10 @@ uniqfn   = curry2 (as, fn) ->                        # [a] -> [a]
     fned = map as, fn
     _filter as, (v, i) -> fned.indexOf(fned[i]) == i
 uniq     = (as) -> return as unless as; _filter as, (v, i) -> as.indexOf(v) == i # [a] -> [a]
+
+# object ----------------------------
+merge   = (t, os...) -> t[k] = v for k,v of o for o in os; t
+mixin   = curry2var (os...) -> merge {}, os...
 
 # promise ---------------------------
 
