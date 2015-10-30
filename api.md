@@ -216,18 +216,16 @@ fn(12345)          # 42
 
 #### apply
 
-Applies the function with the given arguments. This is equivalent to
-`fn.apply(this,args)` and is mostly here due to being curried.
+Applies the function with the given arguments array. This is
+equivalent to `fn.apply(this,args)` and is here due to being
+curried. The inverse of [apply](#apply)
 
-*Deliberate strange order due to curry*
-
-`apply(as,fn)`  `:: [a], (a, ..., z -> r1) -> r1`  
-`any(fn)(as)`   `:: (a, ..., z -> r1) -> [a] -> r1`  
+`apply(fn)(as)` `:: (a, ..., z -> r1) -> [a] -> r1`  
 
 args | desc
 :--- | :---
-`as` | Arguments array
 `fn` | Function to apply
+`as` | Arguments array
 
 ##### apply example
 

@@ -201,7 +201,7 @@ converge = curry3var (fs..., after) ->
 typeis   = curry2 (a,s) -> type(a) == s
 tap      = curry2 (a, f) -> f(a); a                    # a, fn -> a
 call     = curry2var (fn, as...) -> fn as...           # (* -> a), * -> a
-apply    = curry2 (args, fn) -> fn.apply null, args    # [a], fn -> fn(a0, a1, ..., az)
+apply    = (fn) -> (as)    -> fn as...                 # ((a1, a2, ..., an) -> *) -> [a] -> *
 unapply  = (fn) -> (as...) -> fn as                    # ([a] -> *) -> (a1, a2, ..., an) -> *
 iif      = curry3 (c, t, f) ->
     curry _nary arityof(c), plift (as...) -> if c(as...) then t?(as...) else f?(as...)
