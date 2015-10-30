@@ -1330,7 +1330,7 @@ describe 'cond', ->
         ]
         eql fn(11), 43
 
-describe.only 'call', ->
+describe 'call', ->
 
     it 'calls first argument with consequent', ->
         eql call(add, 1, 2), 3
