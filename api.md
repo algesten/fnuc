@@ -12,6 +12,7 @@ API
 [`arityof`](api.md#arityof)
 [`at`](api.md#at)
 [`both`](api.md#both)
+[`call`](api.md#call)
 [`clone`](api.md#clone)
 [`comp`](api.md#comp)
 [`compose`](api.md#compose)
@@ -296,6 +297,23 @@ arityof ((a,b)->)   # 2
 arityof type        # 1
 arityof typeis      # 2
 arityof arity       # 2
+```
+
+#### call
+
+Calls the first argument with the consequent.
+
+`call(fn, a,b,c)`  `:: (* -> a), * -> a`
+
+args | desc
+:--- | :---
+`fn` | Function to call
+`a`  | variadic number of arguments to call function with.
+
+##### call example
+
+```coffee
+call add, 1, 2        # 3
 ```
 
 #### compose

@@ -1329,3 +1329,14 @@ describe 'cond', ->
             [lt(12), always(43)]
         ]
         eql fn(11), 43
+
+describe.only 'call', ->
+
+    it 'calls first argument with consequent', ->
+        eql call(add, 1, 2), 3
+
+    it 'is curried', ->
+        eql call(1)(I), 1
+
+    it 'can be partialed', ->
+        eql (partial(call, add) 1, 2), 3

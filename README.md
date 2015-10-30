@@ -116,6 +116,7 @@ API
 [`arityof`](api.md#arityof)
 [`at`](api.md#at)
 [`both`](api.md#both)
+[`call`](api.md#call)
 [`clone`](api.md#clone)
 [`comp`](api.md#comp)
 [`compose`](api.md#compose)
