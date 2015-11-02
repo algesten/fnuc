@@ -530,6 +530,11 @@ describe 'pipe', ->
         it 'is curried', ->
             eql calc(4)(6), 1
 
+        it 'can pipe curried functions', ->
+            fn = pipe split(' '), pick
+            dopick = fn 'abc'
+            eql dopick({abc:42,def:43}), abc:42
+
     describe '(f1,f2,f3)', ->
 
         f1 = (a,b) -> a + b

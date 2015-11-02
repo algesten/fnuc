@@ -312,7 +312,6 @@ plift = do ->
 
     (f) ->
         return f if f.__fnuc_plift # already lifted?
-        f = _uncurry(f)            # unwrap if we have a curry
         nf = curry _nary arityof(f), (as...) ->
             t0 = firstthen as # false or a bound then-function
             if t0
