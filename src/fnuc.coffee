@@ -30,7 +30,18 @@ clone = (a) ->
     return s
 
 # type -----------------------------
-isplain = (o) -> !!o && typeof o == 'object' && o.constructor == Object
+isplain = do ->
+    # borrowed from jonschlinkert
+    isobject  = (o) -> !!o && typeof o == 'object' # not null object?
+    isobjobj  = (o) -> isobject(o) && Object::toString.call(o) == '[object Object]'
+    # unmodified constructor?
+    iscons    = (o) -> typeof o.constructor == 'function'
+    # unmodified prototype?
+    isprot    = (o) -> isobjobj(o.constructor.prototype)
+    # some object specific method?
+    isprotobj = (o) -> o.constructor.prototype.hasOwnProperty('isPrototypeOf')
+    (o) -> isobjobj(o) && iscons(o) && isprot(o) && isprotobj(o)
+
 isdef   = (o) -> `o != null`
 type    = (a) -> _toString(a)[8...-1].toLowerCase()
 
